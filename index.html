@@ -4,609 +4,258 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sifon Imahjnr — Writer & Engineer</title>
+<meta name="description" content="Sifon Aniefiok Imaikop — software engineering student, cybersecurity enthusiast, writer of essays, poems, and ideas.">
+<!-- AdSense: replace ca-pub-XXXXXXXXXX with your real publisher ID after approval -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script> -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --cream: #faf8f3;
-    --ink: #1a1814;
-    --ink-soft: #4a4640;
-    --ink-muted: #9a9490;
-    --accent: #c4713a;
-    --accent-light: #f0e4d8;
-    --border: #e8e4dd;
-    --card-bg: #ffffff;
-    --nav-h: 72px;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--ink);
-    font-size: 17px;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-
-  /* Prevent copy */
-  * { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    height: var(--nav-h);
-    background: rgba(250,248,243,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 48px;
-    z-index: 1000;
-    transition: box-shadow .3s;
-  }
-  nav.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,.06); }
-
-  .nav-logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: .02em;
-    color: var(--ink);
-    cursor: pointer;
-  }
-  .nav-logo span { color: var(--accent); }
-
-  .nav-links { display: flex; gap: 36px; list-style: none; }
-  .nav-links li a {
-    font-size: 15px;
-    font-weight: 400;
-    color: var(--ink-soft);
-    text-decoration: none;
-    letter-spacing: .04em;
-    transition: color .2s;
-    cursor: pointer;
-  }
-  .nav-links li a:hover, .nav-links li a.active { color: var(--accent); }
-
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-  .hamburger span { display: block; width: 24px; height: 1.5px; background: var(--ink); transition: .3s; }
-
-  /* ── PAGES ── */
-  .page { display: none; min-height: 100vh; padding-top: var(--nav-h); }
-  .page.active { display: block; }
-
-  /* ── HERO ── */
-  .hero {
-    padding: 100px 48px 80px;
-    max-width: 900px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .hero-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    opacity: 0;
-    animation: fadeUp .8s .1s forwards;
-  }
-
-  .hero h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(52px, 7vw, 88px);
-    font-weight: 300;
-    line-height: 1.08;
-    letter-spacing: -.01em;
-    color: var(--ink);
-    opacity: 0;
-    animation: fadeUp .8s .2s forwards;
-    margin-bottom: 28px;
-  }
-  .hero h1 em { font-style: italic; color: var(--accent); }
-
-  .hero-desc {
-    font-size: 19px;
-    color: var(--ink-soft);
-    max-width: 560px;
-    line-height: 1.75;
-    opacity: 0;
-    animation: fadeUp .8s .35s forwards;
-    margin-bottom: 44px;
-  }
-
-  .hero-cta {
-    display: flex; gap: 16px; flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp .8s .5s forwards;
-  }
-
-  .btn {
-    padding: 14px 32px;
-    font-size: 15px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    letter-spacing: .04em;
-    transition: all .25s;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .btn-primary {
-    background: var(--ink);
-    color: var(--cream);
-  }
-  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
-  .btn-outline {
-    background: transparent;
-    border: 1.5px solid var(--ink);
-    color: var(--ink);
-  }
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
-
-  /* ── SECTION HEADINGS ── */
-  .section { padding: 80px 48px; max-width: 1100px; margin: 0 auto; }
-
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-  }
-
-  .section-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 4vw, 52px);
-    font-weight: 300;
-    line-height: 1.15;
-    margin-bottom: 48px;
-    color: var(--ink);
-  }
-
-  .section-title em { font-style: italic; color: var(--accent); }
-
-  .divider { border: none; border-top: 1px solid var(--border); margin: 0 48px; }
-
-  /* ── CAROUSEL ── */
-  .carousel-wrap { position: relative; }
-
-  .carousel {
-    display: flex;
-    gap: 24px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    padding-bottom: 16px;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .carousel::-webkit-scrollbar { display: none; }
-
-  .carousel-nav {
-    display: flex; gap: 12px; align-items: center;
-    margin-top: 28px;
-  }
-
-  .c-btn {
-    width: 44px; height: 44px;
-    border: 1.5px solid var(--border);
-    background: var(--card-bg);
-    color: var(--ink);
-    font-size: 20px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .2s;
-  }
-  .c-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  .c-dots { display: flex; gap: 8px; margin-left: 8px; }
-  .c-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--border);
-    transition: background .25s, transform .25s;
-    cursor: pointer;
-  }
-  .c-dot.active { background: var(--accent); transform: scale(1.3); }
-
-  /* ── BLOG CARDS ── */
-  .blog-card {
-    min-width: 320px;
-    max-width: 340px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    padding: 32px;
-    scroll-snap-align: start;
-    transition: transform .3s, box-shadow .3s;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .blog-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,.08); }
-
-  .card-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 14px;
-  }
-
-  .card-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    font-weight: 400;
-    line-height: 1.3;
-    margin-bottom: 14px;
-    color: var(--ink);
-  }
-
-  .card-excerpt {
-    font-size: 15px;
-    color: var(--ink-soft);
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .card-meta {
-    font-size: 13px;
-    color: var(--ink-muted);
-    font-family: 'DM Mono', monospace;
-  }
-
-  /* ── POEM CARDS ── */
-  .poem-card {
-    min-width: 280px;
-    max-width: 300px;
-    background: var(--ink);
-    color: var(--cream);
-    padding: 40px 32px;
-    scroll-snap-align: start;
-    transition: transform .3s;
-    cursor: pointer;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-  }
-  .poem-card::before {
-    content: '"';
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 120px;
-    color: rgba(196,113,58,.2);
-    position: absolute;
-    top: -10px; left: 16px;
-    line-height: 1;
-    pointer-events: none;
-  }
-  .poem-card:hover { transform: translateY(-6px); }
-
-  .poem-card .card-tag { color: rgba(196,113,58,.8); }
-  .poem-card .card-title { color: var(--cream); font-size: 22px; }
-  .poem-card .card-excerpt { color: rgba(250,248,243,.65); font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 17px; }
-  .poem-card .card-meta { color: rgba(250,248,243,.4); }
-
-  /* ── PROJECT CARDS ── */
-  .project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-  }
-
-  .project-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    padding: 36px;
-    transition: transform .3s, box-shadow .3s;
-    cursor: pointer;
-  }
-  .project-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,.08); }
-
-  .project-icon {
-    width: 48px; height: 48px;
-    background: var(--accent-light);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-
-  .project-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    font-weight: 400;
-    margin-bottom: 12px;
-  }
-
-  .project-desc { font-size: 15px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 20px; }
-
-  .project-stack { display: flex; flex-wrap: wrap; gap: 8px; }
-  .tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    padding: 4px 12px;
-    background: var(--accent-light);
-    color: var(--accent);
-    letter-spacing: .06em;
-  }
-
-  /* ── FULL POST ── */
-  .post-page { display: none; padding-top: var(--nav-h); }
-  .post-page.active { display: block; }
-
-  .post-container {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 80px 48px 120px;
-  }
-
-  .post-back {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    color: var(--accent);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 48px;
-    letter-spacing: .06em;
-  }
-  .post-back:hover { opacity: .7; }
-
-  .post-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 20px;
-  }
-
-  .post-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(40px, 6vw, 64px);
-    font-weight: 300;
-    line-height: 1.1;
-    margin-bottom: 20px;
-  }
-
-  .post-meta {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    color: var(--ink-muted);
-    margin-bottom: 56px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .post-body {
-    font-size: 18px;
-    line-height: 1.85;
-    color: var(--ink-soft);
-  }
-  .post-body p { margin-bottom: 28px; }
-  .post-body h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 400;
-    color: var(--ink);
-    margin: 48px 0 20px;
-  }
-
-  /* Poem post */
-  .poem-post .post-container { text-align: center; }
-  .poem-post .post-title { font-style: italic; }
-  .poem-post .post-body {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    line-height: 2.2;
-    font-style: italic;
-    color: var(--ink);
-    max-width: 520px;
-    margin: 0 auto;
-  }
-  .poem-post .post-body p { margin-bottom: 36px; }
-  .poem-author {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    color: var(--accent);
-    margin-top: 56px;
-    font-style: italic;
-  }
-
-  /* ── ABOUT ── */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.6fr;
-    gap: 80px;
-    align-items: start;
-  }
-
-  .about-portrait {
-    aspect-ratio: 3/4;
-    background: var(--ink);
-    position: relative;
-    overflow: hidden;
-  }
-  .about-portrait-inner {
-    width: 100%; height: 100%;
-    background: linear-gradient(160deg, #2a2520 0%, #1a1814 60%, #3a2820 100%);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .about-initials {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 96px;
-    font-weight: 300;
-    color: rgba(196,113,58,.3);
-    letter-spacing: .1em;
-  }
-  .about-portrait-line {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 4px;
-    background: var(--accent);
-  }
-
-  .about-content p {
-    font-size: 18px;
-    line-height: 1.85;
-    color: var(--ink-soft);
-    margin-bottom: 28px;
-  }
-
-  .about-interests {
-    display: flex; flex-wrap: wrap; gap: 10px;
-    margin-top: 32px;
-  }
-  .interest-chip {
-    padding: 8px 20px;
-    border: 1.5px solid var(--border);
-    font-size: 14px;
-    color: var(--ink-soft);
-    transition: all .2s;
-  }
-  .interest-chip:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* ── BLOG FILTER ── */
-  .filter-bar {
-    display: flex; gap: 12px; flex-wrap: wrap;
-    margin-bottom: 48px;
-  }
-  .filter-btn {
-    padding: 10px 22px;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    border: 1.5px solid var(--border);
-    background: transparent;
-    color: var(--ink-soft);
-    cursor: pointer;
-    transition: all .2s;
-    letter-spacing: .03em;
-  }
-  .filter-btn:hover, .filter-btn.active {
-    background: var(--ink);
-    color: var(--cream);
-    border-color: var(--ink);
-  }
-
-  .blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
-  }
-
-  .blog-full-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    padding: 32px;
-    cursor: pointer;
-    transition: transform .3s, box-shadow .3s;
-  }
-  .blog-full-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,.08); }
-  .blog-full-card.poem-type { background: var(--ink); color: var(--cream); }
-  .blog-full-card.poem-type .card-title { color: var(--cream); }
-  .blog-full-card.poem-type .card-excerpt { color: rgba(250,248,243,.65); font-style: italic; }
-  .blog-full-card.poem-type .card-meta { color: rgba(250,248,243,.4); }
-
-  /* ── CONTACT ── */
-  .contact-inner { max-width: 600px; }
-
-  .contact-intro {
-    font-size: 19px;
-    color: var(--ink-soft);
-    line-height: 1.8;
-    margin-bottom: 48px;
-  }
-
-  .contact-links { display: flex; flex-direction: column; gap: 20px; }
-
-  .contact-link {
-    display: flex; align-items: center; gap: 20px;
-    padding: 24px 28px;
-    border: 1.5px solid var(--border);
-    background: var(--card-bg);
-    text-decoration: none;
-    color: var(--ink);
-    transition: all .25s;
-    cursor: pointer;
-  }
-  .contact-link:hover { border-color: var(--accent); transform: translateX(6px); }
-
-  .contact-link-icon {
-    width: 44px; height: 44px;
-    background: var(--accent-light);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .contact-link-text strong { display: block; font-size: 16px; font-weight: 500; margin-bottom: 2px; }
-  .contact-link-text span { font-size: 14px; color: var(--ink-muted); font-family: 'DM Mono', monospace; }
-
-  /* ── FOOTER ── */
-  footer {
-    padding: 48px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  footer p { font-size: 14px; color: var(--ink-muted); font-family: 'DM Mono', monospace; }
-  .footer-logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .footer-logo span { color: var(--accent); }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .fade-in { opacity: 0; animation: fadeUp .7s forwards; }
-
-  /* ── MOBILE ── */
-  @media (max-width: 768px) {
-    nav { padding: 0 24px; }
-    .nav-links { display: none; flex-direction: column; position: absolute; top: var(--nav-h); left: 0; right: 0; background: var(--cream); border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; }
-    .nav-links.open { display: flex; }
-    .hamburger { display: flex; }
-
-    .hero, .section { padding: 60px 24px; }
-    .post-container { padding: 60px 24px 80px; }
-    .about-grid { grid-template-columns: 1fr; gap: 40px; }
-    .divider { margin: 0 24px; }
-    footer { padding: 32px 24px; }
-  }
-
-  /* ── SCROLL INDICATOR ── */
-  .scroll-progress {
-    position: fixed; top: var(--nav-h); left: 0;
-    height: 2px;
-    background: var(--accent);
-    z-index: 999;
-    transition: width .1s;
-  }
+:root{
+  --cream:#faf8f3;--ink:#1a1814;--ink-soft:#4a4640;--ink-muted:#9a9490;
+  --accent:#c4713a;--accent-light:#f0e4d8;--border:#e8e4dd;--card-bg:#ffffff;
+  --nav-h:72px;--green:#3a7d44;--green-light:#e8f4ea;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);
+  font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;
+  user-select:none;-webkit-user-select:none;-moz-user-select:none;
+}
+*{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+  background:rgba(250,248,243,.94);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;z-index:1000;transition:box-shadow .3s;
+}
+nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;letter-spacing:.02em;color:var(--ink);cursor:pointer;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
+.nav-links li a{font-size:15px;font-weight:400;color:var(--ink-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s;cursor:pointer;}
+.nav-links li a:hover,.nav-links li a.active{color:var(--accent);}
+.nav-admin-btn{padding:8px 18px;font-size:13px;font-family:'DM Mono',monospace;background:var(--ink);color:var(--cream);border:none;cursor:pointer;letter-spacing:.06em;transition:background .2s;white-space:nowrap;}
+.nav-admin-btn:hover{background:var(--accent);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;}
+.hamburger span{display:block;width:24px;height:1.5px;background:var(--ink);transition:.3s;}
+
+/* SCROLL BAR */
+.scroll-progress{position:fixed;top:var(--nav-h);left:0;height:2px;background:var(--accent);z-index:999;transition:width .1s;}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:var(--nav-h);}
+.page.active{display:block;}
+.post-page{display:none;padding-top:var(--nav-h);}
+.post-page.active{display:block;}
+
+/* HERO */
+.hero{padding:100px 48px 80px;max-width:940px;margin:0 auto;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:24px;opacity:0;animation:fadeUp .8s .1s forwards;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,7vw,88px);font-weight:300;line-height:1.08;letter-spacing:-.01em;color:var(--ink);opacity:0;animation:fadeUp .8s .2s forwards;margin-bottom:28px;}
+.hero h1 em{font-style:italic;color:var(--accent);}
+.hero-desc{font-size:19px;color:var(--ink-soft);max-width:560px;line-height:1.75;opacity:0;animation:fadeUp .8s .35s forwards;margin-bottom:44px;}
+.hero-cta{display:flex;gap:16px;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .5s forwards;}
+
+/* BUTTONS */
+.btn{padding:14px 32px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;border:none;cursor:pointer;letter-spacing:.04em;transition:all .25s;text-decoration:none;display:inline-block;}
+.btn-primary{background:var(--ink);color:var(--cream);}
+.btn-primary:hover{background:var(--accent);transform:translateY(-2px);}
+.btn-outline{background:transparent;border:1.5px solid var(--ink);color:var(--ink);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+.btn-accent{background:var(--accent);color:var(--cream);}
+.btn-accent:hover{background:#a85e2e;transform:translateY(-2px);}
+
+/* SECTIONS */
+.section{padding:80px 48px;max-width:1100px;margin:0 auto;}
+.section-label{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,52px);font-weight:300;line-height:1.15;margin-bottom:48px;color:var(--ink);}
+.section-title em{font-style:italic;color:var(--accent);}
+.divider{border:none;border-top:1px solid var(--border);margin:0 48px;}
+
+/* NEWSLETTER BANNER */
+.newsletter-banner{background:var(--ink);padding:72px 48px;text-align:center;}
+.newsletter-banner h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,48px);font-weight:300;color:var(--cream);margin-bottom:16px;}
+.newsletter-banner h2 em{font-style:italic;color:var(--accent);}
+.newsletter-banner p{color:rgba(250,248,243,.65);font-size:17px;max-width:480px;margin:0 auto 36px;line-height:1.75;}
+.newsletter-form{display:flex;gap:0;max-width:480px;margin:0 auto;}
+.newsletter-form input{flex:1;padding:16px 20px;font-size:15px;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);border-right:none;color:var(--cream);outline:none;transition:border-color .2s;-webkit-user-select:text;user-select:text;}
+.newsletter-form input::placeholder{color:rgba(250,248,243,.35);}
+.newsletter-form input:focus{border-color:var(--accent);}
+.newsletter-form button{padding:16px 28px;background:var(--accent);color:var(--cream);border:none;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.04em;transition:background .2s;white-space:nowrap;}
+.newsletter-form button:hover{background:#a85e2e;}
+.newsletter-note{font-family:'DM Mono',monospace;font-size:12px;color:rgba(250,248,243,.3);margin-top:16px;letter-spacing:.04em;}
+
+/* AD SLOT */
+.ad-slot{background:var(--card-bg);border:1px dashed var(--border);padding:20px;text-align:center;margin:0 48px 32px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted);letter-spacing:.06em;line-height:1.8;}
+
+/* BUY ME A COFFEE FLOAT */
+.bmac-float{position:fixed;bottom:28px;right:28px;z-index:900;display:flex;align-items:center;gap:10px;background:var(--accent);color:var(--cream);padding:14px 22px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 8px 32px rgba(196,113,58,.4);transition:all .25s;text-decoration:none;}
+.bmac-float:hover{background:#a85e2e;transform:translateY(-3px);box-shadow:0 12px 40px rgba(196,113,58,.5);}
+.bmac-float span{font-size:18px;}
+
+/* CAROUSEL */
+.carousel-wrap{position:relative;}
+.carousel{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding-bottom:8px;-ms-overflow-style:none;scrollbar-width:none;}
+.carousel::-webkit-scrollbar{display:none;}
+.carousel-nav{display:flex;gap:12px;align-items:center;margin-top:28px;}
+.c-btn{width:44px;height:44px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--ink);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.c-btn:hover{border-color:var(--accent);color:var(--accent);}
+.c-dots{display:flex;gap:8px;margin-left:8px;}
+.c-dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .25s,transform .25s;cursor:pointer;}
+.c-dot.active{background:var(--accent);transform:scale(1.3);}
+
+/* BLOG CARDS */
+.blog-card{min-width:320px;max-width:340px;background:var(--card-bg);border:1px solid var(--border);padding:32px;scroll-snap-align:start;transition:transform .3s,box-shadow .3s;cursor:pointer;flex-shrink:0;position:relative;}
+.blog-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.08);}
+.poem-card{min-width:280px;max-width:300px;background:var(--ink);color:var(--cream);padding:40px 32px;scroll-snap-align:start;transition:transform .3s;cursor:pointer;flex-shrink:0;position:relative;overflow:hidden;}
+.poem-card::before{content:'"';font-family:'Cormorant Garamond',serif;font-size:120px;color:rgba(196,113,58,.2);position:absolute;top:-10px;left:16px;line-height:1;pointer-events:none;}
+.poem-card:hover{transform:translateY(-6px);}
+.poem-card .card-tag{color:rgba(196,113,58,.8);}
+.poem-card .card-title{color:var(--cream);}
+.poem-card .card-excerpt{color:rgba(250,248,243,.65);font-style:italic;font-family:'Cormorant Garamond',serif;font-size:17px;}
+.poem-card .card-meta{color:rgba(250,248,243,.4);}
+.card-tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;line-height:1.3;margin-bottom:14px;color:var(--ink);}
+.card-excerpt{font-size:15px;color:var(--ink-soft);line-height:1.7;margin-bottom:20px;}
+.card-meta{font-size:13px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
+.members-badge{display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--accent);color:var(--cream);padding:3px 10px;position:absolute;top:16px;right:16px;}
+
+/* PROJECT CARDS */
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;}
+.project-card{background:var(--card-bg);border:1px solid var(--border);padding:36px;transition:transform .3s,box-shadow .3s;cursor:pointer;}
+.project-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.08);}
+.project-icon{width:48px;height:48px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;}
+.project-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;margin-bottom:12px;}
+.project-desc{font-size:15px;color:var(--ink-soft);line-height:1.7;margin-bottom:20px;}
+.project-stack{display:flex;flex-wrap:wrap;gap:8px;}
+.tag{font-family:'DM Mono',monospace;font-size:11px;padding:4px 12px;background:var(--accent-light);color:var(--accent);letter-spacing:.06em;}
+
+/* BLOG FULL PAGE */
+.filter-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:48px;}
+.filter-btn{padding:10px 22px;font-size:14px;font-family:'DM Sans',sans-serif;border:1.5px solid var(--border);background:transparent;color:var(--ink-soft);cursor:pointer;transition:all .2s;letter-spacing:.03em;}
+.filter-btn:hover,.filter-btn.active{background:var(--ink);color:var(--cream);border-color:var(--ink);}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
+.blog-full-card{background:var(--card-bg);border:1px solid var(--border);padding:32px;cursor:pointer;transition:transform .3s,box-shadow .3s;position:relative;}
+.blog-full-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.08);}
+.blog-full-card.poem-type{background:var(--ink);color:var(--cream);}
+.blog-full-card.poem-type .card-title{color:var(--cream);}
+.blog-full-card.poem-type .card-excerpt{color:rgba(250,248,243,.65);font-style:italic;}
+.blog-full-card.poem-type .card-meta{color:rgba(250,248,243,.4);}
+
+/* POST PAGE */
+.post-container{max-width:720px;margin:0 auto;padding:80px 48px 120px;}
+.post-back{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;gap:8px;margin-bottom:48px;letter-spacing:.06em;}
+.post-back:hover{opacity:.7;}
+.post-tag{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+.post-title{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,6vw,64px);font-weight:300;line-height:1.1;margin-bottom:20px;}
+.post-meta{font-family:'DM Mono',monospace;font-size:13px;color:var(--ink-muted);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border);}
+.post-body{font-size:18px;line-height:1.85;color:var(--ink-soft);}
+.post-body p{margin-bottom:28px;}
+.post-body h2{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--ink);margin:48px 0 20px;}
+.poem-post .post-container{text-align:center;}
+.poem-post .post-title{font-style:italic;}
+.poem-post .post-body{font-family:'Cormorant Garamond',serif;font-size:22px;line-height:2.2;font-style:italic;color:var(--ink);max-width:520px;margin:0 auto;}
+.poem-post .post-body p{margin-bottom:36px;}
+.poem-author{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--accent);margin-top:56px;font-style:italic;}
+
+/* PAYWALL */
+.paywall-wall{background:linear-gradient(to bottom,transparent,var(--cream) 60%);position:relative;margin-top:-120px;padding:120px 0 60px;text-align:center;}
+.paywall-box{background:var(--card-bg);border:1px solid var(--border);padding:48px 40px;max-width:480px;margin:0 auto;}
+.paywall-box h3{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;margin-bottom:12px;}
+.paywall-box p{font-size:16px;color:var(--ink-soft);margin-bottom:28px;line-height:1.7;}
+.paywall-box .btn{width:100%;text-align:center;display:block;margin-bottom:12px;}
+
+/* POST BOTTOM CTA */
+.post-cta-strip{margin-top:72px;padding-top:48px;border-top:1px solid var(--border);display:flex;gap:20px;flex-wrap:wrap;align-items:center;}
+.post-cta-strip p{font-size:16px;color:var(--ink-soft);flex:1;min-width:200px;}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:80px;align-items:start;}
+.about-portrait{aspect-ratio:3/4;background:var(--ink);position:relative;overflow:hidden;}
+.about-portrait-inner{width:100%;height:100%;background:linear-gradient(160deg,#2a2520 0%,#1a1814 60%,#3a2820 100%);display:flex;align-items:center;justify-content:center;}
+.about-initials{font-family:'Cormorant Garamond',serif;font-size:96px;font-weight:300;color:rgba(196,113,58,.3);letter-spacing:.1em;}
+.about-portrait-line{position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--accent);}
+.about-content p{font-size:18px;line-height:1.85;color:var(--ink-soft);margin-bottom:28px;}
+.about-interests{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;}
+.interest-chip{padding:8px 20px;border:1.5px solid var(--border);font-size:14px;color:var(--ink-soft);transition:all .2s;}
+.interest-chip:hover{border-color:var(--accent);color:var(--accent);}
+
+/* CONTACT */
+.contact-inner{max-width:600px;}
+.contact-intro{font-size:19px;color:var(--ink-soft);line-height:1.8;margin-bottom:48px;}
+.contact-links{display:flex;flex-direction:column;gap:20px;}
+.contact-link{display:flex;align-items:center;gap:20px;padding:24px 28px;border:1.5px solid var(--border);background:var(--card-bg);text-decoration:none;color:var(--ink);transition:all .25s;cursor:pointer;}
+.contact-link:hover{border-color:var(--accent);transform:translateX(6px);}
+.contact-link-icon{width:44px;height:44px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.contact-link-text strong{display:block;font-size:16px;font-weight:500;margin-bottom:2px;}
+.contact-link-text span{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
+
+/* PRIVACY */
+.privacy-content{max-width:720px;}
+.privacy-content h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin:40px 0 16px;color:var(--ink);}
+.privacy-content p,.privacy-content li{font-size:17px;color:var(--ink-soft);line-height:1.85;margin-bottom:16px;}
+.privacy-content ul{padding-left:24px;}
+
+/* ADMIN PANEL */
+.admin-overlay{display:none;position:fixed;inset:0;background:rgba(26,24,20,.85);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.admin-overlay.open{display:flex;}
+.admin-panel{background:var(--cream);width:min(700px,95vw);max-height:90vh;overflow-y:auto;padding:48px;position:relative;}
+.admin-close{position:absolute;top:20px;right:24px;font-size:24px;cursor:pointer;color:var(--ink-muted);background:none;border:none;line-height:1;}
+.admin-close:hover{color:var(--ink);}
+.admin-panel h2{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:400;margin-bottom:8px;}
+.admin-sub{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;margin-bottom:36px;letter-spacing:.06em;}
+.form-row{margin-bottom:24px;}
+.form-row label{display:block;font-size:13px;font-family:'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;}
+.form-row input,.form-row textarea,.form-row select{width:100%;padding:14px 16px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--card-bg);border:1.5px solid var(--border);color:var(--ink);outline:none;transition:border-color .2s;user-select:text;-webkit-user-select:text;}
+.form-row input:focus,.form-row textarea:focus,.form-row select:focus{border-color:var(--accent);}
+.form-row textarea{min-height:200px;resize:vertical;line-height:1.7;}
+.form-row select{cursor:pointer;}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.admin-success{background:var(--green-light);border:1px solid var(--green);padding:16px 20px;font-size:14px;color:var(--green);font-family:'DM Mono',monospace;margin-bottom:24px;display:none;}
+
+/* FOOTER */
+footer{padding:48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--ink);}
+.footer-logo span{color:var(--accent);}
+.footer-links{display:flex;gap:24px;}
+.footer-links a{font-size:13px;color:var(--ink-muted);text-decoration:none;font-family:'DM Mono',monospace;cursor:pointer;letter-spacing:.04em;}
+.footer-links a:hover{color:var(--accent);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 24px;}
+  .nav-links{display:none;flex-direction:column;position:absolute;top:var(--nav-h);left:0;right:0;background:var(--cream);border-bottom:1px solid var(--border);padding:24px;gap:20px;}
+  .nav-links.open{display:flex;}
+  .hamburger{display:flex;}
+  .hero,.section{padding:60px 24px;}
+  .post-container{padding:60px 24px 80px;}
+  .about-grid{grid-template-columns:1fr;gap:40px;}
+  .divider,.ad-slot{margin:0 24px;}
+  footer{padding:32px 24px;}
+  .newsletter-form{flex-direction:column;}
+  .newsletter-form input{border-right:1.5px solid rgba(255,255,255,.2);border-bottom:none;}
+  .newsletter-banner{padding:60px 24px;}
+  .form-2col{grid-template-columns:1fr;}
+  .bmac-float{bottom:16px;right:16px;padding:12px 18px;font-size:13px;}
+}
 </style>
 </head>
 <body>
 
 <div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- FLOATING COFFEE BUTTON — replace href with your real buymeacoffee link -->
+<a class="bmac-float" href="https://buymeacoffee.com/sifon" target="_blank" rel="noopener">
+  <span>☕</span> Support my work
+</a>
 
 <!-- NAV -->
 <nav id="mainNav">
@@ -617,21 +266,19 @@
     <li><a onclick="navigate('blog')" id="nav-blog">Blog</a></li>
     <li><a onclick="navigate('projects')" id="nav-projects">Projects</a></li>
     <li><a onclick="navigate('contact')" id="nav-contact">Contact</a></li>
+    <li><button class="nav-admin-btn" onclick="openAdmin()">+ New Post</button></li>
   </ul>
   <div class="hamburger" id="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
 </nav>
 
-<!-- ══════════ HOME PAGE ══════════ -->
+<!-- ═══ HOME ═══ -->
 <div class="page active" id="page-home">
-
   <div class="hero">
     <div class="hero-eyebrow">Writing · Engineering · Ideas</div>
     <h1>Sifon<br><em>Aniefiok</em><br>Imaikop</h1>
-    <p class="hero-desc">
-      A software engineering and cybersecurity student who enjoys writing, building ideas, and exploring technology.
-    </p>
+    <p class="hero-desc">A software engineering and cybersecurity student who enjoys writing, building ideas, and exploring technology.</p>
     <div class="hero-cta">
       <button class="btn btn-primary" onclick="navigate('blog')">Read the blog</button>
       <button class="btn btn-outline" onclick="navigate('projects')">View projects</button>
@@ -640,18 +287,20 @@
 
   <hr class="divider">
 
-  <!-- Latest Posts -->
+  <!-- AdSense slot — activate after approval -->
+  <div class="ad-slot" id="ad-home-top">
+    📢 <strong>Ad Space</strong> — After Google AdSense approves your site, replace this div with:<br>
+    <code style="font-size:11px">&lt;ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXX" data-ad-slot="XXXX" data-ad-format="auto"&gt;&lt;/ins&gt;</code>
+  </div>
+
   <div class="section">
     <div class="section-label">Recent Writing</div>
     <div class="section-title">Latest <em>Posts</em></div>
-
     <div class="carousel-wrap">
-      <div class="carousel" id="carousel-posts">
-        <!-- Cards injected by JS -->
-      </div>
+      <div class="carousel" id="carousel-posts"></div>
       <div class="carousel-nav">
-        <button class="c-btn" onclick="scrollCarousel('carousel-posts', -1)">&#8592;</button>
-        <button class="c-btn" onclick="scrollCarousel('carousel-posts', 1)">&#8594;</button>
+        <button class="c-btn" onclick="scrollCarousel('carousel-posts',-1)">&#8592;</button>
+        <button class="c-btn" onclick="scrollCarousel('carousel-posts',1)">&#8594;</button>
         <div class="c-dots" id="dots-posts"></div>
       </div>
     </div>
@@ -659,17 +308,14 @@
 
   <hr class="divider">
 
-  <!-- Selected Poems -->
   <div class="section">
     <div class="section-label">Poetry</div>
     <div class="section-title">Selected <em>Poems</em></div>
-
     <div class="carousel-wrap">
-      <div class="carousel" id="carousel-poems">
-      </div>
+      <div class="carousel" id="carousel-poems"></div>
       <div class="carousel-nav">
-        <button class="c-btn" onclick="scrollCarousel('carousel-poems', -1)">&#8592;</button>
-        <button class="c-btn" onclick="scrollCarousel('carousel-poems', 1)">&#8594;</button>
+        <button class="c-btn" onclick="scrollCarousel('carousel-poems',-1)">&#8592;</button>
+        <button class="c-btn" onclick="scrollCarousel('carousel-poems',1)">&#8594;</button>
         <div class="c-dots" id="dots-poems"></div>
       </div>
     </div>
@@ -677,52 +323,53 @@
 
   <hr class="divider">
 
-  <!-- Featured Projects -->
   <div class="section">
     <div class="section-label">Work</div>
     <div class="section-title">Featured <em>Projects</em></div>
     <div class="project-grid" id="featured-projects"></div>
     <br>
-    <button class="btn btn-outline" style="margin-top:12px" onclick="navigate('projects')">All projects →</button>
+    <button class="btn btn-outline" style="margin-top:16px" onclick="navigate('projects')">All projects →</button>
+  </div>
+
+  <!-- Newsletter -->
+  <div class="newsletter-banner">
+    <h2>Join the <em>newsletter</em></h2>
+    <p>Essays, poems, and ideas — delivered to your inbox. No noise, no spam. Just writing worth reading.</p>
+    <div class="newsletter-form">
+      <input type="email" id="nl-home" placeholder="your@email.com" autocomplete="off">
+      <button onclick="subscribeNewsletter('nl-home')">Subscribe free</button>
+    </div>
+    <div class="newsletter-note">Free forever · Unsubscribe anytime · No spam ever</div>
   </div>
 
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
-    <p>© 2025 Sifon Imahjnr. All rights reserved.</p>
-    <p>Built with intention.</p>
+    <div class="footer-links">
+      <a onclick="navigate('privacy')">Privacy Policy</a>
+      <a href="https://buymeacoffee.com/sifon" target="_blank">Support ☕</a>
+      <a onclick="navigate('contact')">Contact</a>
+    </div>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
-<!-- ══════════ ABOUT PAGE ══════════ -->
+<!-- ═══ ABOUT ═══ -->
 <div class="page" id="page-about">
   <div class="section">
     <div class="section-label">About</div>
     <div class="section-title">A little about <em>me</em></div>
-
     <div class="about-grid">
       <div>
         <div class="about-portrait">
-          <div class="about-portrait-inner">
-            <div class="about-initials">S·I</div>
-          </div>
+          <div class="about-portrait-inner"><div class="about-initials">S·I</div></div>
           <div class="about-portrait-line"></div>
         </div>
       </div>
-
       <div class="about-content">
-        <p>
-          I'm <strong>Sifon Aniefiok Imaikop</strong> — a software engineering and cybersecurity student, writer, and builder of ideas. I believe that technology and language are two sides of the same coin: both are tools for making the invisible visible.
-        </p>
-        <p>
-          By day, I study systems, write code, and think about how information flows safely through the world. By night — and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.
-        </p>
-        <p>
-          I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.
-        </p>
-        <p>
-          When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.
-        </p>
-
+        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> ,a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
+        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night, and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
+        <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
+        <p>When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.</p>
         <div class="about-interests">
           <div class="interest-chip">Software Engineering</div>
           <div class="interest-chip">Cybersecurity</div>
@@ -736,558 +383,430 @@
       </div>
     </div>
   </div>
-
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
-    <p>© 2025 Sifon Imahjnr. All rights reserved.</p>
-    <p>Built with intention.</p>
+    <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
-<!-- ══════════ BLOG PAGE ══════════ -->
+<!-- ═══ BLOG ═══ -->
 <div class="page" id="page-blog">
   <div class="section">
     <div class="section-label">Writing</div>
     <div class="section-title">The <em>Blog</em></div>
-
     <div class="filter-bar" id="filter-bar">
-      <button class="filter-btn active" onclick="filterBlog('All', this)">All</button>
-      <button class="filter-btn" onclick="filterBlog('Poetry', this)">Poetry</button>
-      <button class="filter-btn" onclick="filterBlog('Ideas', this)">Ideas</button>
-      <button class="filter-btn" onclick="filterBlog('Technology', this)">Technology</button>
-      <button class="filter-btn" onclick="filterBlog('Essays', this)">Essays</button>
-      <button class="filter-btn" onclick="filterBlog('Learning', this)">Learning</button>
+      <button class="filter-btn active" onclick="filterBlog('All',this)">All</button>
+      <button class="filter-btn" onclick="filterBlog('Poetry',this)">Poetry</button>
+      <button class="filter-btn" onclick="filterBlog('Ideas',this)">Ideas</button>
+      <button class="filter-btn" onclick="filterBlog('Technology',this)">Technology</button>
+      <button class="filter-btn" onclick="filterBlog('Essays',this)">Essays</button>
+      <button class="filter-btn" onclick="filterBlog('Learning',this)">Learning</button>
     </div>
-
     <div class="blog-grid" id="blog-grid"></div>
   </div>
-
+  <div class="ad-slot">📢 Ad Space — activate after AdSense approval</div>
+  <div class="newsletter-banner" style="margin-bottom:0">
+    <h2>Never miss a <em>post</em></h2>
+    <p>Get new essays and poems in your inbox the moment they're published.</p>
+    <div class="newsletter-form">
+      <input type="email" id="nl-blog" placeholder="your@email.com" autocomplete="off">
+      <button onclick="subscribeNewsletter('nl-blog')">Subscribe free</button>
+    </div>
+    <div class="newsletter-note">Free · Unsubscribe anytime</div>
+  </div>
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
-    <p>© 2025 Sifon Imahjnr. All rights reserved.</p>
-    <p>Built with intention.</p>
+    <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
-<!-- ══════════ PROJECTS PAGE ══════════ -->
+<!-- ═══ PROJECTS ═══ -->
 <div class="page" id="page-projects">
   <div class="section">
     <div class="section-label">Portfolio</div>
     <div class="section-title">Things I've <em>built</em></div>
-
     <div class="project-grid" id="all-projects"></div>
   </div>
-
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
-    <p>© 2025 Sifon Imahjnr. All rights reserved.</p>
-    <p>Built with intention.</p>
+    <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
-<!-- ══════════ CONTACT PAGE ══════════ -->
+<!-- ═══ CONTACT ═══ -->
 <div class="page" id="page-contact">
   <div class="section">
     <div class="section-label">Connect</div>
     <div class="section-title">Get in <em>touch</em></div>
-
     <div class="contact-inner">
-      <p class="contact-intro">
-        Whether you want to talk about a project, share a thought about something I've written, or just say hello — I'm always glad to hear from thoughtful people.
-      </p>
-
+      <p class="contact-intro">Whether you want to talk about a project, share a thought, or just say hello — I'm always glad to hear from thoughtful people.</p>
       <div class="contact-links">
         <a class="contact-link" href="mailto:sifon@example.com">
           <div class="contact-link-icon">✉</div>
-          <div class="contact-link-text">
-            <strong>Email</strong>
-            <span>sifon@example.com</span>
-          </div>
+          <div class="contact-link-text"><strong>Email</strong><span>sifon@example.com</span></div>
         </a>
         <div class="contact-link" onclick="window.open('https://github.com','_blank')">
           <div class="contact-link-icon" style="font-size:18px">⌥</div>
-          <div class="contact-link-text">
-            <strong>GitHub</strong>
-            <span>@sifon-dev</span>
-          </div>
+          <div class="contact-link-text"><strong>GitHub</strong><span>@sifon-dev</span></div>
         </div>
         <div class="contact-link">
-          <div class="contact-link-icon" style="font-size:18px">𝕏</div>
-          <div class="contact-link-text">
-            <strong>Twitter / X</strong>
-            <span>@sifon_writes</span>
-          </div>
+          <div class="contact-link-icon" style="font-size:16px">𝕏</div>
+          <div class="contact-link-text"><strong>Twitter / X</strong><span>@sifon_writes</span></div>
         </div>
         <div class="contact-link">
-          <div class="contact-link-icon" style="font-size:16px">in</div>
-          <div class="contact-link-text">
-            <strong>LinkedIn</strong>
-            <span>Sifon Imaikop</span>
-          </div>
+          <div class="contact-link-icon" style="font-size:15px">in</div>
+          <div class="contact-link-text"><strong>LinkedIn</strong><span>Sifon Imaikop</span></div>
         </div>
+        <a class="contact-link" href="https://buymeacoffee.com/sifon" target="_blank">
+          <div class="contact-link-icon">☕</div>
+          <div class="contact-link-text"><strong>Buy Me a Coffee</strong><span>Support the writing</span></div>
+        </a>
       </div>
     </div>
   </div>
-
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
-    <p>© 2026 Sifon Imahjnr. All rights reserved.</p>
-    <p>Built with intention.</p>
+    <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
-<!-- ══════════ POST PAGE ══════════ -->
+<!-- ═══ PRIVACY POLICY ═══ -->
+<div class="page" id="page-privacy">
+  <div class="section">
+    <div class="section-label">Legal</div>
+    <div class="section-title"><em>Privacy</em> Policy</div>
+    <div class="privacy-content">
+      <p><em>Last updated: January 2025</em></p>
+      <p>This Privacy Policy explains how Sifon Imahjnr ("I", "me", "my") collects, uses, and protects information when you visit this website.</p>
+      <h2>Information I Collect</h2>
+      <p>When you subscribe to my newsletter, I collect your email address. This is stored by my newsletter provider (Beehiiv). I do not collect names or any other personal information unless you voluntarily provide it by contacting me directly.</p>
+      <h2>How I Use Your Information</h2>
+      <ul>
+        <li>To send you newsletter emails you subscribed to</li>
+        <li>To respond to your messages if you contact me</li>
+        <li>To understand how many people read each post (anonymous analytics only)</li>
+      </ul>
+      <h2>Cookies and Analytics</h2>
+      <p>This website may use Google Analytics to understand visitor traffic. Google Analytics collects anonymous data such as pages visited and time spent on the site. No personally identifiable information is collected via analytics. This website may also display Google AdSense advertisements, which use cookies to serve relevant ads based on your prior visits to this and other websites.</p>
+      <h2>Third-Party Services</h2>
+      <p>I use the following third-party services, each with their own privacy policies:</p>
+      <ul>
+        <li><strong>Beehiiv</strong> — newsletter delivery (beehiiv.com/privacy)</li>
+        <li><strong>Google AdSense</strong> — advertising (policies.google.com/privacy)</li>
+        <li><strong>Buy Me a Coffee</strong> — voluntary donations (buymeacoffee.com/privacy-policy)</li>
+        <li><strong>GitHub Pages</strong> — website hosting (docs.github.com/privacy)</li>
+      </ul>
+      <h2>Your Rights</h2>
+      <p>You can unsubscribe from my newsletter at any time using the unsubscribe link in any email I send. You may also contact me directly to request deletion of your email address.</p>
+      <h2>Data Security</h2>
+      <p>I take reasonable steps to protect your information. However, no internet transmission is 100% secure. Please do not share sensitive personal information through this website.</p>
+      <h2>Contact</h2>
+      <p>Questions about this policy? Contact me at <strong>sifon@example.com</strong>.</p>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-logo">S<span>.</span>I</div>
+    <p>© 2026 Sifon Imahjnr. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══ POST PAGE ═══ -->
 <div class="post-page" id="post-page">
   <div class="post-container" id="post-content"></div>
 </div>
 
+<!-- ═══ ADMIN PANEL ═══ -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <button class="admin-close" onclick="closeAdmin()">✕</button>
+    <h2>Publish a Post</h2>
+    <div class="admin-sub">CONTENT EDITOR · SIFON.I</div>
+    <div class="admin-success" id="admin-success">✓ Post published successfully! Check the Blog page to see it live.</div>
+    <div class="form-row">
+      <label>Post Title *</label>
+      <input type="text" id="f-title" placeholder="e.g. Why I Write at Midnight">
+    </div>
+    <div class="form-2col">
+      <div class="form-row">
+        <label>Category *</label>
+        <select id="f-category">
+          <option value="Essays">Essays</option>
+          <option value="Ideas">Ideas</option>
+          <option value="Technology">Technology</option>
+          <option value="Learning">Learning</option>
+          <option value="Poetry">Poetry</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Read Time</label>
+        <input type="text" id="f-readtime" placeholder="e.g. 5 min read or Poem">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Short Excerpt (shown on cards)</label>
+      <input type="text" id="f-excerpt" placeholder="One or two sentence teaser...">
+    </div>
+    <div class="form-row">
+      <label>Full Content *</label>
+      <textarea id="f-content" placeholder="Write your full post here.&#10;&#10;For essays: each paragraph on a new line.&#10;Use ## to create a subheading.&#10;&#10;For poems: each line on its own line.&#10;Leave a blank line between stanzas."></textarea>
+    </div>
+    <div class="form-row">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;letter-spacing:0">
+        <input type="checkbox" id="f-members" style="width:18px;padding:0;height:18px;cursor:pointer">
+        <span style="font-size:15px;color:var(--ink-soft)">Members Only — show paywall after first paragraph</span>
+      </label>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">
+      <button class="btn btn-primary" onclick="publishPost()" style="flex:1">Publish Post</button>
+      <button class="btn btn-outline" onclick="closeAdmin()" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const posts = [
-  {
-    id: 1,
-    type: 'Technology',
-    title: 'On Building in the Age of Noise',
-    excerpt: 'What does it mean to build something meaningful when the internet accelerates everything into forgettability?',
-    date: 'March 2025',
-    readTime: '5 min read',
-    content: `
-      <p>There is a particular kind of anxiety that comes with building in public. Every week, a new tool. Every month, a new paradigm. Every year, the thing you built last year feels like archaeology.</p>
-      <h2>The Speed of Things</h2>
-      <p>Software has always moved fast — but something changed. The pace of tooling and the noise of discourse have decoupled from the pace of actual good ideas. We now have more tutorials than understanding, more frameworks than foundations.</p>
-      <p>I think about this often when I'm writing code. Not "what is the latest library?" but "what am I actually trying to say?" Code is communication. The best systems I've read feel like clear prose — a thought expressed precisely, without excess.</p>
-      <h2>A Different Measure</h2>
-      <p>What if the measure of a good build isn't its virality, but its clarity? What if we measured software the way we measure essays — by how much it illuminates, not by how many people see it?</p>
-      <p>I'm learning to build slowly. To think before typing. To read before writing. It goes against every instinct the internet has trained into me, and it is one of the best things I've done.</p>
-    `
-  },
-  {
-    id: 2,
-    type: 'Essays',
-    title: 'The Space Between Knowing and Understanding',
-    excerpt: 'Information is cheap. Understanding is expensive. And wisdom? Wisdom costs a life.',
-    date: 'February 2025',
-    readTime: '7 min read',
-    content: `
-      <p>We live in the richest information environment that has ever existed. At this moment, I can call up the complete works of nearly every major thinker in history, the proceedings of every major conference, the source code of nearly every significant piece of software. All of it, instantly. And yet —</p>
-      <p>I do not think we are wiser. I am not sure we are even more knowledgeable, in the deepest sense. We are, perhaps, more informed. There is a difference.</p>
-      <h2>Three Levels</h2>
-      <p>Information is a fact held in memory. Knowledge is a pattern extracted from many facts. Understanding is the felt sense of why the pattern exists and when it breaks. Wisdom is knowing which understanding to apply, and when to apply none of them.</p>
-      <p>The internet is extraordinarily good at delivering information. It is mediocre at transmitting knowledge. It is nearly useless for producing understanding. And wisdom it cannot touch at all.</p>
-      <p>Understanding requires time. Not just exposure, but processing — the slow digestion of ideas until they become part of how you see. This is why a semester of struggling with mathematics teaches more than a year of watching math videos.</p>
-    `
-  },
-  {
-    id: 3,
-    type: 'Learning',
-    title: 'Notes on Learning Rust as Someone Who Thinks in Python',
-    excerpt: 'Switching languages is switching thought. Rust made me realise how much Python had let me avoid.',
-    date: 'January 2025',
-    readTime: '4 min read',
-    content: `
-      <p>I started learning Rust three months ago. This is a confession about how hard it has been, and why that hardness is, I think, the point.</p>
-      <h2>Python and the Comfortable Lie</h2>
-      <p>Python is a language that loves you. It manages your memory. It figures out your types. It forgives your sins. Writing Python feels like having a very competent assistant who handles the ugly parts of reality so you can focus on ideas.</p>
-      <p>Rust is a language that respects you. It expects you to know what you want. It expects you to think about ownership — about who holds a reference to what, and for how long. These are questions Python simply absorbs on your behalf. Rust makes them explicit.</p>
-      <h2>What the Borrow Checker Taught Me</h2>
-      <p>The infamous borrow checker — Rust's system for enforcing memory safety — felt like an adversary at first. Every program I wrote was wrong. Not logically wrong, but wrong in a deeper way: wrong about who owned what, wrong about lifetimes, wrong about concurrency.</p>
-      <p>After weeks of fighting it, I realised: the borrow checker was not wrong about my programs. It was right. It was just surfacing errors I had been hiding from myself for years.</p>
-    `
-  },
-  {
-    id: 4,
-    type: 'Ideas',
-    title: 'What if Boredom is the Last Luxury?',
-    excerpt: 'In a world optimised for stimulation, the capacity to sit with nothing is becoming rare — and maybe sacred.',
-    date: 'December 2024',
-    readTime: '4 min read',
-    content: `
-      <p>I have been deliberately bored. This is a strange thing to confess in an age when boredom is treated as a software bug to be patched. But I think boredom might be one of the most important experiences available to a thinking person.</p>
-      <p>Not the boredom of waiting — the restless, agitated wanting for something to happen. I mean the deeper boredom that arrives after the fidgeting stops. The emptiness that, if you sit with it long enough, starts to fill with your own thoughts.</p>
-      <h2>The Algorithm Against Silence</h2>
-      <p>Every platform we use is optimised to defeat this kind of boredom. Not because boredom is bad, but because your attention, undirected, is unmonetisable. The moment you are bored, you are free — and freedom cannot be sold advertising.</p>
-      <p>This is why I think boredom is the last luxury. Not in the sense of expense, but in the sense of scarcity. Silence is free but increasingly rare. The capacity to withstand your own mind, unentertainèd, is a skill most of us are quietly losing.</p>
-    `
-  },
-  {
-    id: 5,
-    type: 'Ideas',
-    title: 'Security is a Philosophy, Not a Feature',
-    excerpt: 'Treating cybersecurity as a checklist is how we keep failing. It has to become a way of thinking.',
-    date: 'November 2024',
-    readTime: '6 min read',
-    content: `
-      <p>I have sat through enough security briefings to know the pattern. A company is breached. The post-mortem identifies a "failure to implement X." A new policy is written. A checkbox is checked. Everyone breathes. Six months later, a different company is breached for the same underlying reason.</p>
-      <p>The problem is not technical. It is philosophical. We treat security as a collection of features to be installed rather than a way of thinking to be cultivated.</p>
-      <h2>The Adversarial Mindset</h2>
-      <p>True security thinking is adversarial in a specific way: it assumes that someone smart and motivated wants to break what you are building, and it asks — before the attacker does — how they would do it.</p>
-      <p>This mindset is uncomfortable. It requires sitting with the thought that what you've built might be fragile. It requires a kind of intellectual humility that conflicts with the pride of creation.</p>
-      <p>But it is the only mindset that works. Not checklists, not frameworks, not compliance audits — though these have their place. The foundation must be a way of seeing: every interface is an attack surface, every assumption is a vulnerability, every convenience is a trade-off.</p>
-    `
-  },
+// ─── DATA ────────────────────────────────────────────────────────────────────
+let posts=[
+  {id:1,type:'Technology',title:'On Building in the Age of Noise',excerpt:'What does it mean to build something meaningful when the internet accelerates everything into forgettability?',date:'March 2025',readTime:'5 min read',members:false,content:`<p>There is a particular kind of anxiety that comes with building in public. Every week, a new tool. Every month, a new paradigm. Every year, the thing you built last year feels like archaeology.</p><h2>The Speed of Things</h2><p>Software has always moved fast — but something changed. The pace of tooling and the noise of discourse have decoupled from the pace of actual good ideas. We now have more tutorials than understanding, more frameworks than foundations.</p><p>I think about this often when I'm writing code. Not "what is the latest library?" but "what am I actually trying to say?" Code is communication. The best systems I've read feel like clear prose — a thought expressed precisely, without excess.</p><h2>A Different Measure</h2><p>What if the measure of a good build isn't its virality, but its clarity? What if we measured software the way we measure essays — by how much it illuminates, not by how many people see it?</p><p>I'm learning to build slowly. To think before typing. To read before writing. It goes against every instinct the internet has trained into me, and it is one of the best things I've done.</p>`},
+  {id:2,type:'Essays',title:'The Space Between Knowing and Understanding',excerpt:'Information is cheap. Understanding is expensive. And wisdom? Wisdom costs a life.',date:'February 2025',readTime:'7 min read',members:false,content:`<p>We live in the richest information environment that has ever existed. At this moment, I can call up the complete works of nearly every major thinker in history. All of it, instantly. And yet —</p><p>I do not think we are wiser. I am not sure we are even more knowledgeable, in the deepest sense. We are, perhaps, more informed. There is a difference.</p><h2>Three Levels</h2><p>Information is a fact held in memory. Knowledge is a pattern extracted from many facts. Understanding is the felt sense of why the pattern exists and when it breaks. Wisdom is knowing which understanding to apply, and when to apply none of them.</p><p>The internet is extraordinarily good at delivering information. It is mediocre at transmitting knowledge. It is nearly useless for producing understanding. And wisdom it cannot touch at all.</p>`},
+  {id:3,type:'Learning',title:'Notes on Learning Rust as Someone Who Thinks in Python',excerpt:'Switching languages is switching thought. Rust made me realise how much Python had let me avoid.',date:'January 2025',readTime:'4 min read',members:false,content:`<p>I started learning Rust three months ago. This is a confession about how hard it has been, and why that hardness is, I think, the point.</p><h2>Python and the Comfortable Lie</h2><p>Python is a language that loves you. It manages your memory. It figures out your types. It forgives your sins. Writing Python feels like having a very competent assistant who handles the ugly parts of reality so you can focus on ideas.</p><p>Rust is a language that respects you. It expects you to know what you want. The borrow checker — Rust's system for enforcing memory safety — felt like an adversary at first. Every program I wrote was wrong. Not logically wrong, but wrong in a deeper way.</p><h2>What the Borrow Checker Taught Me</h2><p>After weeks of fighting it, I realised: the borrow checker was not wrong about my programs. It was right. It was just surfacing errors I had been hiding from myself for years.</p>`},
+  {id:4,type:'Ideas',title:'What if Boredom is the Last Luxury?',excerpt:'In a world optimised for stimulation, the capacity to sit with nothing is becoming rare — and maybe sacred.',date:'December 2024',readTime:'4 min read',members:true,content:`<p>I have been deliberately bored. This is a strange thing to confess in an age when boredom is treated as a software bug to be patched. But I think boredom might be one of the most important experiences available to a thinking person.</p><p>Not the boredom of waiting — the restless, agitated wanting for something to happen. I mean the deeper boredom that arrives after the fidgeting stops.</p><h2>The Algorithm Against Silence</h2><p>Every platform we use is optimised to defeat this kind of boredom. Not because boredom is bad, but because your attention, undirected, is unmonetisable. The moment you are bored, you are free — and freedom cannot be sold advertising.</p><p>This is why I think boredom is the last luxury. Silence is free but increasingly rare. The capacity to withstand your own mind, unentertained, is a skill most of us are quietly losing.</p>`},
+  {id:5,type:'Ideas',title:'Security is a Philosophy, Not a Feature',excerpt:'Treating cybersecurity as a checklist is how we keep failing. It has to become a way of thinking.',date:'November 2024',readTime:'6 min read',members:false,content:`<p>I have sat through enough security briefings to know the pattern. A company is breached. The post-mortem identifies a failure. A new policy is written. A checkbox is checked. Six months later, a different company is breached for the same underlying reason.</p><p>The problem is not technical. It is philosophical. We treat security as a collection of features to be installed rather than a way of thinking to be cultivated.</p><h2>The Adversarial Mindset</h2><p>True security thinking is adversarial in a specific way: it assumes that someone smart and motivated wants to break what you are building, and it asks — before the attacker does — how they would do it.</p><p>This mindset requires sitting with the thought that what you've built might be fragile. Every interface is an attack surface. Every assumption is a vulnerability. Every convenience is a trade-off.</p>`},
 ];
 
-const poems = [
-  {
-    id: 101,
-    type: 'Poetry',
-    title: 'Signal & Noise',
-    excerpt: 'Between the hum of servers / and the quiet of a room — / I am learning to hear / what the data cannot say.',
-    date: 'March 2025',
-    readTime: 'Poem',
-    content: `
-      <p>Between the hum of servers<br>
-      and the quiet of a room —<br>
-      I am learning to hear<br>
-      what the data cannot say.</p>
-
-      <p>Every byte is a word<br>
-      someone chose not to speak.<br>
-      Every packet, a letter<br>
-      that arrived before it was written.</p>
-
-      <p>I have trained myself<br>
-      on loss functions<br>
-      and found that grief<br>
-      optimises nothing.</p>
-
-      <p>The signal is clear:<br>
-      I am here,<br>
-      and the noise<br>
-      is everything I haven't yet understood.</p>
-    `
-  },
-  {
-    id: 102,
-    type: 'Poetry',
-    title: 'Compile',
-    excerpt: 'We write ourselves in drafts. / The first version never runs. / The debugger finds us / in the margins of what we meant.',
-    date: 'January 2025',
-    readTime: 'Poem',
-    content: `
-      <p>We write ourselves in drafts.<br>
-      The first version never runs.<br>
-      The debugger finds us<br>
-      in the margins of what we meant.</p>
-
-      <p>There is an error on line<br>
-      seventeen of my childhood:<br>
-      a semicolon missed,<br>
-      a scope misunderstood.</p>
-
-      <p>I have been refactoring since.<br>
-      Some functions I have deleted.<br>
-      Some I have wrapped in conditions<br>
-      I am still learning to read.</p>
-
-      <p>But the program runs.<br>
-      Imperfectly, incompletely —<br>
-      and in the output<br>
-      something recognisable remains.</p>
-    `
-  },
-  {
-    id: 103,
-    type: 'Poetry',
-    title: 'Inheritance',
-    excerpt: 'My mother tongue is a class / with methods I never called / until the night I needed them / and they were already there.',
-    date: 'December 2024',
-    readTime: 'Poem',
-    content: `
-      <p>My mother tongue is a class<br>
-      with methods I never called<br>
-      until the night I needed them<br>
-      and they were already there.</p>
-
-      <p>Inherited. Overridden.<br>
-      Extended in ways<br>
-      the original author<br>
-      did not anticipate.</p>
-
-      <p>I carry functions<br>
-      from people I have never met.<br>
-      Their logic runs<br>
-      in corners I have not yet found.</p>
-
-      <p>Somewhere in the base class<br>
-      is a name.<br>
-      I am learning<br>
-      to read it.</p>
-    `
-  },
-  {
-    id: 104,
-    type: 'Poetry',
-    title: 'Zero Trust',
-    excerpt: 'Even the systems that love you / require authentication. / It is not coldness. / It is how trust is built — slowly, with evidence.',
-    date: 'October 2024',
-    readTime: 'Poem',
-    content: `
-      <p>Even the systems that love you<br>
-      require authentication.<br>
-      It is not coldness.<br>
-      It is how trust is built —<br>
-      slowly, with evidence.</p>
-
-      <p>In zero trust architecture,<br>
-      nothing is assumed safe<br>
-      by virtue of location.<br>
-      You must prove yourself<br>
-      at every boundary.</p>
-
-      <p>I have been thinking about<br>
-      how we love each other<br>
-      the same way.<br>
-      Not once and forever,<br>
-      but again and again —</p>
-
-      <p>at every threshold,<br>
-      with every re-entry,<br>
-      showing our credentials<br>
-      in small and ordinary acts.</p>
-    `
-  },
+let poems=[
+  {id:101,type:'Poetry',title:'Signal & Noise',excerpt:'Between the hum of servers / and the quiet of a room',date:'March 2025',readTime:'Poem',members:false,content:`<p>Between the hum of servers<br>and the quiet of a room —<br>I am learning to hear<br>what the data cannot say.</p><p>Every byte is a word<br>someone chose not to speak.<br>Every packet, a letter<br>that arrived before it was written.</p><p>I have trained myself<br>on loss functions<br>and found that grief<br>optimises nothing.</p><p>The signal is clear:<br>I am here,<br>and the noise<br>is everything I haven't yet understood.</p>`},
+  {id:102,type:'Poetry',title:'Compile',excerpt:'We write ourselves in drafts. / The first version never runs.',date:'January 2025',readTime:'Poem',members:false,content:`<p>We write ourselves in drafts.<br>The first version never runs.<br>The debugger finds us<br>in the margins of what we meant.</p><p>There is an error on line<br>seventeen of my childhood:<br>a semicolon missed,<br>a scope misunderstood.</p><p>I have been refactoring since.<br>Some functions I have deleted.<br>Some I have wrapped in conditions<br>I am still learning to read.</p><p>But the program runs.<br>Imperfectly, incompletely —<br>and in the output<br>something recognisable remains.</p>`},
+  {id:103,type:'Poetry',title:'Inheritance',excerpt:'My mother tongue is a class / with methods I never called',date:'December 2024',readTime:'Poem',members:false,content:`<p>My mother tongue is a class<br>with methods I never called<br>until the night I needed them<br>and they were already there.</p><p>Inherited. Overridden.<br>Extended in ways<br>the original author<br>did not anticipate.</p><p>I carry functions<br>from people I have never met.<br>Their logic runs<br>in corners I have not yet found.</p><p>Somewhere in the base class<br>is a name.<br>I am learning<br>to read it.</p>`},
+  {id:104,type:'Poetry',title:'Zero Trust',excerpt:'Even the systems that love you / require authentication.',date:'October 2024',readTime:'Poem',members:true,content:`<p>Even the systems that love you<br>require authentication.<br>It is not coldness.<br>It is how trust is built —<br>slowly, with evidence.</p><p>In zero trust architecture,<br>nothing is assumed safe<br>by virtue of location.<br>You must prove yourself<br>at every boundary.</p><p>I have been thinking about<br>how we love each other<br>the same way.<br>Not once and forever,<br>but again and again —</p><p>at every threshold,<br>with every re-entry,<br>showing our credentials<br>in small and ordinary acts.</p>`},
 ];
 
-const projects = [
-  {
-    id: 201,
-    icon: '🔐',
-    title: 'SecureVault CLI',
-    description: 'A command-line password manager built in Rust with AES-256 encryption and zero-knowledge architecture. Designed for developers who live in the terminal.',
-    stack: ['Rust', 'AES-256', 'CLI', 'Security'],
-    featured: true,
-  },
-  {
-    id: 202,
-    icon: '📡',
-    title: 'NetWatch',
-    description: 'A real-time network traffic analyser that detects anomalies using lightweight statistical models. Visualises packet flow in the terminal.',
-    stack: ['Python', 'Scapy', 'Pandas', 'Curses'],
-    featured: true,
-  },
-  {
-    id: 203,
-    icon: '📝',
-    title: 'This Website',
-    description: 'A personal website built as a single HTML file — no frameworks, no build steps, no dependencies. Just clean HTML, CSS, and vanilla JavaScript.',
-    stack: ['HTML', 'CSS', 'JavaScript'],
-    featured: true,
-  },
-  {
-    id: 204,
-    icon: '🧠',
-    title: 'Memento',
-    description: 'A spaced-repetition flashcard app for terminal users. Cards are stored in plain Markdown files so they\'re readable without the app.',
-    stack: ['Python', 'Markdown', 'SQLite', 'CLI'],
-    featured: false,
-  },
-  {
-    id: 205,
-    icon: '🌐',
-    title: 'PortMap',
-    description: 'A fast port scanner and service fingerprinter written in Go. Designed for educational use in understanding how network reconnaissance works.',
-    stack: ['Go', 'Networking', 'Security'],
-    featured: false,
-  },
-  {
-    id: 206,
-    icon: '✍️',
-    title: 'Drafts',
-    description: 'A minimal writing environment for the terminal. Distraction-free, plain-text, version-controlled. Because sometimes less is the only thing that works.',
-    stack: ['Python', 'Rich', 'Git', 'CLI'],
-    featured: false,
-  },
+const projects=[
+  {id:201,icon:'🔐',title:'SecureVault CLI',description:'A command-line password manager built in Rust with AES-256 encryption and zero-knowledge architecture. Designed for developers who live in the terminal.',stack:['Rust','AES-256','CLI','Security'],featured:true},
+  {id:202,icon:'📡',title:'NetWatch',description:'A real-time network traffic analyser that detects anomalies using lightweight statistical models. Visualises packet flow in the terminal.',stack:['Python','Scapy','Pandas','Curses'],featured:true},
+  {id:203,icon:'📝',title:'This Website',description:'A personal website built as a single HTML file — no frameworks, no build steps, no dependencies. Just clean HTML, CSS, and vanilla JavaScript.',stack:['HTML','CSS','JavaScript'],featured:true},
+  {id:204,icon:'🧠',title:'Memento',description:'A spaced-repetition flashcard app for terminal users. Cards are stored in plain Markdown files so they\'re readable without the app.',stack:['Python','Markdown','SQLite','CLI'],featured:false},
+  {id:205,icon:'🌐',title:'PortMap',description:'A fast port scanner and service fingerprinter written in Go. Designed for educational use in understanding network reconnaissance.',stack:['Go','Networking','Security'],featured:false},
+  {id:206,icon:'✍️',title:'Drafts',description:'A minimal writing environment for the terminal. Distraction-free, plain-text, version-controlled. Because sometimes less is the only thing that works.',stack:['Python','Rich','Git','CLI'],featured:false},
 ];
 
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-function navigate(page) {
-  // Hide all pages including post page
-  document.querySelectorAll('.page, .post-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+let nextId=300;
 
-  document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('nav-' + page).classList.add('active');
-  window.scrollTo(0, 0);
-
-  // Close mobile menu
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function navigate(page){
+  document.querySelectorAll('.page,.post-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const n=document.getElementById('nav-'+page);
+  if(n) n.classList.add('active');
+  window.scrollTo(0,0);
   document.getElementById('navLinks').classList.remove('open');
 }
 
-function openPost(id) {
-  const allData = [...posts, ...poems];
-  const post = allData.find(p => p.id === id);
-  if (!post) return;
+function toggleMenu(){document.getElementById('navLinks').classList.toggle('open');}
 
-  const isPoem = post.type === 'Poetry';
+// ─── POST VIEWER ─────────────────────────────────────────────────────────────
+function openPost(id){
+  const all=[...posts,...poems];
+  const post=all.find(p=>p.id===id);
+  if(!post) return;
+  const isPoem=post.type==='Poetry';
 
-  const container = document.getElementById('post-content');
-  container.innerHTML = `
-    <div class="post-back" onclick="closePost()">← Back</div>
-    <div class="post-tag">${post.type} · ${post.readTime}</div>
+  let bodyHTML=post.content;
+  let extra='';
+
+  if(post.members){
+    const fp=post.content.indexOf('</p>');
+    const preview=fp!==-1?post.content.slice(0,fp+4):post.content.slice(0,300)+'...';
+    bodyHTML=preview;
+    extra=`<div class="paywall-wall"><div class="paywall-box">
+      <h3>Members Only</h3>
+      <p>This post is for paid subscribers. Join the newsletter to unlock full access to all writing.</p>
+      <a href="https://beehiiv.com" target="_blank" class="btn btn-primary">Become a Member</a>
+      <a href="https://buymeacoffee.com/sifon" target="_blank" class="btn btn-outline" style="margin-top:0">☕ Support with coffee</a>
+    </div></div>`;
+  } else {
+    extra=`<div class="post-cta-strip">
+      <p>If this piece meant something to you, consider supporting the work.</p>
+      <a href="https://buymeacoffee.com/sifon" target="_blank" class="btn btn-accent">☕ Buy me a coffee</a>
+      <button class="btn btn-outline" onclick="navigate('blog')">More posts →</button>
+    </div>`;
+    if(isPoem) extra=`<div class="poem-author">— Sifon</div>`+extra;
+  }
+
+  document.getElementById('post-content').innerHTML=`
+    <div class="post-back" onclick="closePost()">← Back to Blog</div>
+    <div class="post-tag">${post.type} · ${post.readTime}${post.members?' · ★ Members':''}</div>
     <h1 class="post-title">${post.title}</h1>
     <div class="post-meta">${post.date}</div>
-    <div class="post-body">
-      ${post.content}
-      ${isPoem ? '<div class="poem-author">— Sifon</div>' : ''}
-    </div>
+    <div class="post-body">${bodyHTML}</div>
+    ${extra}
   `;
 
-  const postPage = document.getElementById('post-page');
-  document.querySelectorAll('.page, .post-page').forEach(p => p.classList.remove('active'));
-  postPage.classList.add('active');
-  if (isPoem) postPage.classList.add('poem-post');
-  else postPage.classList.remove('poem-post');
-  window.scrollTo(0, 0);
+  const pp=document.getElementById('post-page');
+  document.querySelectorAll('.page,.post-page').forEach(p=>p.classList.remove('active'));
+  pp.classList.add('active');
+  if(isPoem) pp.classList.add('poem-post'); else pp.classList.remove('poem-post');
+  window.scrollTo(0,0);
 }
 
-function closePost() {
-  document.getElementById('post-page').classList.remove('active');
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-blog').classList.add('active');
-  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-  document.getElementById('nav-blog').classList.add('active');
-  window.scrollTo(0, 0);
+function closePost(){
+  document.getElementById('post-page').classList.remove('active','poem-post');
+  navigate('blog');
 }
 
-function toggleMenu() {
-  document.getElementById('navLinks').classList.toggle('open');
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+function openAdmin(){document.getElementById('adminOverlay').classList.add('open');}
+function closeAdmin(){
+  document.getElementById('adminOverlay').classList.remove('open');
+  document.getElementById('admin-success').style.display='none';
 }
 
-// ── RENDER ────────────────────────────────────────────────────────────────────
-function renderHomeCarousels() {
-  // Blog posts carousel
-  const postsCar = document.getElementById('carousel-posts');
-  posts.slice(0, 5).forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'blog-card';
-    card.onclick = () => openPost(p.id);
-    card.innerHTML = `
-      <div class="card-tag">${p.type}</div>
-      <div class="card-title">${p.title}</div>
-      <div class="card-excerpt">${p.excerpt}</div>
-      <div class="card-meta">${p.date} · ${p.readTime}</div>
-    `;
-    postsCar.appendChild(card);
+function publishPost(){
+  const title=document.getElementById('f-title').value.trim();
+  const cat=document.getElementById('f-category').value;
+  const rt=document.getElementById('f-readtime').value.trim()||(cat==='Poetry'?'Poem':'5 min read');
+  const exc=document.getElementById('f-excerpt').value.trim();
+  const raw=document.getElementById('f-content').value.trim();
+  const mem=document.getElementById('f-members').checked;
+  if(!title||!raw){alert('Please fill in a title and the content.');return;}
+
+  const isPoem=cat==='Poetry';
+  const paras=raw.split(/\n\n+/);
+  let html='';
+  paras.forEach(para=>{
+    const lines=para.split('\n').map(l=>l.trim()).filter(Boolean);
+    if(!lines.length) return;
+    if(lines[0].startsWith('##')){html+=`<h2>${lines[0].replace(/^##\s*/,'')}</h2>`;return;}
+    if(isPoem){html+=`<p>${lines.join('<br>')}</p>`;}
+    else{lines.forEach(l=>{if(l.startsWith('##'))html+=`<h2>${l.replace(/^##\s*/,'')}</h2>`;else html+=`<p>${l}</p>`;});}
   });
-  buildDots('carousel-posts', 'dots-posts', posts.length);
 
-  // Poems carousel
-  const poemsCar = document.getElementById('carousel-poems');
-  poems.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'poem-card';
-    card.onclick = () => openPost(p.id);
-    card.innerHTML = `
-      <div class="card-tag">${p.type}</div>
-      <div class="card-title">${p.title}</div>
-      <div class="card-excerpt">${p.excerpt.split('\n')[0]}</div>
-      <div class="card-meta" style="margin-top:20px">${p.date}</div>
-    `;
-    poemsCar.appendChild(card);
+  const np={id:nextId++,type:cat,title,excerpt:exc||raw.slice(0,120)+'…',date:new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'}),readTime:rt,members:mem,content:html};
+  if(isPoem) poems.unshift(np); else posts.unshift(np);
+
+  renderHomeCarousels();
+  renderBlog();
+
+  document.getElementById('admin-success').style.display='block';
+  ['f-title','f-excerpt','f-content','f-readtime'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('f-members').checked=false;
+  setTimeout(()=>document.getElementById('admin-success').style.display='none',5000);
+}
+
+// ─── NEWSLETTER ───────────────────────────────────────────────────────────────
+function subscribeNewsletter(inputId){
+  const inp=document.getElementById(inputId);
+  const email=inp.value.trim();
+  if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}
+  // TODO: Replace with your real Beehiiv subscribe URL
+  // window.open(`https://embeds.beehiiv.com/YOUR_FORM_ID?email=${encodeURIComponent(email)}`,'_blank');
+  alert(`✓ Thanks for subscribing!\n\n${email} has been noted.\n\nTo activate this: replace the Beehiiv URL in the code with your real embed link from beehiiv.com → your publication → Grow → Subscribe Forms.`);
+  inp.value='';
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderHomeCarousels(){
+  // Posts
+  const pc=document.getElementById('carousel-posts');
+  const pd=document.getElementById('dots-posts');
+  pc.innerHTML='';pd.innerHTML='';
+  posts.slice(0,6).forEach(p=>{
+    const c=document.createElement('div');
+    c.className='blog-card';c.onclick=()=>openPost(p.id);
+    c.innerHTML=`${p.members?'<div class="members-badge">★ Members</div>':''}<div class="card-tag">${p.type}</div><div class="card-title">${p.title}</div><div class="card-excerpt">${p.excerpt}</div><div class="card-meta">${p.date} · ${p.readTime}</div>`;
+    pc.appendChild(c);
   });
-  buildDots('carousel-poems', 'dots-poems', poems.length);
+  buildDots('carousel-posts','dots-posts',Math.min(posts.length,6));
+  // Poems
+  const mc=document.getElementById('carousel-poems');
+  const md=document.getElementById('dots-poems');
+  mc.innerHTML='';md.innerHTML='';
+  poems.forEach(p=>{
+    const c=document.createElement('div');
+    c.className='poem-card';c.onclick=()=>openPost(p.id);
+    c.innerHTML=`<div class="card-tag">${p.type}</div><div class="card-title">${p.title}</div><div class="card-excerpt">${p.excerpt}</div><div class="card-meta" style="margin-top:20px">${p.date}</div>`;
+    mc.appendChild(c);
+  });
+  buildDots('carousel-poems','dots-poems',poems.length);
 }
 
-function renderFeaturedProjects() {
-  const container = document.getElementById('featured-projects');
-  projects.filter(p => p.featured).forEach(p => {
-    container.appendChild(createProjectCard(p));
+function renderFeaturedProjects(){
+  const c=document.getElementById('featured-projects');c.innerHTML='';
+  projects.filter(p=>p.featured).forEach(p=>c.appendChild(mkProject(p)));
+}
+
+function renderBlog(filter='All'){
+  const g=document.getElementById('blog-grid');g.innerHTML='';
+  const all=[...posts,...poems];
+  (filter==='All'?all:all.filter(p=>p.type===filter)).forEach(p=>{
+    const c=document.createElement('div');
+    const ip=p.type==='Poetry';
+    c.className='blog-full-card'+(ip?' poem-type':'');
+    c.onclick=()=>openPost(p.id);
+    c.innerHTML=`${p.members?'<div class="members-badge">★ Members</div>':''}<div class="card-tag">${p.type}</div><div class="card-title">${p.title}</div><div class="card-excerpt">${p.excerpt}</div><div class="card-meta">${p.date} · ${p.readTime}</div>`;
+    g.appendChild(c);
   });
 }
 
-function renderBlog(filter = 'All') {
-  const grid = document.getElementById('blog-grid');
-  grid.innerHTML = '';
-  const allData = [...posts, ...poems];
-  const filtered = filter === 'All' ? allData : allData.filter(p => p.type === filter);
-
-  filtered.forEach(p => {
-    const card = document.createElement('div');
-    const isPoemType = p.type === 'Poetry';
-    card.className = 'blog-full-card' + (isPoemType ? ' poem-type' : '');
-    card.onclick = () => openPost(p.id);
-    card.innerHTML = `
-      <div class="card-tag">${p.type}</div>
-      <div class="card-title">${p.title}</div>
-      <div class="card-excerpt">${p.excerpt.split('\n')[0]}</div>
-      <div class="card-meta">${p.date} · ${p.readTime}</div>
-    `;
-    grid.appendChild(card);
-  });
+function renderAllProjects(){
+  const c=document.getElementById('all-projects');c.innerHTML='';
+  projects.forEach(p=>c.appendChild(mkProject(p)));
 }
 
-function renderAllProjects() {
-  const container = document.getElementById('all-projects');
-  projects.forEach(p => {
-    container.appendChild(createProjectCard(p));
-  });
+function mkProject(p){
+  const c=document.createElement('div');c.className='project-card';
+  c.innerHTML=`<div class="project-icon">${p.icon}</div><div class="project-title">${p.title}</div><div class="project-desc">${p.description}</div><div class="project-stack">${p.stack.map(s=>`<span class="tag">${s}</span>`).join('')}</div>`;
+  return c;
 }
 
-function createProjectCard(p) {
-  const card = document.createElement('div');
-  card.className = 'project-card';
-  card.innerHTML = `
-    <div class="project-icon">${p.icon}</div>
-    <div class="project-title">${p.title}</div>
-    <div class="project-desc">${p.description}</div>
-    <div class="project-stack">
-      ${p.stack.map(s => `<span class="tag">${s}</span>`).join('')}
-    </div>
-  `;
-  return card;
+function filterBlog(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderBlog(cat);
 }
 
-function filterBlog(cat, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderBlog(cat);
+// ─── CAROUSEL ─────────────────────────────────────────────────────────────────
+function scrollCarousel(id,dir){
+  const car=document.getElementById(id);
+  const first=car.querySelector('div');if(!first)return;
+  car.scrollBy({left:dir*(first.offsetWidth+24)*1.5,behavior:'smooth'});
 }
 
-// ── CAROUSEL ─────────────────────────────────────────────────────────────────
-function scrollCarousel(id, dir) {
-  const car = document.getElementById(id);
-  const cardW = car.querySelector('div').offsetWidth + 24;
-  car.scrollBy({ left: dir * cardW * 1.5, behavior: 'smooth' });
-}
-
-function buildDots(carId, dotsId, count) {
-  const dotsEl = document.getElementById(dotsId);
-  const car = document.getElementById(carId);
-  const visible = Math.min(count, 5);
-  for (let i = 0; i < visible; i++) {
-    const d = document.createElement('div');
-    d.className = 'c-dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => {
-      const cardW = car.querySelector('div').offsetWidth + 24;
-      car.scrollTo({ left: i * cardW, behavior: 'smooth' });
-    };
-    dotsEl.appendChild(d);
+function buildDots(carId,dotsId,count){
+  const el=document.getElementById(dotsId);
+  const car=document.getElementById(carId);
+  for(let i=0;i<Math.min(count,6);i++){
+    const d=document.createElement('div');
+    d.className='c-dot'+(i===0?' active':'');
+    d.onclick=()=>{const w=car.querySelector('div').offsetWidth+24;car.scrollTo({left:i*w,behavior:'smooth'});};
+    el.appendChild(d);
   }
-  car.addEventListener('scroll', () => {
-    const cardW = car.querySelector('div').offsetWidth + 24;
-    const idx = Math.round(car.scrollLeft / cardW);
-    dotsEl.querySelectorAll('.c-dot').forEach((d, i) => {
-      d.classList.toggle('active', i === idx);
-    });
+  car.addEventListener('scroll',()=>{
+    const w=car.querySelector('div').offsetWidth+24;
+    const idx=Math.round(car.scrollLeft/w);
+    el.querySelectorAll('.c-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
   });
 }
 
-// ── SCROLL PROGRESS ───────────────────────────────────────────────────────────
-window.addEventListener('scroll', () => {
-  const total = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
-  document.getElementById('scrollProgress').style.width = pct + '%';
-  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+// ─── SCROLL ────────────────────────────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  const tot=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('scrollProgress').style.width=(tot>0?(window.scrollY/tot)*100:0)+'%';
+  document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>20);
 });
 
-// ── PREVENT CONTEXT MENU ─────────────────────────────────────────────────────
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && ['c','a','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
+// ─── SECURITY ─────────────────────────────────────────────────────────────────
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&['c','a','u','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
 });
+// Allow typing in admin
+document.getElementById('adminOverlay').addEventListener('keydown',e=>e.stopPropagation());
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+// ─── INIT ──────────────────────────────────────────────────────────────────────
 renderHomeCarousels();
 renderFeaturedProjects();
 renderBlog();
