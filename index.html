@@ -38,8 +38,7 @@ nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06);}
 .nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
 .nav-links li a{font-size:15px;font-weight:400;color:var(--ink-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s;cursor:pointer;}
 .nav-links li a:hover,.nav-links li a.active{color:var(--accent);}
-.nav-admin-btn{padding:8px 18px;font-size:13px;font-family:'DM Mono',monospace;background:var(--ink);color:var(--cream);border:none;cursor:pointer;letter-spacing:.06em;transition:background .2s;white-space:nowrap;}
-.nav-admin-btn:hover{background:var(--accent);}
+.nav-admin-btn{display:none !important;} /* hidden from visitors — secret shortcut: triple-click the logo */
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;}
 .hamburger span{display:block;width:24px;height:1.5px;background:var(--ink);transition:.3s;}
 
@@ -92,10 +91,35 @@ nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06);}
 /* AD SLOT */
 .ad-slot{background:var(--card-bg);border:1px dashed var(--border);padding:20px;text-align:center;margin:0 48px 32px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted);letter-spacing:.06em;line-height:1.8;}
 
-/* BUY ME A COFFEE FLOAT */
-.bmac-float{position:fixed;bottom:28px;right:28px;z-index:900;display:flex;align-items:center;gap:10px;background:var(--accent);color:var(--cream);padding:14px 22px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 8px 32px rgba(196,113,58,.4);transition:all .25s;text-decoration:none;}
-.bmac-float:hover{background:#a85e2e;transform:translateY(-3px);box-shadow:0 12px 40px rgba(196,113,58,.5);}
-.bmac-float span{font-size:18px;}
+/* BUY ME A COFFEE FLOAT — modern minimal pill */
+.bmac-float{
+  position:fixed;bottom:24px;right:24px;z-index:900;
+  display:flex;align-items:center;gap:6px;
+  background:rgba(26,24,20,.92);
+  backdrop-filter:blur(12px);
+  color:rgba(250,248,243,.85);
+  padding:8px 14px 8px 11px;
+  font-size:11px;font-weight:400;letter-spacing:.07em;text-transform:uppercase;
+  font-family:'DM Mono',monospace;
+  cursor:pointer;
+  border-radius:100px;
+  box-shadow:0 2px 16px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.07);
+  transition:all .25s cubic-bezier(.34,1.4,.64,1);
+  text-decoration:none;
+}
+.bmac-float:hover{
+  background:var(--accent);
+  color:var(--cream);
+  transform:translateY(-2px);
+  box-shadow:0 6px 24px rgba(196,113,58,.32);
+}
+.bmac-float .bmac-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;
+  transition:background .25s;
+}
+.bmac-float:hover .bmac-dot{background:rgba(255,255,255,.7);}
+.bmac-float .bmac-label{line-height:1;}
 
 /* CAROUSEL */
 .carousel-wrap{position:relative;}
@@ -244,7 +268,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   .newsletter-form input{border-right:1.5px solid rgba(255,255,255,.2);border-bottom:none;}
   .newsletter-banner{padding:60px 24px;}
   .form-2col{grid-template-columns:1fr;}
-  .bmac-float{bottom:16px;right:16px;padding:12px 18px;font-size:13px;}
+  .bmac-float{bottom:16px;right:16px;padding:7px 12px 7px 10px;font-size:10px;}
 }
 </style>
 </head>
@@ -252,14 +276,14 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
 
 <div class="scroll-progress" id="scrollProgress"></div>
 
-<!-- FLOATING COFFEE BUTTON — replace href with your real buymeacoffee link -->
+<!-- FLOATING SUPPORT BUTTON — replace href with your real buymeacoffee link -->
 <a class="bmac-float" href="https://buymeacoffee.com/sifon" target="_blank" rel="noopener">
-  <span>☕</span> Support my work
+  <span class="bmac-dot"></span><span class="bmac-label">Support my work</span>
 </a>
 
 <!-- NAV -->
 <nav id="mainNav">
-  <div class="nav-logo" onclick="navigate('home')">S<span>.</span>I</div>
+  <div class="nav-logo" id="navLogo" onclick="navigate('home')">S<span>.</span>I</div>
   <ul class="nav-links" id="navLinks">
     <li><a onclick="navigate('home')" class="active" id="nav-home">Home</a></li>
     <li><a onclick="navigate('about')" id="nav-about">About</a></li>
@@ -349,7 +373,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
       <a href="https://buymeacoffee.com/sifon" target="_blank">Support ☕</a>
       <a onclick="navigate('contact')">Contact</a>
     </div>
-    <p>© 2026 Sifon Imahjnr</p>
+    <p>© 2025 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -366,8 +390,8 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
       </div>
       <div class="about-content">
-        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> ,a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
-        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night, and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
+        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> — a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
+        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night — and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
         <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
         <p>When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.</p>
         <div class="about-interests">
@@ -386,7 +410,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
-    <p>© 2026 Sifon Imahjnr</p>
+    <p>© 2025 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -418,7 +442,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
-    <p>© 2026 Sifon Imahjnr</p>
+    <p>© 2025 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -432,7 +456,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
-    <p>© 2026 Sifon Imahjnr</p>
+    <p>© 2025 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -444,9 +468,9 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
     <div class="contact-inner">
       <p class="contact-intro">Whether you want to talk about a project, share a thought, or just say hello — I'm always glad to hear from thoughtful people.</p>
       <div class="contact-links">
-        <a class="contact-link" href="mailto:sifon@example.com">
+        <a class="contact-link" href="/cdn-cgi/l/email-protection#d5a6bcb3babb95b0adb4b8a5b9b0fbb6bab8">
           <div class="contact-link-icon">✉</div>
-          <div class="contact-link-text"><strong>Email</strong><span>sifonaniefiok@gmail.com</span></div>
+          <div class="contact-link-text"><strong>Email</strong><span><span class="__cf_email__" data-cfemail="e09389868f8ea08598818d908c85ce838f8d">[email&#160;protected]</span></span></div>
         </a>
         <div class="contact-link" onclick="window.open('https://github.com','_blank')">
           <div class="contact-link-icon" style="font-size:18px">⌥</div>
@@ -454,7 +478,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
         <div class="contact-link">
           <div class="contact-link-icon" style="font-size:16px">𝕏</div>
-          <div class="contact-link-text"><strong>Twitter / X</strong><span>@sifon_Imahjnr</span></div>
+          <div class="contact-link-text"><strong>Twitter / X</strong><span>@sifon_writes</span></div>
         </div>
         <div class="contact-link">
           <div class="contact-link-icon" style="font-size:15px">in</div>
@@ -470,7 +494,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
-    <p>© 2026 Sifon Imahjnr</p>
+    <p>© 2025 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -505,12 +529,12 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
       <h2>Data Security</h2>
       <p>I take reasonable steps to protect your information. However, no internet transmission is 100% secure. Please do not share sensitive personal information through this website.</p>
       <h2>Contact</h2>
-      <p>Questions about this policy? Contact me at <strong>sifon@example.com</strong>.</p>
+      <p>Questions about this policy? Contact me at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="12617b747d7c52776a737f627e773c717d7f">[email&#160;protected]</a></strong>.</p>
     </div>
   </div>
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
-    <p>© 2026 Sifon Imahjnr. All rights reserved.</p>
+    <p>© 2025 Sifon Imahjnr. All rights reserved.</p>
   </footer>
 </div>
 
@@ -567,7 +591,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ─── DATA ────────────────────────────────────────────────────────────────────
 let posts=[
   {id:1,type:'Technology',title:'On Building in the Age of Noise',excerpt:'What does it mean to build something meaningful when the internet accelerates everything into forgettability?',date:'March 2025',readTime:'5 min read',members:false,content:`<p>There is a particular kind of anxiety that comes with building in public. Every week, a new tool. Every month, a new paradigm. Every year, the thing you built last year feels like archaeology.</p><h2>The Speed of Things</h2><p>Software has always moved fast — but something changed. The pace of tooling and the noise of discourse have decoupled from the pace of actual good ideas. We now have more tutorials than understanding, more frameworks than foundations.</p><p>I think about this often when I'm writing code. Not "what is the latest library?" but "what am I actually trying to say?" Code is communication. The best systems I've read feel like clear prose — a thought expressed precisely, without excess.</p><h2>A Different Measure</h2><p>What if the measure of a good build isn't its virality, but its clarity? What if we measured software the way we measure essays — by how much it illuminates, not by how many people see it?</p><p>I'm learning to build slowly. To think before typing. To read before writing. It goes against every instinct the internet has trained into me, and it is one of the best things I've done.</p>`},
@@ -625,7 +649,7 @@ function openPost(id){
     extra=`<div class="paywall-wall"><div class="paywall-box">
       <h3>Members Only</h3>
       <p>This post is for paid subscribers. Join the newsletter to unlock full access to all writing.</p>
-      <a href="https://beehiiv.com" target="_blank" class="btn btn-primary">Become a Member</a>
+      <a href="https://sifons-newsletter-f3fd43.beehiiv.com" target="_blank" class="btn btn-primary">Become a Member</a>
       <a href="https://buymeacoffee.com/sifon" target="_blank" class="btn btn-outline" style="margin-top:0">☕ Support with coffee</a>
     </div></div>`;
   } else {
@@ -695,6 +719,13 @@ function publishPost(){
   ['f-title','f-excerpt','f-content','f-readtime'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('f-members').checked=false;
   setTimeout(()=>document.getElementById('admin-success').style.display='none',5000);
+  // Scroll carousels back to start so new post is visible
+  setTimeout(()=>{
+    const cp=document.getElementById('carousel-posts');
+    const cm=document.getElementById('carousel-poems');
+    if(cp) cp.scrollTo({left:0,behavior:'smooth'});
+    if(cm) cm.scrollTo({left:0,behavior:'smooth'});
+  },100);
 }
 
 // ─── NEWSLETTER ───────────────────────────────────────────────────────────────
@@ -702,9 +733,7 @@ function subscribeNewsletter(inputId){
   const inp=document.getElementById(inputId);
   const email=inp.value.trim();
   if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}
-  .https://sifons-newsletter-f3fd43.beehiiv.com
-  // window.open(`https://embeds.https://sifons-newsletter-f3fd43.beehiiv.com/?email=${encodeURIComponent(email)}`,'_blank');
-  alert(`✓ Thanks for subscribing!\n\n${email} has been noted.\n\nTo activate this: replace the Beehiiv URL in the code with your real embed link from beehiiv.com → your publication → Grow → Subscribe Forms.`);
+  window.open(`https://sifons-newsletter-f3fd43.beehiiv.com/subscribe?email=${encodeURIComponent(email)}`,'_blank');
   inp.value='';
 }
 
@@ -806,7 +835,16 @@ document.addEventListener('keydown',e=>{
 // Allow typing in admin
 document.getElementById('adminOverlay').addEventListener('keydown',e=>e.stopPropagation());
 
-// ─── INIT ──────────────────────────────────────────────────────────────────────
+// ─── SECRET ADMIN — triple-click the logo ────────────────────────────────────
+let logoClicks=0,logoTimer=null;
+document.getElementById('navLogo').addEventListener('click',()=>{
+  logoClicks++;
+  clearTimeout(logoTimer);
+  logoTimer=setTimeout(()=>{logoClicks=0;},600);
+  if(logoClicks>=3){logoClicks=0;openAdmin();}
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
 renderHomeCarousels();
 renderFeaturedProjects();
 renderBlog();
