@@ -399,7 +399,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
       </div>
       <div class="about-content">
-        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> — a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
+        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> , a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
         <p>By day, I study systems, write code, and think about how information flows safely through the world. By night — and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
         <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
         <p>When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.</p>
@@ -487,7 +487,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
         <div class="contact-link">
           <div class="contact-link-icon" style="font-size:16px">𝕏</div>
-          <div class="contact-link-text"><strong>Twitter / X</strong><span>@sifon_writes</span></div>
+          <div class="contact-link-text"><strong>Twitter / X</strong><span>@Sifon_Imahjnr</span></div>
         </div>
         <div class="contact-link">
           <div class="contact-link-icon" style="font-size:15px">in</div>
@@ -648,6 +648,7 @@ const projects=[
 // ─── API CONFIG ──────────────────────────────────────────────────────────────
 // Replace with your Railway backend URL after deploying
 const API_URL = 'https://sifon-backend-production.up.railway.app';
+
 // Admin token stored in memory only — NOT localStorage (XSS risk)
 // Wiped on page close. You'll log in again next session.
 let _adminToken = null;
@@ -660,8 +661,10 @@ async function loadPostsFromAPI(){
     const { posts: apiPosts } = await res.json();
     if (!apiPosts?.length) return;
 
-    // Merge API posts with default seed posts
-    // API posts come first (newest), seed posts fill in the rest
+    // Separate API posts into posts and poems
+    const apiNormalPosts = [];
+    const apiPoems = [];
+
     apiPosts.forEach(p => {
       const normalized = {
         id: p.id,
@@ -671,17 +674,27 @@ async function loadPostsFromAPI(){
         date: p.date,
         readTime: p.read_time,
         members: p.members,
-        content: null, // Full content loaded on demand
+        content: null, // Full content loaded on demand when post is opened
       };
       if (p.type === 'Poetry') {
-        if (!poems.find(x => x.id === p.id)) poems.unshift(normalized);
+        apiPoems.push(normalized);
       } else {
-        if (!posts.find(x => x.id === p.id)) posts.unshift(normalized);
+        apiNormalPosts.push(normalized);
       }
     });
+
+    // Put API posts at the FRONT, seed posts at the back
+    // This ensures your real published posts always appear first
+    if (apiNormalPosts.length > 0) {
+      posts = [...apiNormalPosts, ...posts];
+    }
+    if (apiPoems.length > 0) {
+      poems = [...apiPoems, ...poems];
+    }
+
   } catch(e) {
     console.warn('[API] Could not load posts from backend:', e.message);
-    // Site still works with seed posts if backend is down
+    // Site still works with seed posts if backend is unreachable
   }
 }
 
