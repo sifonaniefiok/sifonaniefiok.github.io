@@ -399,8 +399,8 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
       </div>
       <div class="about-content">
-        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> , a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
-        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night, and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
+        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> — a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
+        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night — and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
         <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
         <p>When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.</p>
         <div class="about-interests">
@@ -647,7 +647,7 @@ const projects=[
 
 // ─── API CONFIG ──────────────────────────────────────────────────────────────
 // Replace with your Railway backend URL after deploying
-const API_URL = 'https://sifon-backend-production.up.railway.app';
+const API_URL = 'https://YOUR-RAILWAY-URL.railway.app';
 
 // Admin token stored in memory only — NOT localStorage (XSS risk)
 // Wiped on page close. You'll log in again next session.
@@ -854,7 +854,9 @@ function closeAdmin(){
   document.getElementById('admin-success').style.display='none';
 }
 
-function publishPost(){
+async function publishPost(){
+  if(!_adminToken){ alert('You must be logged in to publish.'); showLoginModal(); return; }
+
   const title=document.getElementById('f-title').value.trim();
   const cat=document.getElementById('f-category').value;
   const rt=document.getElementById('f-readtime').value.trim()||(cat==='Poetry'?'Poem':'5 min read');
@@ -863,6 +865,7 @@ function publishPost(){
   const mem=document.getElementById('f-members').checked;
   if(!title||!raw){alert('Please fill in a title and the content.');return;}
 
+  // Convert raw text to HTML
   const isPoem=cat==='Poetry';
   const paras=raw.split(/\n\n+/);
   let html='';
@@ -874,24 +877,56 @@ function publishPost(){
     else{lines.forEach(l=>{if(l.startsWith('##'))html+=`<h2>${l.replace(/^##\s*/,'')}</h2>`;else html+=`<p>${l}</p>`;});}
   });
 
-  const np={id:getNextId(),type:cat,title,excerpt:exc||raw.slice(0,120)+'…',date:new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'}),readTime:rt,members:mem,content:html};
-  if(isPoem) poems.unshift(np); else posts.unshift(np);
+  const btn=document.querySelector('#adminOverlay .btn-primary');
+  if(btn){btn.textContent='Publishing…';btn.disabled=true;}
 
-  savePosts(); // persist to localStorage
-  renderHomeCarousels();
-  renderBlog();
+  try {
+    const res=await fetch(`${API_URL}/api/posts`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${_adminToken}`
+      },
+      body:JSON.stringify({
+        title,
+        type:cat,
+        excerpt:exc||raw.slice(0,120)+'…',
+        content:html,
+        readTime:rt,
+        members:mem
+      })
+    });
 
-  document.getElementById('admin-success').style.display='block';
-  ['f-title','f-excerpt','f-content','f-readtime'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('f-members').checked=false;
-  setTimeout(()=>document.getElementById('admin-success').style.display='none',5000);
-  // Scroll carousels back to start so new post is visible
-  setTimeout(()=>{
-    const cp=document.getElementById('carousel-posts');
-    const cm=document.getElementById('carousel-poems');
-    if(cp) cp.scrollTo({left:0,behavior:'smooth'});
-    if(cm) cm.scrollTo({left:0,behavior:'smooth'});
-  },100);
+    if(!res.ok){
+      const err=await res.json();
+      throw new Error(err.error||'Publish failed');
+    }
+
+    const {post:saved}=await res.json();
+
+    // Add to local arrays so UI updates immediately without refresh
+    const np={id:saved.id,type:saved.type,title:saved.title,excerpt:saved.excerpt,date:saved.date,readTime:saved.read_time,members:saved.members,content:html};
+    if(isPoem) poems.unshift(np); else posts.unshift(np);
+
+    renderHomeCarousels();
+    renderBlog();
+
+    document.getElementById('admin-success').style.display='block';
+    ['f-title','f-excerpt','f-content','f-readtime'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('f-members').checked=false;
+    setTimeout(()=>document.getElementById('admin-success').style.display='none',5000);
+    setTimeout(()=>{
+      ['carousel-posts','carousel-poems'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.scrollTo({left:0,behavior:'smooth'});
+      });
+    },150);
+
+  } catch(e){
+    alert('Failed to publish: '+e.message);
+  } finally {
+    if(btn){btn.textContent='Publish Post';btn.disabled=false;}
+  }
 }
 
 // ─── NEWSLETTER ───────────────────────────────────────────────────────────────
