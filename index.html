@@ -224,6 +224,15 @@ nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06);}
 .privacy-content p,.privacy-content li{font-size:17px;color:var(--ink-soft);line-height:1.85;margin-bottom:16px;}
 .privacy-content ul{padding-left:24px;}
 
+/* LOGIN MODAL */
+.login-overlay{display:none;position:fixed;inset:0;background:rgba(26,24,20,.85);z-index:2100;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.login-overlay.open{display:flex;}
+.login-box{background:var(--cream);width:min(400px,92vw);padding:48px 40px;position:relative;}
+.login-box h2{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:6px;}
+.login-box .sub{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted);letter-spacing:.08em;margin-bottom:32px;}
+.login-error{font-size:13px;color:#c44;font-family:'DM Mono',monospace;margin-bottom:16px;min-height:18px;}
+.login-box .form-row input{-webkit-user-select:text;user-select:text;}
+
 /* ADMIN PANEL */
 .admin-overlay{display:none;position:fixed;inset:0;background:rgba(26,24,20,.85);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
 .admin-overlay.open{display:flex;}
@@ -373,7 +382,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
       <a href="https://buymeacoffee.com/sifon" target="_blank">Support ☕</a>
       <a onclick="navigate('contact')">Contact</a>
     </div>
-    <p>© 2025 Sifon Imahjnr</p>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -390,8 +399,8 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
       </div>
       <div class="about-content">
-        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> — a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
-        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night — and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
+        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> , a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
+        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night, and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
         <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
         <p>When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.</p>
         <div class="about-interests">
@@ -410,7 +419,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
-    <p>© 2025 Sifon Imahjnr</p>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -442,7 +451,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
-    <p>© 2025 Sifon Imahjnr</p>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -456,7 +465,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
-    <p>© 2025 Sifon Imahjnr</p>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -494,7 +503,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links"><a onclick="navigate('privacy')">Privacy Policy</a></div>
-    <p>© 2025 Sifon Imahjnr</p>
+    <p>© 2026 Sifon Imahjnr</p>
   </footer>
 </div>
 
@@ -534,7 +543,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   </div>
   <footer>
     <div class="footer-logo">S<span>.</span>I</div>
-    <p>© 2025 Sifon Imahjnr. All rights reserved.</p>
+    <p>© 2026 Sifon Imahjnr. All rights reserved.</p>
   </footer>
 </div>
 
@@ -543,13 +552,32 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   <div class="post-container" id="post-content"></div>
 </div>
 
+<!-- ═══ LOGIN MODAL ═══ -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <button class="admin-close" onclick="closeLoginModal()">✕</button>
+    <h2>Admin Login</h2>
+    <div class="sub">SIFON.I · SECURE ACCESS</div>
+    <div class="login-error" id="l-error"></div>
+    <div class="form-row">
+      <label>Email</label>
+      <input type="email" id="l-email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('l-password').focus()">
+    </div>
+    <div class="form-row">
+      <label>Password</label>
+      <input type="password" id="l-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()">
+    </div>
+    <button class="btn btn-primary" id="l-btn" onclick="submitLogin()" style="width:100%;margin-top:8px">Log in</button>
+  </div>
+</div>
+
 <!-- ═══ ADMIN PANEL ═══ -->
 <div class="admin-overlay" id="adminOverlay">
   <div class="admin-panel">
     <button class="admin-close" onclick="closeAdmin()">✕</button>
     <h2>Publish a Post</h2>
     <div class="admin-sub">CONTENT EDITOR · SIFON.I</div>
-    <div class="admin-success" id="admin-success">✓ Post published successfully! Check the Blog page to see it live.</div>
+    <div class="admin-success" id="admin-success">✓ Post published successfully! It's now live on the Blog and Home page.</div>
     <div class="form-row">
       <label>Post Title *</label>
       <input type="text" id="f-title" placeholder="e.g. Why I Write at Midnight">
@@ -617,7 +645,93 @@ const projects=[
   {id:206,icon:'✍️',title:'Drafts',description:'A minimal writing environment for the terminal. Distraction-free, plain-text, version-controlled. Because sometimes less is the only thing that works.',stack:['Python','Rich','Git','CLI'],featured:false},
 ];
 
-let nextId=300;
+// ─── API CONFIG ──────────────────────────────────────────────────────────────
+// Replace with your Railway backend URL after deploying
+const API_URL = 'https://sifon-backend-production.up.railway.app';
+
+// Admin token stored in memory only — NOT localStorage (XSS risk)
+// Wiped on page close. You'll log in again next session.
+let _adminToken = null;
+
+// ─── API: LOAD POSTS FROM BACKEND ────────────────────────────────────────────
+async function loadPostsFromAPI(){
+  try {
+    const res = await fetch(`${API_URL}/api/posts`);
+    if (!res.ok) throw new Error('Failed to fetch posts');
+    const { posts: apiPosts } = await res.json();
+    if (!apiPosts?.length) return;
+
+    // Merge API posts with default seed posts
+    // API posts come first (newest), seed posts fill in the rest
+    apiPosts.forEach(p => {
+      const normalized = {
+        id: p.id,
+        type: p.type,
+        title: p.title,
+        excerpt: p.excerpt,
+        date: p.date,
+        readTime: p.read_time,
+        members: p.members,
+        content: null, // Full content loaded on demand
+      };
+      if (p.type === 'Poetry') {
+        if (!poems.find(x => x.id === p.id)) poems.unshift(normalized);
+      } else {
+        if (!posts.find(x => x.id === p.id)) posts.unshift(normalized);
+      }
+    });
+  } catch(e) {
+    console.warn('[API] Could not load posts from backend:', e.message);
+    // Site still works with seed posts if backend is down
+  }
+}
+
+// ─── API: LOAD SINGLE POST CONTENT ───────────────────────────────────────────
+async function loadPostContent(id){
+  try {
+    const headers = {};
+    if (_adminToken) headers['Authorization'] = `Bearer ${_adminToken}`;
+    const res = await fetch(`${API_URL}/api/posts/${id}`, { headers });
+    if (!res.ok) return null;
+    const { post } = await res.json();
+    return post;
+  } catch(e) { return null; }
+}
+
+// ─── ADMIN: LOGIN ─────────────────────────────────────────────────────────────
+async function adminLogin(email, password) {
+  const res = await fetch(`${API_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Login failed');
+  }
+  const { accessToken } = await res.json();
+  _adminToken = accessToken; // Stored in memory only — wiped on close
+}
+
+// ─── ADMIN: DELETE POST ───────────────────────────────────────────────────────
+async function deletePost(id){
+  if (!_adminToken) { alert('You need to be logged in to delete posts.'); return; }
+  if (!confirm('Delete this post? This cannot be undone.')) return;
+  try {
+    const res = await fetch(`${API_URL}/api/posts/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${_adminToken}` }
+    });
+    if (!res.ok) throw new Error('Delete failed');
+    posts = posts.filter(p => p.id !== id);
+    poems = poems.filter(p => p.id !== id);
+    renderHomeCarousels();
+    renderBlog();
+    navigate('blog');
+  } catch(e) {
+    alert('Failed to delete post: ' + e.message);
+  }
+}
 
 // ─── NAV ─────────────────────────────────────────────────────────────────────
 function navigate(page){
@@ -633,19 +747,43 @@ function navigate(page){
 function toggleMenu(){document.getElementById('navLinks').classList.toggle('open');}
 
 // ─── POST VIEWER ─────────────────────────────────────────────────────────────
-function openPost(id){
+async function openPost(id){
   const all=[...posts,...poems];
-  const post=all.find(p=>p.id===id);
+  let post=all.find(p=>p.id===id);
   if(!post) return;
-  const isPoem=post.type==='Poetry';
 
-  let bodyHTML=post.content;
+  // Show page immediately with loading state
+  const pp=document.getElementById('post-page');
+  document.querySelectorAll('.page,.post-page').forEach(p=>p.classList.remove('active'));
+  pp.classList.remove('poem-post');
+  pp.classList.add('active');
+  window.scrollTo(0,0);
+  document.getElementById('post-content').innerHTML=`
+    <div class="post-back" onclick="closePost()">← Back to Blog</div>
+    <div style="padding:80px 0;text-align:center;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink-muted);letter-spacing:.08em;">Loading…</div>
+  `;
+
+  // If content is null (API post with only metadata loaded), fetch full content
+  if(post.content === null || post.content === undefined){
+    const full = await loadPostContent(id);
+    if(full){
+      // Merge full content back into local array so we don't re-fetch
+      post = { ...post, content: full.content, truncated: full.truncated };
+      if(post.type==='Poetry'){
+        const idx=poems.findIndex(p=>p.id===id);
+        if(idx!==-1) poems[idx]=post;
+      } else {
+        const idx=posts.findIndex(p=>p.id===id);
+        if(idx!==-1) posts[idx]=post;
+      }
+    }
+  }
+
+  const isPoem=post.type==='Poetry';
+  const bodyHTML = post.content || '<p>Content could not be loaded. Please try again.</p>';
   let extra='';
 
-  if(post.members){
-    const fp=post.content.indexOf('</p>');
-    const preview=fp!==-1?post.content.slice(0,fp+4):post.content.slice(0,300)+'...';
-    bodyHTML=preview;
+  if(post.members && post.truncated){
     extra=`<div class="paywall-wall"><div class="paywall-box">
       <h3>Members Only</h3>
       <p>This post is for paid subscribers. Join the newsletter to unlock full access to all writing.</p>
@@ -662,7 +800,10 @@ function openPost(id){
   }
 
   document.getElementById('post-content').innerHTML=`
-    <div class="post-back" onclick="closePost()">← Back to Blog</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:48px;">
+      <div class="post-back" style="margin-bottom:0" onclick="closePost()">← Back to Blog</div>
+      ${_adminToken?`<button onclick="deletePost(${post.id})" style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid #e88;color:#c44;padding:6px 14px;cursor:pointer;">Delete post</button>`:''}
+    </div>
     <div class="post-tag">${post.type} · ${post.readTime}${post.members?' · ★ Members':''}</div>
     <h1 class="post-title">${post.title}</h1>
     <div class="post-meta">${post.date}</div>
@@ -670,7 +811,7 @@ function openPost(id){
     ${extra}
   `;
 
-  const pp=document.getElementById('post-page');
+  const pp2=document.getElementById('post-page');
   document.querySelectorAll('.page,.post-page').forEach(p=>p.classList.remove('active'));
   pp.classList.add('active');
   if(isPoem) pp.classList.add('poem-post'); else pp.classList.remove('poem-post');
@@ -683,7 +824,31 @@ function closePost(){
 }
 
 // ─── ADMIN ────────────────────────────────────────────────────────────────────
-function openAdmin(){document.getElementById('adminOverlay').classList.add('open');}
+function showLoginModal(){ document.getElementById('loginOverlay').classList.add('open'); }
+function closeLoginModal(){ document.getElementById('loginOverlay').classList.remove('open'); }
+
+async function submitLogin(){
+  const email = document.getElementById('l-email').value.trim();
+  const pw = document.getElementById('l-password').value;
+  const errEl = document.getElementById('l-error');
+  const btn = document.getElementById('l-btn');
+  errEl.textContent=''; btn.textContent='Logging in…'; btn.disabled=true;
+  try {
+    await adminLogin(email, pw);
+    closeLoginModal();
+    document.getElementById('adminOverlay').classList.add('open');
+  } catch(e) {
+    errEl.textContent = 'Invalid credentials. Try again.';
+  } finally {
+    btn.textContent='Log in'; btn.disabled=false;
+    document.getElementById('l-password').value='';
+  }
+}
+
+function openAdmin(){
+  if(_adminToken){ document.getElementById('adminOverlay').classList.add('open'); }
+  else { showLoginModal(); }
+}
 function closeAdmin(){
   document.getElementById('adminOverlay').classList.remove('open');
   document.getElementById('admin-success').style.display='none';
@@ -709,9 +874,10 @@ function publishPost(){
     else{lines.forEach(l=>{if(l.startsWith('##'))html+=`<h2>${l.replace(/^##\s*/,'')}</h2>`;else html+=`<p>${l}</p>`;});}
   });
 
-  const np={id:nextId++,type:cat,title,excerpt:exc||raw.slice(0,120)+'…',date:new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'}),readTime:rt,members:mem,content:html};
+  const np={id:getNextId(),type:cat,title,excerpt:exc||raw.slice(0,120)+'…',date:new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'}),readTime:rt,members:mem,content:html};
   if(isPoem) poems.unshift(np); else posts.unshift(np);
 
+  savePosts(); // persist to localStorage
   renderHomeCarousels();
   renderBlog();
 
@@ -832,8 +998,9 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&['c','a','u','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
 });
-// Allow typing in admin
+// Allow typing in admin + login modals
 document.getElementById('adminOverlay').addEventListener('keydown',e=>e.stopPropagation());
+document.getElementById('loginOverlay').addEventListener('keydown',e=>e.stopPropagation());
 
 // ─── SECRET ADMIN — triple-click the logo ────────────────────────────────────
 let logoClicks=0,logoTimer=null;
@@ -845,10 +1012,17 @@ document.getElementById('navLogo').addEventListener('click',()=>{
 });
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
+// Load seed posts first (instant), then fetch real posts from API
 renderHomeCarousels();
 renderFeaturedProjects();
 renderBlog();
 renderAllProjects();
+// Then fetch real posts from backend and re-render
+loadPostsFromAPI().then(()=>{
+  renderHomeCarousels();
+  renderFeaturedProjects();
+  renderBlog();
+});
 </script>
 </body>
 </html>
