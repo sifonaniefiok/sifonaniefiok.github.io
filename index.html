@@ -5,10 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sifon Imahjnr — Writer & Engineer</title>
 <meta name="description" content="Sifon Aniefiok Imaikop — software engineering student, cybersecurity enthusiast, writer of essays, poems, and ideas.">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
 <!-- AdSense: replace ca-pub-XXXXXXXXXX with your real publisher ID after approval -->
 <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script> -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,6 +87,23 @@ nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06);}
 .newsletter-form button{padding:16px 28px;background:var(--accent);color:var(--cream);border:none;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.04em;transition:background .2s;white-space:nowrap;}
 .newsletter-form button:hover{background:#a85e2e;}
 .newsletter-note{font-family:'DM Mono',monospace;font-size:12px;color:rgba(250,248,243,.3);margin-top:16px;letter-spacing:.04em;}
+
+/* SKELETON LOADER */
+.skeleton-card .skel-line{
+  background:linear-gradient(90deg, rgba(0,0,0,.06) 25%, rgba(0,0,0,.1) 50%, rgba(0,0,0,.06) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:2px;
+}
+.poem-card.skeleton-card .skel-line{
+  background:linear-gradient(90deg, rgba(255,255,255,.06) 25%, rgba(255,255,255,.12) 50%, rgba(255,255,255,.06) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+}
+@keyframes shimmer{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
 
 /* AD SLOT */
 .ad-slot{background:var(--card-bg);border:1px dashed var(--border);padding:20px;text-align:center;margin:0 48px 32px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted);letter-spacing:.06em;line-height:1.8;}
@@ -254,6 +267,23 @@ nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06);}
 .form-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .admin-success{background:var(--green-light);border:1px solid var(--green);padding:16px 20px;font-size:14px;color:var(--green);font-family:'DM Mono',monospace;margin-bottom:24px;display:none;}
 
+/* SKELETON LOADER */
+.skeleton-card .skel-line{
+  background:linear-gradient(90deg,rgba(0,0,0,.06) 25%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.06) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:2px;
+}
+.poem-card.skeleton-card .skel-line{
+  background:linear-gradient(90deg,rgba(255,255,255,.06) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.06) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+}
+@keyframes shimmer{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+
 /* FOOTER */
 footer{padding:48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
@@ -290,7 +320,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <!-- FLOATING SUPPORT BUTTON — replace href with your real buymeacoffee link -->
-<a class="bmac-float" href="https://buymeacoffee.com/sifon" target="_blank" rel="noopener">
+<a class="bmac-float" href="https://buymeacoffee.com/Sifon" target="_blank" rel="noopener">
   <span class="bmac-dot"></span><span class="bmac-label">Support my work</span>
 </a>
 
@@ -324,10 +354,9 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
 
   <hr class="divider">
 
-  <!-- AdSense slot — activate after approval -->
-  <div class="ad-slot" id="ad-home-top">
-    📢 <strong>Ad Space</strong> — After Google AdSense approves your site, replace this div with:<br>
-    <code style="font-size:11px">&lt;ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXX" data-ad-slot="XXXX" data-ad-format="auto"&gt;&lt;/ins&gt;</code>
+  <!-- AdSense slot — hidden until approved. Remove style="display:none" after approval -->
+  <div class="ad-slot" id="ad-home-top" style="display:none">
+    <!-- Replace this entire div with your AdSense <ins> tag after approval -->
   </div>
 
   <div class="section">
@@ -383,7 +412,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
     <div class="footer-logo">S<span>.</span>I</div>
     <div class="footer-links">
       <a onclick="navigate('privacy')">Privacy Policy</a>
-      <a href="https://buymeacoffee.com/sifon" target="_blank">Support ☕</a>
+      <a href="https://buymeacoffee.com/Sifon" target="_blank">Support ☕</a>
       <a onclick="navigate('contact')">Contact</a>
     </div>
     <p>© 2026 Sifon Imahjnr</p>
@@ -404,7 +433,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
       </div>
       <div class="about-content">
         <p>I'm <strong>Sifon Aniefiok Imaikop</strong> , a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
-        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night — and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
+        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night, and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
         <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
         <p>When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.</p>
         <div class="about-interests">
@@ -442,7 +471,8 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
     </div>
     <div class="blog-grid" id="blog-grid"></div>
   </div>
-  <div class="ad-slot">📢 Ad Space — activate after AdSense approval</div>
+  <!-- AdSense slot — hidden until approved -->
+  <div class="ad-slot" style="display:none"></div>
   <div class="newsletter-banner" style="margin-bottom:0">
     <h2>Never miss a <em>post</em></h2>
     <p>Get new essays and poems in your inbox the moment they're published.</p>
@@ -487,7 +517,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </a>
         <div class="contact-link" onclick="window.open('https://github.com','_blank')">
           <div class="contact-link-icon" style="font-size:18px">⌥</div>
-          <div class="contact-link-text"><strong>GitHub</strong><span>@sifon-dev</span></div>
+          <div class="contact-link-text"><strong>GitHub</strong><span>@sifonaniefiok</span></div>
         </div>
         <div class="contact-link">
           <div class="contact-link-icon" style="font-size:16px">𝕏</div>
@@ -497,7 +527,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
           <div class="contact-link-icon" style="font-size:15px">in</div>
           <div class="contact-link-text"><strong>LinkedIn</strong><span>Sifon Imaikop</span></div>
         </div>
-        <a class="contact-link" href="https://buymeacoffee.com/sifon" target="_blank">
+        <a class="contact-link" href="https://buymeacoffee.com/Sifon" target="_blank">
           <div class="contact-link-icon">☕</div>
           <div class="contact-link-text"><strong>Buy Me a Coffee</strong><span>Support the writing</span></div>
         </a>
@@ -651,7 +681,7 @@ const projects=[
 
 // ─── API CONFIG ──────────────────────────────────────────────────────────────
 // Replace with your Railway backend URL after deploying
-const API_URL = 'https://sifon-backend-production.up.railway.app';
+const API_URL = 'https://YOUR-RAILWAY-URL.railway.app';
 
 // Admin token stored in memory only — NOT localStorage (XSS risk)
 // Wiped on page close. You'll log in again next session.
@@ -804,12 +834,12 @@ async function openPost(id){
       <h3>Members Only</h3>
       <p>This post is for paid subscribers. Join the newsletter to unlock full access to all writing.</p>
       <a href="https://sifons-newsletter-f3fd43.beehiiv.com" target="_blank" class="btn btn-primary">Become a Member</a>
-      <a href="https://buymeacoffee.com/sifon" target="_blank" class="btn btn-outline" style="margin-top:0">☕ Support with coffee</a>
+      <a href="https://buymeacoffee.com/Sifon" target="_blank" class="btn btn-outline" style="margin-top:0">☕ Support with coffee</a>
     </div></div>`;
   } else {
     extra=`<div class="post-cta-strip">
       <p>If this piece meant something to you, consider supporting the work.</p>
-      <a href="https://buymeacoffee.com/sifon" target="_blank" class="btn btn-accent">☕ Buy me a coffee</a>
+      <a href="https://buymeacoffee.com/Sifon" target="_blank" class="btn btn-accent">☕ Buy me a coffee</a>
       <button class="btn btn-outline" onclick="navigate('blog')">More posts →</button>
     </div>`;
     if(isPoem) extra=`<div class="poem-author">— Sifon</div>`+extra;
@@ -827,9 +857,7 @@ async function openPost(id){
     ${extra}
   `;
 
-  const pp2=document.getElementById('post-page');
-  document.querySelectorAll('.page,.post-page').forEach(p=>p.classList.remove('active'));
-  pp.classList.add('active');
+  // Update poem styling
   if(isPoem) pp.classList.add('poem-post'); else pp.classList.remove('poem-post');
   window.scrollTo(0,0);
 }
@@ -1053,6 +1081,38 @@ document.addEventListener('keydown',e=>{
 document.getElementById('adminOverlay').addEventListener('keydown',e=>e.stopPropagation());
 document.getElementById('loginOverlay').addEventListener('keydown',e=>e.stopPropagation());
 
+// ─── SKELETON LOADER ─────────────────────────────────────────────────────────
+function showSkeletonCarousels(){
+  const skeletonCard = (dark=false) => {
+    const c = document.createElement('div');
+    c.className = dark ? 'poem-card skeleton-card' : 'blog-card skeleton-card';
+    c.style.cssText = 'cursor:default;pointer-events:none;';
+    c.innerHTML = `
+      <div class="skel-line" style="width:60px;height:10px;margin-bottom:18px"></div>
+      <div class="skel-line" style="width:90%;height:18px;margin-bottom:10px"></div>
+      <div class="skel-line" style="width:75%;height:18px;margin-bottom:20px"></div>
+      <div class="skel-line" style="width:100%;height:12px;margin-bottom:8px"></div>
+      <div class="skel-line" style="width:80%;height:12px;margin-bottom:20px"></div>
+      <div class="skel-line" style="width:50%;height:10px"></div>
+    `;
+    return c;
+  };
+
+  // Posts carousel — 4 skeleton cards
+  const pc = document.getElementById('carousel-posts');
+  const pd = document.getElementById('dots-posts');
+  if(pc){ pc.innerHTML=''; pd.innerHTML=''; for(let i=0;i<4;i++) pc.appendChild(skeletonCard(false)); }
+
+  // Poems carousel — 4 dark skeleton cards
+  const mc = document.getElementById('carousel-poems');
+  const md = document.getElementById('dots-poems');
+  if(mc){ mc.innerHTML=''; md.innerHTML=''; for(let i=0;i<4;i++) mc.appendChild(skeletonCard(true)); }
+
+  // Blog grid skeleton
+  const bg = document.getElementById('blog-grid');
+  if(bg){ bg.innerHTML=''; for(let i=0;i<6;i++) bg.appendChild(skeletonCard(false)); }
+}
+
 // ─── SECRET ADMIN — triple-click the logo ────────────────────────────────────
 let logoClicks=0,logoTimer=null;
 document.getElementById('navLogo').addEventListener('click',()=>{
@@ -1063,15 +1123,19 @@ document.getElementById('navLogo').addEventListener('click',()=>{
 });
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
-// Load seed posts first (instant), then fetch real posts from API
-renderHomeCarousels();
 renderFeaturedProjects();
-renderBlog();
 renderAllProjects();
-// Then fetch real posts from backend and re-render
+
+// Show skeleton while API loads
+showSkeletonCarousels();
+
+// Fetch real posts then render everything
 loadPostsFromAPI().then(()=>{
   renderHomeCarousels();
-  renderFeaturedProjects();
+  renderBlog();
+}).catch(()=>{
+  // Fallback to seed posts if API fails
+  renderHomeCarousels();
   renderBlog();
 });
 </script>
