@@ -1,0 +1,12 @@
+# robots.txt for sifonaniefiok.github.io
+# Tells search engines which pages to crawl and index
+
+# Allow all search engines to crawl everything
+User-agent: *
+Allow: /
+
+# Sitemap location — helps Google find all your pages faster
+Sitemap: https://sifonaniefiok.github.io/sitemap.xml
+
+# Block search engines from indexing the CDN scripts (not useful content)
+Disallow: /cdn-cgi/
