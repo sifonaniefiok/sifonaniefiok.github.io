@@ -449,9 +449,9 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
       </div>
       <div class="about-content">
-        <p>I'm <strong>Sifon Aniefiok Imaikop</strong>, a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
+        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> , a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
         <p>By day, I study systems, write code, and think about how information flows safely through the world. By night, and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
-        <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
+        <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines , where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
         <p>When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.</p>
         <div class="about-interests">
           <div class="interest-chip">Software Engineering</div>
@@ -542,7 +542,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
         <div class="contact-link">
           <div class="contact-link-icon" style="font-size:15px">in</div>
-          <div class="contact-link-text"><strong>LinkedIn</strong><span>Sifon Imaikop</span></div>
+          <div class="contact-link-text"><strong>LinkedIn</strong><span>sifon-imah-jnr</span></div>
         </div>
         <a class="contact-link" href="https://buymeacoffee.com/Sifon" target="_blank">
           <div class="contact-link-icon">☕</div>
@@ -1128,4 +1128,43 @@ document.getElementById('navLogo').addEventListener('click',()=>{
   if(logoClicks>=3){logoClicks=0;openAdmin();}
 });
 
-// ─── INIT ───────────────────────────────────────────────────�
+// ─── INIT
+// ─── SKELETON LOADER ─────────────────────────────────────────────────────────
+function showSkeletonCarousels(){
+  const skCard=(dark=false)=>{
+    const c=document.createElement('div');
+    c.className=(dark?'poem-card':'blog-card')+' skeleton-card';
+    c.style.cssText='cursor:default;pointer-events:none;';
+    c.innerHTML=`
+      <div class="skel-line" style="width:60px;height:10px;margin-bottom:18px"></div>
+      <div class="skel-line" style="width:90%;height:18px;margin-bottom:10px"></div>
+      <div class="skel-line" style="width:75%;height:18px;margin-bottom:20px"></div>
+      <div class="skel-line" style="width:100%;height:12px;margin-bottom:8px"></div>
+      <div class="skel-line" style="width:80%;height:12px;margin-bottom:20px"></div>
+      <div class="skel-line" style="width:50%;height:10px"></div>`;
+    return c;
+  };
+  const pc=document.getElementById('carousel-posts');
+  const pd=document.getElementById('dots-posts');
+  if(pc){pc.innerHTML='';pd.innerHTML='';for(let i=0;i<4;i++)pc.appendChild(skCard(false));}
+  const mc=document.getElementById('carousel-poems');
+  const md=document.getElementById('dots-poems');
+  if(mc){mc.innerHTML='';md.innerHTML='';for(let i=0;i<4;i++)mc.appendChild(skCard(true));}
+  const bg=document.getElementById('blog-grid');
+  if(bg){bg.innerHTML='';for(let i=0;i<6;i++)bg.appendChild(skCard(false));}
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+renderFeaturedProjects();
+renderAllProjects();
+showSkeletonCarousels();
+loadPostsFromAPI().then(()=>{
+  renderHomeCarousels();
+  renderBlog();
+}).catch(()=>{
+  renderHomeCarousels();
+  renderBlog();
+});
+</script>
+</body>
+</html>
