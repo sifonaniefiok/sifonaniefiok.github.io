@@ -4,22 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sifon Imahjnr — Writer & Engineer</title>
-<meta name="description" content="Sifon Aniefiok Imaikop — software engineering student, cybersecurity enthusiast, writer of essays, poems, and ideas. From Nsit Ubium, Akwa Ibom State, Nigeria.">
+<meta name="description" content="Sifon Aniefiok Imaikop — software engineering student, cybersecurity enthusiast, writer of essays, poems, and ideas.">
 <meta name="keywords" content="Sifon Imaikop, software engineering, cybersecurity, essays, poetry, ideas, technology, writing, blog">
 <meta name="author" content="Sifon Aniefiok Imaikop">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://sifonaniefiok.github.io/">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
-
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2Y1MTQWW3W"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-2Y1MTQWW3W');
-</script>
 
 <!-- Open Graph — how your site looks when shared on social media -->
 <meta property="og:title" content="Sifon Imahjnr — Writer & Engineer">
@@ -32,6 +22,16 @@
 <meta name="twitter:title" content="Sifon Imahjnr — Writer & Engineer">
 <meta name="twitter:description" content="Essays, poems, and ideas from a software engineering and cybersecurity student.">
 <meta name="twitter:site" content="@Sifon_Imahjnr">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7939660578002066" crossorigin="anonymous"></script>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2Y1MTQWW3W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-2Y1MTQWW3W');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -318,6 +318,117 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
 .footer-links a{font-size:13px;color:var(--ink-muted);text-decoration:none;font-family:'DM Mono',monospace;cursor:pointer;letter-spacing:.04em;}
 .footer-links a:hover{color:var(--accent);}
 
+/* AI CHAT */
+.ai-chat-btn{
+  position:fixed;bottom:24px;left:24px;z-index:900;
+  width:48px;height:48px;border-radius:50%;
+  background:var(--ink);color:var(--cream);
+  border:none;cursor:pointer;font-size:20px;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
+  transition:all .25s;display:flex;align-items:center;justify-content:center;
+}
+.ai-chat-btn:hover{background:var(--accent);transform:scale(1.1);}
+.ai-chat-window{
+  position:fixed;bottom:84px;left:24px;z-index:900;
+  width:min(360px,calc(100vw - 48px));
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
+  display:none;flex-direction:column;
+  max-height:480px;
+}
+.ai-chat-window.open{display:flex;}
+.ai-chat-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ai-chat-header h4{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;}
+.ai-chat-header span{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.08em;}
+.ai-chat-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--ink-muted);}
+.ai-chat-messages{
+  flex:1;overflow-y:auto;padding:16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.ai-msg{font-size:14px;line-height:1.6;max-width:85%;}
+.ai-msg.user{
+  align-self:flex-end;
+  background:var(--ink);color:var(--cream);
+  padding:10px 14px;border-radius:2px;
+  font-family:'DM Sans',sans-serif;
+}
+.ai-msg.assistant{
+  align-self:flex-start;
+  background:var(--accent-light);color:var(--ink);
+  padding:10px 14px;border-radius:2px;
+  font-family:'DM Sans',sans-serif;
+}
+.ai-msg.typing{color:var(--ink-muted);font-style:italic;font-family:'DM Mono',monospace;font-size:12px;}
+.ai-chat-input{
+  padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;gap:8px;
+}
+.ai-chat-input input{
+  flex:1;padding:10px 14px;font-size:14px;
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);border:1.5px solid var(--border);
+  color:var(--ink);outline:none;
+  -webkit-user-select:text;user-select:text;
+}
+.ai-chat-input input:focus{border-color:var(--accent);}
+.ai-chat-input button{
+  padding:10px 16px;background:var(--accent);
+  color:var(--cream);border:none;cursor:pointer;
+  font-size:13px;transition:background .2s;
+}
+.ai-chat-input button:hover{background:#a85e2e;}
+
+/* AI WRITING ASSISTANT */
+.ai-assist-bar{
+  background:var(--accent-light);
+  border:1px solid var(--border);
+  padding:16px;margin-bottom:24px;
+}
+.ai-assist-bar p{
+  font-family:'DM Mono',monospace;font-size:12px;
+  letter-spacing:.06em;color:var(--accent);
+  margin-bottom:12px;text-transform:uppercase;
+}
+.ai-assist-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.ai-assist-btn{
+  padding:8px 16px;font-size:12px;font-family:'DM Mono',monospace;
+  letter-spacing:.06em;background:var(--ink);color:var(--cream);
+  border:none;cursor:pointer;transition:background .2s;
+}
+.ai-assist-btn:hover{background:var(--accent);}
+.ai-assist-btn:disabled{opacity:.5;cursor:not-allowed;}
+.ai-assist-result{
+  background:var(--card-bg);border:1px solid var(--border);
+  padding:16px;font-size:14px;line-height:1.7;
+  color:var(--ink-soft);display:none;
+  max-height:200px;overflow-y:auto;
+  font-family:'DM Sans',sans-serif;
+  -webkit-user-select:text;user-select:text;
+}
+.ai-assist-result.visible{display:block;}
+.ai-assist-actions{display:flex;gap:8px;margin-top:8px;display:none;}
+.ai-assist-actions.visible{display:flex;}
+
+/* AI RECOMMENDATIONS */
+.ai-recommendations{
+  margin-top:48px;padding-top:48px;
+  border-top:1px solid var(--border);
+}
+.ai-recommendations .section-label{margin-bottom:20px;}
+.ai-rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+.ai-rec-card{
+  background:var(--card-bg);border:1px solid var(--border);
+  padding:20px;cursor:pointer;
+  transition:transform .25s,box-shadow .25s;
+}
+.ai-rec-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.08);}
+.ai-rec-card .card-tag{font-size:10px;margin-bottom:8px;}
+.ai-rec-card .card-title{font-size:16px;margin-bottom:0;}
+
 /* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
 
@@ -343,6 +454,26 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
 <body>
 
 <div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- AI CHAT BUTTON -->
+<button class="ai-chat-btn" id="aiChatBtn" onclick="toggleChat()" title="Ask AI about my posts">✦</button>
+
+<div class="ai-chat-window" id="aiChatWindow">
+  <div class="ai-chat-header">
+    <div>
+      <h4>Ask about my writing</h4>
+      <span>Powered by Claude AI</span>
+    </div>
+    <button class="ai-chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="ai-chat-messages" id="aiChatMessages">
+    <div class="ai-msg assistant">Hi! I'm familiar with all of Sifon's posts. Ask me anything — what he's written about, summaries, recommendations, anything.</div>
+  </div>
+  <div class="ai-chat-input">
+    <input type="text" id="aiChatInput" placeholder="Ask me anything…" onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()">→</button>
+  </div>
+</div>
 
 <!-- FLOATING SUPPORT BUTTON — replace href with your real buymeacoffee link -->
 <a class="bmac-float" href="https://buymeacoffee.com/Sifon" target="_blank" rel="noopener">
@@ -457,9 +588,9 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
       </div>
       <div class="about-content">
-        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> , a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
-        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night, and sometimes long past night I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
-        <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines, where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
+        <p>I'm <strong>Sifon Aniefiok Imaikop</strong> — a software engineering and cybersecurity student, writer, and builder of ideas. I believe technology and language are two sides of the same coin: both are tools for making the invisible visible.</p>
+        <p>By day, I study systems, write code, and think about how information flows safely through the world. By night — and sometimes long past night — I write. Essays, poems, reflections, and fragments of thought that refuse to be reduced to a function or a formula.</p>
+        <p>I started this website as a home for things I create: software that solves problems, writing that asks questions, and poems that do both. I'm drawn to ideas that sit at the edge of disciplines — where technology meets philosophy, where security meets trust, where a line of code and a line of verse share the same architecture.</p>
         <p>When I'm not at a desk, I'm probably reading, thinking about systems I don't yet understand, or looking for the right words for something I haven't yet written.</p>
         <div class="about-interests">
           <div class="interest-chip">Software Engineering</div>
@@ -536,9 +667,9 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
     <div class="contact-inner">
       <p class="contact-intro">Whether you want to talk about a project, share a thought, or just say hello — I'm always glad to hear from thoughtful people.</p>
       <div class="contact-links">
-        <a class="contact-link" href="mailto:sifonaniefiokimaikop@gmail.com">
+        <a class="contact-link" href="/cdn-cgi/l/email-protection#ea99838c85848b84838f8c83858183878b8381859aaa8d878b8386c4898587">
           <div class="contact-link-icon">✉</div>
-          <div class="contact-link-text"><strong>Email</strong><span>sifonaniefiokimaikop@gmail.com</span></div>
+          <div class="contact-link-text"><strong>Email</strong><span><span class="__cf_email__" data-cfemail="fa89939c95949b94939f9c93959193979b9391958aba9d979b9396d4999597">[email&#160;protected]</span></span></div>
         </a>
         <div class="contact-link" onclick="window.open('https://github.com','_blank')">
           <div class="contact-link-icon" style="font-size:18px">⌥</div>
@@ -546,11 +677,11 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
         </div>
         <div class="contact-link">
           <div class="contact-link-icon" style="font-size:16px">𝕏</div>
-          <div class="contact-link-text"><strong>Twitter / X</strong><span>@Sifon_Imah</span></div>
+          <div class="contact-link-text"><strong>Twitter / X</strong><span>@sifon_Imahjnr</span></div>
         </div>
         <div class="contact-link">
           <div class="contact-link-icon" style="font-size:15px">in</div>
-          <div class="contact-link-text"><strong>LinkedIn</strong><span>Sifon-Imah-jnr</span></div>
+          <div class="contact-link-text"><strong>LinkedIn</strong><span>Sifon Imaikop</span></div>
         </div>
         <a class="contact-link" href="https://buymeacoffee.com/Sifon" target="_blank">
           <div class="contact-link-icon">☕</div>
@@ -597,7 +728,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
       <h2>Data Security</h2>
       <p>I take reasonable steps to protect your information. However, no internet transmission is 100% secure. Please do not share sensitive personal information through this website.</p>
       <h2>Contact</h2>
-      <p>Questions about this policy? Contact me at <strong>sifonaniefiokimaikop@gmail.com</strong>.</p>
+      <p>Questions about this policy? Contact me at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9eedf7f8f1f0fff0f7fbf8f7f1f5f7f3fff7f5f1eedef9f3fff7f2b0fdf1f3">[email&#160;protected]</a></strong>.</p>
     </div>
   </div>
   <footer>
@@ -637,6 +768,23 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
     <h2>Publish a Post</h2>
     <div class="admin-sub">CONTENT EDITOR · SIFON.I</div>
     <div class="admin-success" id="admin-success">✓ Post published successfully! It's now live on the Blog and Home page.</div>
+
+    <!-- AI Writing Assistant -->
+    <div class="ai-assist-bar">
+      <p>✦ AI Writing Assistant</p>
+      <div class="ai-assist-buttons">
+        <button class="ai-assist-btn" onclick="aiAssist('draft')" id="btn-draft">Draft from topic</button>
+        <button class="ai-assist-btn" onclick="aiAssist('expand')" id="btn-expand">Expand content</button>
+        <button class="ai-assist-btn" onclick="aiAssist('improve')" id="btn-improve">Improve writing</button>
+        <button class="ai-assist-btn" onclick="aiAssist('excerpt')" id="btn-excerpt">Generate excerpt</button>
+      </div>
+      <div class="ai-assist-result" id="ai-assist-result"></div>
+      <div class="ai-assist-actions" id="ai-assist-actions">
+        <button class="ai-assist-btn" onclick="useAIResult('content')">Use as content</button>
+        <button class="ai-assist-btn" onclick="useAIResult('excerpt')">Use as excerpt</button>
+        <button class="ai-assist-btn" style="background:var(--ink-muted)" onclick="clearAIResult()">Dismiss</button>
+      </div>
+    </div>
     <div class="form-row">
       <label>Post Title *</label>
       <input type="text" id="f-title" placeholder="e.g. Why I Write at Midnight">
@@ -678,7 +826,7 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ─── DATA ────────────────────────────────────────────────────────────────────
 let posts=[];
 
@@ -874,6 +1022,11 @@ async function openPost(id){
   // Update poem styling
   if(isPoem) pp.classList.add('poem-post'); else pp.classList.remove('poem-post');
   window.scrollTo(0,0);
+
+  // Load AI recommendations after post renders
+  if(!post.members || !post.truncated){
+    setTimeout(()=>loadRecommendations(post.id, post.title, post.type), 500);
+  }
 }
 
 function closePost(){
@@ -985,6 +1138,151 @@ async function publishPost(){
   } finally {
     if(btn){btn.textContent='Publish Post';btn.disabled=false;}
   }
+}
+
+// ─── AI CHAT ─────────────────────────────────────────────────────────────────
+function toggleChat(){
+  const w=document.getElementById('aiChatWindow');
+  w.classList.toggle('open');
+  if(w.classList.contains('open')){
+    document.getElementById('aiChatInput').focus();
+  }
+}
+
+async function sendChat(){
+  const input=document.getElementById('aiChatInput');
+  const msg=input.value.trim();
+  if(!msg) return;
+  input.value='';
+
+  const messages=document.getElementById('aiChatMessages');
+
+  // Add user message
+  const userDiv=document.createElement('div');
+  userDiv.className='ai-msg user';
+  userDiv.textContent=msg;
+  messages.appendChild(userDiv);
+
+  // Add typing indicator
+  const typingDiv=document.createElement('div');
+  typingDiv.className='ai-msg typing';
+  typingDiv.textContent='Thinking…';
+  messages.appendChild(typingDiv);
+  messages.scrollTop=messages.scrollHeight;
+
+  try {
+    const res=await fetch(`${API_URL}/api/ai/chat`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:msg})
+    });
+    const data=await res.json();
+    typingDiv.className='ai-msg assistant';
+    typingDiv.textContent=data.reply||data.error||'Sorry, I could not answer that.';
+  } catch(e){
+    typingDiv.className='ai-msg assistant';
+    typingDiv.textContent='Sorry, AI is temporarily unavailable.';
+  }
+  messages.scrollTop=messages.scrollHeight;
+}
+
+// ─── AI WRITING ASSISTANT ─────────────────────────────────────────────────────
+let _aiResult='';
+
+async function aiAssist(mode){
+  if(!_adminToken){alert('Log in first.');return;}
+
+  const title=document.getElementById('f-title').value.trim();
+  const content=document.getElementById('f-content').value.trim();
+  const resultEl=document.getElementById('ai-assist-result');
+  const actionsEl=document.getElementById('ai-assist-actions');
+
+  let prompt='';
+  if(mode==='draft'){
+    prompt=title||window.prompt('Enter your topic or idea:');
+    if(!prompt) return;
+  } else {
+    if(!content){alert('Add some content first, then use Expand or Improve.');return;}
+    prompt=content;
+  }
+
+  // Disable all buttons while loading
+  document.querySelectorAll('.ai-assist-btn').forEach(b=>b.disabled=true);
+  resultEl.className='ai-assist-result visible';
+  resultEl.textContent='Writing…';
+  actionsEl.className='ai-assist-actions';
+
+  try {
+    const res=await fetch(`${API_URL}/api/ai/assist`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${_adminToken}`
+      },
+      body:JSON.stringify({
+        mode,
+        prompt,
+        existingContent:content
+      })
+    });
+    const data=await res.json();
+    if(data.result){
+      _aiResult=data.result;
+      resultEl.textContent=data.result;
+      actionsEl.className='ai-assist-actions visible';
+    } else {
+      resultEl.textContent=data.error||'Could not generate content.';
+    }
+  } catch(e){
+    resultEl.textContent='AI assistant unavailable. Try again.';
+  }
+  document.querySelectorAll('.ai-assist-btn').forEach(b=>b.disabled=false);
+}
+
+function useAIResult(target){
+  if(!_aiResult) return;
+  if(target==='content') document.getElementById('f-content').value=_aiResult;
+  if(target==='excerpt') document.getElementById('f-excerpt').value=_aiResult.slice(0,200);
+  clearAIResult();
+}
+
+function clearAIResult(){
+  _aiResult='';
+  document.getElementById('ai-assist-result').className='ai-assist-result';
+  document.getElementById('ai-assist-actions').className='ai-assist-actions';
+}
+
+// ─── AI RECOMMENDATIONS ───────────────────────────────────────────────────────
+async function loadRecommendations(postId, postTitle, postType){
+  try {
+    const res=await fetch(`${API_URL}/api/ai/recommend`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({postId, title:postTitle, type:postType})
+    });
+    const {recommendations}=await res.json();
+    if(!recommendations?.length) return;
+
+    const container=document.createElement('div');
+    container.className='ai-recommendations';
+    container.innerHTML=`
+      <div class="section-label">You might also like</div>
+      <div class="ai-rec-grid" id="ai-rec-grid"></div>`;
+
+    const postContent=document.getElementById('post-content');
+    postContent.appendChild(container);
+
+    const grid=document.getElementById('ai-rec-grid');
+    recommendations.forEach(p=>{
+      const card=document.createElement('div');
+      card.className='ai-rec-card';
+      card.onclick=()=>openPost(p.id);
+      card.innerHTML=`
+        <div class="card-tag">${p.type}</div>
+        <div class="card-title">${p.title}</div>`;
+      grid.appendChild(card);
+    });
+  } catch(e){} // Fail silently
 }
 
 // ─── NEWSLETTER ───────────────────────────────────────────────────────────────
@@ -1129,6 +1427,7 @@ function showSkeletonCarousels(){
   if(bg){bg.innerHTML='';for(let i=0;i<6;i++)bg.appendChild(skCard(false));}
 }
 
+// ─── INIT
 // ─── INIT ────────────────────────────────────────────────────────────────────
 renderFeaturedProjects();
 renderAllProjects();
