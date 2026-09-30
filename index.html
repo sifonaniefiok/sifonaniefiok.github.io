@@ -17,13 +17,19 @@
 <meta property="og:description" content="Essays, poems, and ideas from a software engineering and cybersecurity student.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sifonaniefiok.github.io/">
+<meta property="og:site_name" content="Sifon Imahjnr — Writer & Engineer">
+<meta property="og:image" content="https://sifonaniefiok.github.io/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sifon Aniefiok Imaikop — essays, poems, and ideas">
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sifon Imahjnr — Writer & Engineer">
 <meta name="twitter:description" content="Essays, poems, and ideas from a software engineering and cybersecurity student.">
 <meta name="twitter:site" content="@Sifon_Imahjnr">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7939660578002066" crossorigin="anonymous"></script>
+<meta name="twitter:image" content="https://sifonaniefiok.github.io/og-default.png">
+<link rel="alternate" type="application/rss+xml" title="Sifon Imahjnr" href="https://sifonaniefiok.github.io/feed.xml">
 
 <!-- Google Adsense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3988501910661269"
@@ -454,6 +460,14 @@ footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
   .form-2col{grid-template-columns:1fr;}
   .bmac-float{bottom:16px;right:16px;padding:7px 12px 7px 10px;font-size:10px;}
 }
+/* SHARE BAR */
+.share-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:48px;padding-top:32px;border-top:1px solid var(--border);}
+.share-label{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-right:6px;}
+.share-btn{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.06em;padding:9px 16px;border:1px solid var(--border);background:var(--card-bg);color:var(--ink);text-decoration:none;cursor:pointer;transition:border-color .2s,color .2s,transform .2s;}
+.share-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+.share-btn[hidden]{display:none;}
+.poem-post .share-bar{justify-content:center;}
+@media(max-width:600px){.share-label{width:100%;margin-bottom:2px}}
 </style>
 </head>
 <body>
@@ -950,6 +964,7 @@ async function deletePost(id){
 
 // ─── NAV ─────────────────────────────────────────────────────────────────────
 function navigate(page){
+  if(location.pathname!=='/'||location.search) history.replaceState(null,'','/');
   document.querySelectorAll('.page,.post-page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
@@ -960,6 +975,51 @@ function navigate(page){
 }
 
 function toggleMenu(){document.getElementById('navLinks').classList.toggle('open');}
+
+// ─── SHARING ─────────────────────────────────────────────────────────────────
+// Each post has its own page at /posts/<slug>/ (built by scripts/build_posts.py)
+// with a preview card for X, WhatsApp, etc. posts/index.json maps ids to links.
+const SITE_URL='https://sifonaniefiok.github.io';
+let postLinks={};
+const postLinksReady=fetch('/posts/index.json',{cache:'no-cache'})
+  .then(r=>r.ok?r.json():{posts:[]})
+  .then(d=>{(d.posts||[]).forEach(p=>{postLinks[p.id]=p.url;});})
+  .catch(()=>{});
+function postURL(post){ return postLinks[post.id] || `${SITE_URL}/?post=${post.id}`; }
+function escAttr(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shareBarHTML(post){
+  const url=postURL(post), u=encodeURIComponent(url), t=encodeURIComponent(post.title);
+  const links=[
+    ['X',`https://twitter.com/intent/tweet?text=${t}&url=${u}&via=Sifon_Imahjnr`],
+    ['WhatsApp',`https://wa.me/?text=${encodeURIComponent(post.title+' — '+url)}`],
+    ['Facebook',`https://www.facebook.com/sharer/sharer.php?u=${u}`],
+    ['LinkedIn',`https://www.linkedin.com/sharing/share-offsite/?url=${u}`],
+    ['Telegram',`https://t.me/share/url?url=${u}&text=${t}`],
+  ];
+  return `<div class="share-bar" data-url="${escAttr(url)}" data-title="${escAttr(post.title)}">
+    <span class="share-label">Share this</span>
+    ${links.map(([n,h])=>`<a class="share-btn" data-share="${n.toLowerCase()}" href="${escAttr(h)}" target="_blank" rel="noopener">${n}</a>`).join('')}
+    <button class="share-btn" data-share="copy" type="button">Copy link</button>
+    ${navigator.share?'<button class="share-btn" data-share="native" type="button">Share…</button>':''}
+  </div>`;
+}
+// Show the post's own link in the address bar, so copying it from there works too.
+function setPostAddress(post){
+  const url=postLinks[post.id];
+  try{ history.replaceState(null,'',url?new URL(url).pathname:`/?post=${post.id}`); }catch(e){}
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.share-bar [data-share]'); if(!b) return;
+  const bar=b.closest('.share-bar'), url=bar.dataset.url, kind=b.dataset.share;
+  if(kind==='copy'){
+    (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>{
+      const t=b.textContent; b.textContent='Link copied ✓'; setTimeout(()=>{b.textContent=t;},1800);
+    }).catch(()=>window.prompt('Copy this link:',url));
+  } else if(kind==='native'){
+    navigator.share({title:bar.dataset.title,url}).catch(()=>{});
+  }
+  if(window.gtag) gtag('event','share',{method:kind,content_type:'post',item_id:url});
+});
 
 // ─── POST VIEWER ─────────────────────────────────────────────────────────────
 async function openPost(id){
@@ -1024,7 +1084,9 @@ async function openPost(id){
     <div class="post-meta">${post.date}</div>
     <div class="post-body">${bodyHTML}</div>
     ${extra}
+    ${shareBarHTML(post)}
   `;
+  setPostAddress(post);
 
   // Update poem styling
   if(isPoem) pp.classList.add('poem-post'); else pp.classList.remove('poem-post');
@@ -1037,6 +1099,7 @@ async function openPost(id){
 }
 
 function closePost(){
+  if(location.pathname!=='/'||location.search) history.replaceState(null,'','/');
   document.getElementById('post-page').classList.remove('active','poem-post');
   navigate('blog');
 }
@@ -1439,12 +1502,20 @@ function showSkeletonCarousels(){
 renderFeaturedProjects();
 renderAllProjects();
 showSkeletonCarousels();
+function openFromLink(){
+  const q=new URLSearchParams(location.search);
+  const id=parseInt(q.get('post'),10), pg=q.get('page');
+  if(id && [...posts,...poems].some(p=>p.id===id)){ postLinksReady.then(()=>openPost(id)); }
+  else if(pg && /^[a-z]+$/.test(pg) && document.getElementById('page-'+pg)){ navigate(pg); history.replaceState(null,'','/'); }
+}
 loadPostsFromAPI().then(()=>{
   renderHomeCarousels();
   renderBlog();
+  openFromLink();
 }).catch(()=>{
   renderHomeCarousels();
   renderBlog();
+  openFromLink();
 });
 </script>
 </body>
