@@ -1,0 +1,63 @@
+[
+ {
+  "id": 13,
+  "title": "Security Is a Philosophy, Not a Feature",
+  "type": "Technology",
+  "excerpt": "Most companies treat security like a checkbox. That's exactly why they keep getting breached.",
+  "content": "<p>There is a pattern to every major data breach.</p><h2>The Checklist Illusion</h2><p>Threats evolve. Checklists don't.</p><h2>Trust Is the Real Architecture</h2><p>Every security decision is a trust decision.</p>",
+  "read_time": "6 min read",
+  "date": "March 2026",
+  "members": false,
+  "created_at": "2026-03-21T16:47:03.817+00:00",
+  "updated_at": null
+ },
+ {
+  "id": 6,
+  "title": "The World Is Loud With Bad Advice",
+  "type": "Poetry",
+  "excerpt": "The world is loud with bad advice. Everyone wants to be a prophet with nothing holy in their mouths.",
+  "content": "<p>The world is loud with bad advice.<br>Everyone wants to be a prophet<br>with nothing holy in their mouths.</p><p>They say trust the process,<br>but the process is eating people alive.</p>",
+  "read_time": "3 min poem",
+  "date": "March 2026",
+  "members": false,
+  "created_at": "2026-03-20T14:15:28.52+00:00",
+  "updated_at": null
+ },
+ {
+  "id": 1,
+  "title": "“Heaven Knows Why”",
+  "type": "Essays",
+  "excerpt": "They said, “Heaven knows why.”  And I almost laughed not because it was funny.",
+  "content": "<p>“Heaven Knows Why”</p><p>They said,</p><p>“Heaven knows why.”</p>",
+  "read_time": "3",
+  "date": "March 2026",
+  "members": false,
+  "created_at": "2026-03-19T10:03:50.78+00:00",
+  "updated_at": null
+ },
+ {
+  "id": 30,
+  "title": "A Members Only Essay About Very Long Titles That Should Wrap Neatly Across Several Lines In The Card",
+  "type": "Ideas",
+  "excerpt": "Only the first paragraph is public.",
+  "truncated": true,
+  "content": "<p>Public opening paragraph.</p><p>SECRET second paragraph.</p>",
+  "read_time": "9 min read",
+  "date": "April 2026",
+  "members": true,
+  "created_at": "2026-04-10T10:00:00+00:00",
+  "updated_at": "2026-04-11T10:00:00+00:00"
+ },
+ {
+  "id": 31,
+  "title": "The World Is Loud With Bad Advice",
+  "type": "Essays",
+  "excerpt": "Duplicate title <script>alert(1)</script> & friends",
+  "content": "<p>Hello<script>alert('xss')</script></p><p><a href=\"javascript:alert(1)\" onclick=\"x()\">bad link</a> <a href=\"https://example.com\">good link</a></p><img src=x onerror=alert(1)>",
+  "read_time": "2 min read",
+  "date": "April 2026",
+  "members": false,
+  "created_at": "2026-04-12T10:00:00+00:00",
+  "updated_at": null
+ }
+]
