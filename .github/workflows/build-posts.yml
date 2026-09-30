@@ -34,9 +34,9 @@ jobs:
     env:
       FONT_DIR: /tmp/fonts
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -44,7 +44,7 @@ jobs:
         run: pip install pillow==12.2.0 nh3==0.3.7
 
       - name: Cache fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /tmp/fonts
           key: fonts-v1
