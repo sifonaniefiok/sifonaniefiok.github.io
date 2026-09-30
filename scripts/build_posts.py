@@ -99,7 +99,8 @@ def fetch_posts() -> list[dict]:
 
 # ── Text helpers ──────────────────────────────────────────────────────────────
 def slugify(title: str) -> str:
-    t = unicodedata.normalize("NFKD", title).encode("ascii", "ignore").decode("ascii").lower()
+    t = re.sub(r"['\u2019\u2018`]", "", title)  # "Here's" -> "heres", not "here-s"
+    t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode("ascii").lower()
     t = re.sub(r"[^a-z0-9]+", "-", t).strip("-")
     if len(t) > 70:
         t = t[:70].rsplit("-", 1)[0]
