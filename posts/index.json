@@ -1,0 +1,140 @@
+{
+ "posts": [
+  {
+   "id": 19,
+   "slug": "you-would-have-been-there-too",
+   "aliases": [],
+   "title": "YOU WOULD HAVE BEEN THERE TOO",
+   "type": "Poetry",
+   "url": "https://sifonaniefiok.github.io/posts/you-would-have-been-there-too/"
+  },
+  {
+   "id": 18,
+   "slug": "the-art-of-being-unseen",
+   "aliases": [],
+   "title": "The Art of Being Unseen",
+   "type": "Essays",
+   "url": "https://sifonaniefiok.github.io/posts/the-art-of-being-unseen/"
+  },
+  {
+   "id": 17,
+   "slug": "why-we-hold-on-to-what-never-chose-us",
+   "aliases": [],
+   "title": "Why We Hold On to What Never Chose Us",
+   "type": "Essays",
+   "url": "https://sifonaniefiok.github.io/posts/why-we-hold-on-to-what-never-chose-us/"
+  },
+  {
+   "id": 16,
+   "slug": "your-password-is-already-out-there-here-s-how-they-got-it",
+   "aliases": [],
+   "title": "Your Password Is Already Out There. Here's How They Got It.",
+   "type": "Technology",
+   "url": "https://sifonaniefiok.github.io/posts/your-password-is-already-out-there-here-s-how-they-got-it/"
+  },
+  {
+   "id": 15,
+   "slug": "what-ai-actually-means-for-people-like-us",
+   "aliases": [],
+   "title": "What AI Actually Means for People Like Us",
+   "type": "Technology",
+   "url": "https://sifonaniefiok.github.io/posts/what-ai-actually-means-for-people-like-us/"
+  },
+  {
+   "id": 14,
+   "slug": "the-church-ain-t-ready",
+   "aliases": [],
+   "title": "The Church Ain't Ready",
+   "type": "Poetry",
+   "url": "https://sifonaniefiok.github.io/posts/the-church-ain-t-ready/"
+  },
+  {
+   "id": 13,
+   "slug": "security-is-a-philosophy-not-a-feature",
+   "aliases": [],
+   "title": "Security Is a Philosophy, Not a Feature",
+   "type": "Technology",
+   "url": "https://sifonaniefiok.github.io/posts/security-is-a-philosophy-not-a-feature/"
+  },
+  {
+   "id": 12,
+   "slug": "on-finishing-things",
+   "aliases": [],
+   "title": "On Finishing Things",
+   "type": "Essays",
+   "url": "https://sifonaniefiok.github.io/posts/on-finishing-things/"
+  },
+  {
+   "id": 11,
+   "slug": "the-gap-between-knowing-and-doing",
+   "aliases": [],
+   "title": "The Gap Between Knowing and Doing",
+   "type": "Essays",
+   "url": "https://sifonaniefiok.github.io/posts/the-gap-between-knowing-and-doing/"
+  },
+  {
+   "id": 10,
+   "slug": "notes-on-learning-rust-as-someone-who-thinks-in-python",
+   "aliases": [],
+   "title": "Notes on Learning Rust as Someone Who Thinks in Python",
+   "type": "Learning",
+   "url": "https://sifonaniefiok.github.io/posts/notes-on-learning-rust-as-someone-who-thinks-in-python/"
+  },
+  {
+   "id": 9,
+   "slug": "the-pages-we-dont-outgrow",
+   "aliases": [],
+   "title": "The Pages We Don’t Outgrow",
+   "type": "Poetry",
+   "url": "https://sifonaniefiok.github.io/posts/the-pages-we-dont-outgrow/"
+  },
+  {
+   "id": 8,
+   "slug": "on-building-in-the-age-of-noise",
+   "aliases": [],
+   "title": "On Building in the Age of Noise",
+   "type": "Technology",
+   "url": "https://sifonaniefiok.github.io/posts/on-building-in-the-age-of-noise/"
+  },
+  {
+   "id": 7,
+   "slug": "why-silence-is-a-form-of-thinking",
+   "aliases": [],
+   "title": "Why Silence Is a Form of Thinking",
+   "type": "Ideas",
+   "url": "https://sifonaniefiok.github.io/posts/why-silence-is-a-form-of-thinking/"
+  },
+  {
+   "id": 6,
+   "slug": "the-world-is-loud-with-bad-advice",
+   "aliases": [],
+   "title": "The World Is Loud With Bad Advice",
+   "type": "Poetry",
+   "url": "https://sifonaniefiok.github.io/posts/the-world-is-loud-with-bad-advice/"
+  },
+  {
+   "id": 5,
+   "slug": "the-weight-beneath-my-silence",
+   "aliases": [],
+   "title": "The Weight Beneath My Silence",
+   "type": "Poetry",
+   "url": "https://sifonaniefiok.github.io/posts/the-weight-beneath-my-silence/"
+  },
+  {
+   "id": 2,
+   "slug": "signal-and-noise-in-an-age-of-infinite-content",
+   "aliases": [],
+   "title": "Signal and Noise in an Age of Infinite Content",
+   "type": "Essays",
+   "url": "https://sifonaniefiok.github.io/posts/signal-and-noise-in-an-age-of-infinite-content/"
+  },
+  {
+   "id": 1,
+   "slug": "heaven-knows-why",
+   "aliases": [],
+   "title": "“Heaven Knows Why”",
+   "type": "Essays",
+   "url": "https://sifonaniefiok.github.io/posts/heaven-knows-why/"
+  }
+ ]
+}

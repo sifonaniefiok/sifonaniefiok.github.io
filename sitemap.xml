@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://sifonaniefiok.github.io/</loc>
-    <lastmod>2026-03-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://sifonaniefiok.github.io/</loc><lastmod>2026-04-03</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/you-would-have-been-there-too/</loc><lastmod>2026-04-03</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/the-art-of-being-unseen/</loc><lastmod>2026-03-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/why-we-hold-on-to-what-never-chose-us/</loc><lastmod>2026-03-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/your-password-is-already-out-there-here-s-how-they-got-it/</loc><lastmod>2026-03-23</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/what-ai-actually-means-for-people-like-us/</loc><lastmod>2026-03-23</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/the-church-ain-t-ready/</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/security-is-a-philosophy-not-a-feature/</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/on-finishing-things/</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/the-gap-between-knowing-and-doing/</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/notes-on-learning-rust-as-someone-who-thinks-in-python/</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/the-pages-we-dont-outgrow/</loc><lastmod>2026-03-21</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/on-building-in-the-age-of-noise/</loc><lastmod>2026-03-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/why-silence-is-a-form-of-thinking/</loc><lastmod>2026-03-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/the-world-is-loud-with-bad-advice/</loc><lastmod>2026-03-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/the-weight-beneath-my-silence/</loc><lastmod>2026-03-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/signal-and-noise-in-an-age-of-infinite-content/</loc><lastmod>2026-03-19</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sifonaniefiok.github.io/posts/heaven-knows-why/</loc><lastmod>2026-03-19</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
