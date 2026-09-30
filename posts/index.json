@@ -26,11 +26,13 @@
   },
   {
    "id": 16,
-   "slug": "your-password-is-already-out-there-here-s-how-they-got-it",
-   "aliases": [],
+   "slug": "your-password-is-already-out-there-heres-how-they-got-it",
+   "aliases": [
+    "your-password-is-already-out-there-here-s-how-they-got-it"
+   ],
    "title": "Your Password Is Already Out There. Here's How They Got It.",
    "type": "Technology",
-   "url": "https://sifonaniefiok.github.io/posts/your-password-is-already-out-there-here-s-how-they-got-it/"
+   "url": "https://sifonaniefiok.github.io/posts/your-password-is-already-out-there-heres-how-they-got-it/"
   },
   {
    "id": 15,
@@ -42,11 +44,13 @@
   },
   {
    "id": 14,
-   "slug": "the-church-ain-t-ready",
-   "aliases": [],
+   "slug": "the-church-aint-ready",
+   "aliases": [
+    "the-church-ain-t-ready"
+   ],
    "title": "The Church Ain't Ready",
    "type": "Poetry",
-   "url": "https://sifonaniefiok.github.io/posts/the-church-ain-t-ready/"
+   "url": "https://sifonaniefiok.github.io/posts/the-church-aint-ready/"
   },
   {
    "id": 13,
