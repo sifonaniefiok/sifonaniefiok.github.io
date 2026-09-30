@@ -1,0 +1,69 @@
+# Builds a shareable page + preview image for every blog post, plus sitemap.xml and feed.xml.
+#
+# Runs automatically every hour, so a post published from the admin panel gets its own
+# link within the hour. To publish one immediately: GitHub → Actions → "Build post pages"
+# → "Run workflow".  The script lives in scripts/build_posts.py; tests in tests/.
+# Note: GitHub pauses hourly schedules after 60 days with no commits to this repo. This
+# workflow commits whenever posts change, so regular posting keeps it on; if it is ever
+# paused, GitHub emails you and Actions → "Build post pages" → "Enable workflow" restores it.
+name: Build post pages
+
+on:
+  schedule:
+    - cron: "23 * * * *"   # every hour
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - scripts/**
+      - tests/**
+      - .github/workflows/build-posts.yml
+
+permissions:
+  contents: write   # commit the generated pages
+
+concurrency:
+  group: build-post-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FONT_DIR: /tmp/fonts
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pillow==12.2.0 nh3==0.3.7
+
+      - name: Cache fonts
+        uses: actions/cache@v4
+        with:
+          path: /tmp/fonts
+          key: fonts-v1
+
+      - name: Test the page builder
+        run: python tests/test_build_posts.py
+
+      - name: Build post pages from the live site
+        run: python scripts/build_posts.py
+
+      - name: Commit changes
+        run: |
+          git add posts sitemap.xml feed.xml og-default.png
+          if git diff --cached --quiet; then
+            echo "No changes to publish."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Update post pages"
+            git push
+          fi
+
