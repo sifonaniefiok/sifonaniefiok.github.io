@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="tr" data-lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Terri Berri Concept Site</title>
+<meta name="description" content="Terri Berri Menswear: erkek giyim, Lefkoşa ve Girne. Yeni sezon eşofman takımları, gömlek, triko, ayakkabı ve aksesuar. WhatsApp ile sor, ayırt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@75..150,500..900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: wide typographic hero over a garment grid; category rail, product cards with colour + size pickers that feed a WhatsApp enquiry; two store cards; stone neutrals with a khaki accent. */
+:root {
+  --bg: #F1F1EE;
+  --surface: #FBFBF9;
+  --tile: #E4E4DF;
+  --ink: #151513;
+  --muted: #5F605A;
+  --line: #D6D6D0;
+  --khaki: #4F5A34;
+  --on-khaki: #F3F4EC;
+  --open: #2D7A46;
+  --closed: #A13A2B;
+  --outline: rgba(21,21,19,.28);
+
+  --f-display: "Anybody", "Arial Black", Impact, sans-serif;
+  --f-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gutter: clamp(16px, 4vw, 44px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121311; --surface: #1A1B18; --tile: #23241F; --ink: #ECECE6; --muted: #A2A39B; --line: #2E2F2A;
+    --khaki: #A7B47C; --on-khaki: #151513; --open: #5CC47E; --closed: #F08A78; --outline: rgba(236,236,230,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121311; --surface: #1A1B18; --tile: #23241F; --ink: #ECECE6; --muted: #A2A39B; --line: #2E2F2A;
+  --khaki: #A7B47C; --on-khaki: #151513; --open: #5CC47E; --closed: #F08A78; --outline: rgba(236,236,230,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.55; -webkit-font-smoothing: antialiased; padding-top: env(safe-area-inset-top, 0px); }
+img { max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--khaki); outline-offset: 3px; border-radius: 3px; }
+.wrap { max-width: 1200px; margin-inline: auto; padding-inline: var(--gutter); }
+.label { font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+h1, h2, h3 { margin: 0; font-family: var(--f-display); line-height: .95; text-wrap: balance; }
+p { margin: 0; }
+
+/* Concept strip */
+.concept { background: var(--khaki); color: var(--on-khaki); font-size: .8125rem; font-weight: 600; text-align: center; padding: 7px 16px; }
+
+/* Header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.wordmark { text-decoration: none; display: grid; line-height: 1; }
+.wordmark b { font-family: var(--f-display); font-weight: 900; font-stretch: 140%; font-style: italic; font-size: 1.375rem; letter-spacing: -.01em; }
+.wordmark span { font-size: .625rem; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+.top nav { display: flex; align-items: center; gap: 22px; font-weight: 600; font-size: .9375rem; }
+.top nav a { text-decoration: none; color: var(--muted); }
+.top nav a:hover { color: var(--ink); }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+.lang button { border: 0; background: transparent; padding: 5px 10px; border-radius: 999px; font-size: .8125rem; font-weight: 700; cursor: pointer; color: var(--muted); }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+@media (max-width: 760px) { .top nav a { display: none; } }
+
+/* Hero */
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(24px, 4vw, 56px); align-items: end; padding-block: clamp(28px, 5vw, 64px) clamp(28px, 4vw, 48px); }
+@media (max-width: 820px) { .hero .wrap { grid-template-columns: 1fr; } }
+.hero h1 { font-size: clamp(3.25rem, 1.6rem + 7vw, 7.5rem); font-weight: 900; font-stretch: 150%; letter-spacing: -.035em; text-transform: uppercase; }
+.hero h1 .thin { display: block; font-weight: 500; font-stretch: 75%; letter-spacing: -.01em; color: var(--khaki); }
+.hero .lede { margin-top: 20px; font-size: 1.1875rem; color: var(--muted); max-width: 40ch; }
+.hero .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; border-radius: 999px; padding: 13px 22px; border: 1.5px solid var(--ink); cursor: pointer; transition: transform .15s ease; background: transparent; }
+.btn.solid { background: var(--ink); color: var(--bg); }
+.btn:hover { transform: translateY(-1px); }
+.btn svg { flex: none; }
+.hero-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.hero-grid .tile { aspect-ratio: 1; max-width: 100%; border-radius: 4px; background: var(--tile); display: grid; place-items: center; padding: 14%; }
+.hero-grid .tile:nth-child(2) { background: color-mix(in srgb, var(--khaki) 22%, var(--tile)); }
+.hero-grid .tile:nth-child(3) { background: color-mix(in srgb, var(--ink) 10%, var(--tile)); }
+.hero-grid svg { width: 100%; height: 100%; }
+
+/* Info strip */
+.strip { border-block: 1px solid var(--line); background: var(--surface); }
+.strip ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.strip li { padding: 16px 18px; display: grid; gap: 2px; border-left: 1px solid var(--line); min-width: 0; }
+.strip li:first-child { border-left: 0; padding-left: 0; }
+.strip strong { font-size: .9688rem; }
+.strip span { font-size: .8438rem; color: var(--muted); }
+@media (max-width: 820px) { .strip ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } .strip li:nth-child(3) { border-left: 0; padding-left: 0; } .strip li:nth-child(n+3) { border-top: 1px solid var(--line); } }
+
+/* Shop */
+section { padding-block: clamp(44px, 6vw, 80px); }
+.sec-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 32px; margin-bottom: 22px; }
+.sec-head h2 { font-size: clamp(2rem, 1.3rem + 2.6vw, 3.25rem); font-weight: 900; font-stretch: 130%; text-transform: uppercase; letter-spacing: -.02em; }
+.sec-head p { color: var(--muted); max-width: 46ch; }
+.cats { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 22px; scrollbar-width: thin; }
+.cats button { flex: none; border: 1px solid var(--line); background: var(--surface); padding: 9px 16px; border-radius: 999px; font-weight: 600; font-size: .9375rem; cursor: pointer; white-space: nowrap; }
+.cats button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.cats .n { font-variant-numeric: tabular-nums; opacity: .6; margin-left: 4px; font-weight: 500; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(max(150px, calc((100% - 60px) / 4)), 1fr)); gap: 28px 20px; }
+@media (max-width: 560px) { .grid { gap: 24px 12px; } .sz { min-width: 32px; padding: 0 6px; } .sw { width: 24px; height: 24px; } .card h3 { font-size: .9688rem; } }
+.card { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card .ask { margin-top: auto; }
+.card .pic { position: relative; aspect-ratio: 4 / 5; max-width: 100%; background: var(--tile); border-radius: 4px; display: grid; place-items: center; padding: 16%; overflow: hidden; }
+.card .pic svg { width: 100%; height: 100%; transition: transform .35s ease; }
+.card:hover .pic svg { transform: scale(1.04); }
+.tag { position: absolute; top: 12px; left: 12px; background: var(--khaki); color: var(--on-khaki); font-size: .6875rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; padding: 4px 8px; border-radius: 2px; }
+.card h3 { font-family: var(--f-body); font-size: 1.0625rem; font-weight: 700; line-height: 1.25; }
+.card .meta { font-size: .875rem; color: var(--muted); margin-top: 2px; }
+.pickrow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sw { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--outline); background: var(--c); cursor: pointer; padding: 0; position: relative; }
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink); }
+.sz { min-width: 40px; height: 32px; padding: 0 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); font-size: .8125rem; font-weight: 700; cursor: pointer; font-variant-numeric: tabular-nums; }
+.sz[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.ask { display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: 700; font-size: .9375rem; border: 1.5px solid var(--ink); border-radius: 999px; padding: 10px 14px; }
+.ask:hover { background: var(--ink); color: var(--bg); }
+.note { margin-top: 26px; font-size: .875rem; color: var(--muted); }
+
+/* How to order */
+.how { background: var(--surface); border-block: 1px solid var(--line); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; counter-reset: s; }
+@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+.steps li { counter-increment: s; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.steps li::before { content: counter(s, decimal-leading-zero); font-family: var(--f-display); font-weight: 900; font-stretch: 150%; font-size: 2.5rem; line-height: 1; color: var(--khaki); }
+.steps h3 { font-family: var(--f-body); font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
+.steps p { color: var(--muted); }
+
+/* Stores */
+.stores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 760px) { .stores { grid-template-columns: 1fr; } }
+.store { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: clamp(20px, 3vw, 30px); display: grid; gap: 16px; align-content: start; min-width: 0; }
+.store .city { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.store h3 { font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem); font-weight: 900; font-stretch: 140%; text-transform: uppercase; letter-spacing: -.02em; }
+.store .alt { font-size: .875rem; color: var(--muted); font-weight: 600; }
+.status { display: inline-flex; align-items: center; gap: 7px; font-size: .8125rem; font-weight: 700; }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.status.open { color: var(--open); } .status.closed { color: var(--closed); }
+.store dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 20px; }
+.store dt { font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+.store dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.store .acts { display: flex; flex-wrap: wrap; gap: 10px; }
+.store .acts .btn { padding: 10px 18px; font-size: .9375rem; }
+
+/* Footer */
+footer { border-top: 1px solid var(--line); padding-block: 32px 110px; font-size: .875rem; color: var(--muted); }
+footer .wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 32px; align-items: start; }
+footer .links { display: flex; gap: 18px; flex-wrap: wrap; }
+footer a { font-weight: 600; color: var(--ink); text-decoration: none; }
+@media (min-width: 761px) { footer { padding-block: 32px; } }
+@media (max-width: 600px) { footer .wrap { grid-template-columns: 1fr; } }
+
+/* Mobile dock */
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: none; gap: 10px; background: var(--surface); border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.dock .btn { flex: 1; padding: 12px 14px; }
+@media (max-width: 760px) { .dock { display: flex; } }
+</style>
+</head>
+<body>
+
+<div class="concept" data-i18n="concept">Konsept tasarım · Terri Berri Menswear için hazırlandı</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="wordmark" href="#top" aria-label="Terri Berri Menswear">
+      <b>TERRIBERRI</b>
+      <span>Menswear · Brandhouse</span>
+    </a>
+    <nav aria-label="Menü">
+      <a href="#shop" data-i18n="navShop">Ürünler</a>
+      <a href="#order" data-i18n="navOrder">Nasıl sipariş verilir</a>
+      <a href="#stores" data-i18n="navStores">Mağazalar</a>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-set-lang="tr" aria-pressed="true">TR</button>
+        <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <p class="label" data-i18n="heroEyebrow">Erkek giyim · Lefkoşa &amp; Girne</p>
+        <h1 style="margin-top:14px"><span data-i18n="heroTitleA">Yeni</span><span class="thin" data-i18n="heroTitleB">sezon geldi</span></h1>
+        <p class="lede" data-i18n="heroLede">Eşofman takımları, keten gömlekler, triko ve ayakkabı. Beğendiğin parçayı seç, rengini ve bedenini işaretle, WhatsApp'tan sor. Mağazada senin için ayıralım.</p>
+        <div class="ctas">
+          <a class="btn solid" href="#shop" data-i18n="heroCta">Yeni sezonu gör</a>
+          <a class="btn" data-wa-general href="https://wa.me/905338830863" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
+            <span data-i18n="waUs">WhatsApp'tan yaz</span>
+          </a>
+        </div>
+      </div>
+      <div class="hero-grid" id="hero-grid" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="wrap">
+      <ul>
+        <li><strong data-i18n="s1a">İki mağaza</strong><span data-i18n="s1b">Lefkoşa ve Girne</span></li>
+        <li><strong data-i18n="s2a">Her gün açık</strong><span class="num">09:30–19:30</span></li>
+        <li><strong data-i18n="s3a">Kargo 180₺</strong><span data-i18n="s3b">Tüm KKTC'ye teslimat</span></li>
+        <li><strong data-i18n="s4a">WhatsApp ile sipariş</strong><span class="num">0533 883 08 63</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <section id="shop">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 data-i18n="shopTitle">Ürünler</h2>
+        <p data-i18n="shopSub">Renk ve beden seç, “Sor” butonuna bas. Mesajın hazır şekilde WhatsApp'ta açılır.</p>
+      </div>
+      <div class="cats" id="cats" role="group" aria-label="Kategoriler"></div>
+      <div class="grid" id="grid"></div>
+      <p class="note" data-i18n="shopNote">Ürün görselleri örnektir. Site yayına alınırken mağazanın kendi fotoğrafları ve güncel ürünleriyle doldurulur.</p>
+    </div>
+  </section>
+
+  <section id="order" class="how">
+    <div class="wrap">
+      <div class="sec-head"><h2 data-i18n="orderTitle">Nasıl sipariş verilir</h2></div>
+      <ol class="steps">
+        <li><h3 data-i18n="o1t">Parçanı seç</h3><p data-i18n="o1p">Rengi ve bedeni işaretle, “Sor” butonuna bas.</p></li>
+        <li><h3 data-i18n="o2t">WhatsApp'tan onayla</h3><p data-i18n="o2p">Stok ve fiyatı hemen yazalım. İstersen fotoğraf ya da video da gönderelim.</p></li>
+        <li><h3 data-i18n="o3t">Mağazadan al ya da kargola</h3><p data-i18n="o3p">Lefkoşa veya Girne mağazasından teslim al, ya da 180₺ kargo ile kapına gelsin.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="stores">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 data-i18n="storesTitle">Mağazalar</h2>
+        <p data-i18n="storesSub">İki mağaza da haftanın her günü 09:30–19:30 arası açık.</p>
+      </div>
+      <div class="stores">
+        <article class="store">
+          <div class="city"><h3>Lefkoşa</h3><span class="status" data-status></span></div>
+          <p class="alt">Nicosia</p>
+          <dl>
+            <dt data-i18n="addr">Adres</dt><dd data-i18n="addrLef">Metropol yolu, D&amp;P Parfüm yanı</dd>
+            <dt data-i18n="hours">Saatler</dt><dd><span data-i18n="daily">Pazartesi–Pazar</span> · 09:30–19:30</dd>
+            <dt data-i18n="phone">Telefon</dt><dd>0533 883 08 63</dd>
+          </dl>
+          <div class="acts">
+            <a class="btn solid" href="https://www.google.com/maps/search/?api=1&amp;query=Terri+Berri+Menswear+Metropol+Lefko%C5%9Fa" target="_blank" rel="noopener" data-i18n="dir">Yol tarifi</a>
+            <a class="btn" href="tel:+905338830863" data-i18n="call">Ara</a>
+          </div>
+        </article>
+        <article class="store">
+          <div class="city"><h3>Girne</h3><span class="status" data-status></span></div>
+          <p class="alt">Kyrenia</p>
+          <dl>
+            <dt data-i18n="addr">Adres</dt><dd data-i18n="addrGir">Yeni Belediye karşısı, Şaşa Aksesuar yanı</dd>
+            <dt data-i18n="hours">Saatler</dt><dd><span data-i18n="daily">Pazartesi–Pazar</span> · 09:30–19:30</dd>
+            <dt data-i18n="phone">Telefon</dt><dd>0533 883 08 63</dd>
+          </dl>
+          <div class="acts">
+            <a class="btn solid" href="https://www.google.com/maps/search/?api=1&amp;query=Terri+Berri+Menswear+Girne" target="_blank" rel="noopener" data-i18n="dir">Yol tarifi</a>
+            <a class="btn" href="tel:+905338830863" data-i18n="call">Ara</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p><strong style="color:var(--ink)">Terri Berri Menswear</strong> · <span data-i18n="footLine">Lefkoşa &amp; Girne, KKTC</span></p>
+      <p style="margin-top:6px" data-i18n="footConcept">Konsept tasarım: Sifon Imaikop. Ürün görselleri örnektir.</p>
+    </div>
+    <div class="links">
+      <a href="https://www.instagram.com/terriberri_menswear/" target="_blank" rel="noopener">Instagram</a>
+      <a data-wa-general href="https://wa.me/905338830863" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<div class="dock">
+  <a class="btn" href="tel:+905338830863" data-i18n="call">Ara</a>
+  <a class="btn solid" data-wa-general href="https://wa.me/905338830863" target="_blank" rel="noopener">WhatsApp</a>
+</div>
+
+<script>
+/* ============================================================
+   STORE SETTINGS: edit here.
+   ============================================================ */
+const STORE = {
+  name: "Terri Berri",
+  whatsapp: "905338830863",
+  timeZone: "Europe/Istanbul",   // North Cyprus uses Turkey time (UTC+3)
+  open: "09:30",
+  close: "19:30"
+};
+
+/* Products: swap `shape` for `img: "images/xyz.jpg"` once real photos are in. */
+const CATS = [
+  { id: "all",       tr: "Tümü",            en: "All" },
+  { id: "takim",     tr: "Eşofman takımı",  en: "Tracksuits" },
+  { id: "gomlek",    tr: "Gömlek",          en: "Shirts" },
+  { id: "triko",     tr: "Triko",           en: "Knitwear" },
+  { id: "alt",       tr: "Pantolon",        en: "Trousers" },
+  { id: "ayakkabi",  tr: "Ayakkabı",        en: "Shoes" },
+  { id: "aksesuar",  tr: "Aksesuar",        en: "Accessories" }
+];
+const C = {
+  gri:    { tr: "Gri melanj", en: "Grey marl", hex: "#B7B9B5" },
+  siyah:  { tr: "Siyah", en: "Black", hex: "#1F1F1E" },
+  krem:   { tr: "Krem", en: "Cream", hex: "#E7E0D0" },
+  lacivert:{ tr: "Lacivert", en: "Navy", hex: "#243149" },
+  haki:   { tr: "Haki", en: "Khaki", hex: "#646B48" },
+  mavi:   { tr: "Açık mavi", en: "Light blue", hex: "#9DC0DF" },
+  beyaz:  { tr: "Beyaz", en: "White", hex: "#F3F2EE" },
+  bej:    { tr: "Bej", en: "Beige", hex: "#D6C6A6" },
+  pembe:  { tr: "Pudra", en: "Dusty pink", hex: "#E3C3BE" },
+  ekru:   { tr: "Ekru", en: "Ecru", hex: "#E9E2D0" },
+  kahve:  { tr: "Kahve", en: "Brown", hex: "#6A4B36" },
+  tortoise:{ tr: "Kaplumbağa", en: "Tortoiseshell", hex: "#7A5534" }
+};
+const TOP = ["S", "M", "L", "XL", "XXL"];
+const PRODUCTS = [
+  { id: "p1", cat: "takim", tr: "Fermuarlı eşofman takımı", en: "Zip-up tracksuit set", mtr: "Ceket + alt", men: "Jacket + joggers", colors: ["gri","siyah","krem"], sizes: TOP, shape: "zip", isNew: true },
+  { id: "p2", cat: "takim", tr: "Kapüşonlu eşofman takımı", en: "Hooded tracksuit set", mtr: "Sweatshirt + alt", men: "Hoodie + joggers", colors: ["lacivert","haki"], sizes: TOP, shape: "hood" },
+  { id: "p3", cat: "gomlek", tr: "Keten gömlek", en: "Linen shirt", mtr: "%100 keten", men: "100% linen", colors: ["mavi","beyaz","bej"], sizes: TOP, shape: "shirt", isNew: true },
+  { id: "p4", cat: "gomlek", tr: "Oversize oxford gömlek", en: "Oversized oxford shirt", mtr: "Pamuklu", men: "Cotton", colors: ["beyaz","pembe"], sizes: TOP, shape: "shirt" },
+  { id: "p5", cat: "triko", tr: "Bisiklet yaka triko tişört", en: "Crew-neck knit tee", mtr: "İnce örgü", men: "Fine knit", colors: ["haki","ekru","siyah"], sizes: TOP, shape: "knit", isNew: true },
+  { id: "p6", cat: "triko", tr: "Yarım fermuarlı triko", en: "Half-zip knit", mtr: "Kalın örgü", men: "Chunky knit", colors: ["lacivert","kahve"], sizes: TOP, shape: "halfzip" },
+  { id: "p7", cat: "alt", tr: "Jogger eşofman altı", en: "Jogger sweatpants", mtr: "Paçası lastikli", men: "Cuffed hem", colors: ["gri","siyah","kahve"], sizes: TOP, shape: "jogger" },
+  { id: "p8", cat: "alt", tr: "Keten pantolon", en: "Linen trousers", mtr: "Beli lastikli", men: "Elastic waist", colors: ["bej","beyaz"], sizes: TOP, shape: "trousers" },
+  { id: "p9", cat: "ayakkabi", tr: "Deri sneaker", en: "Leather sneakers", mtr: "Hakiki deri", men: "Genuine leather", colors: ["beyaz","siyah"], sizes: ["40","41","42","43","44","45"], shape: "sneaker", isNew: true },
+  { id: "p10", cat: "aksesuar", tr: "Deri kemer", en: "Leather belt", mtr: "Metal toka", men: "Metal buckle", colors: ["siyah","kahve"], sizes: [], shape: "belt" },
+  { id: "p11", cat: "aksesuar", tr: "Güneş gözlüğü", en: "Sunglasses", mtr: "UV400", men: "UV400", colors: ["siyah","tortoise"], sizes: [], shape: "glasses" }
+];
+
+/* Text in both languages */
+const T = {
+  tr: {
+    concept: "Konsept tasarım · Terri Berri Menswear için hazırlandı",
+    navShop: "Ürünler", navOrder: "Nasıl sipariş verilir", navStores: "Mağazalar",
+    heroEyebrow: "Erkek giyim · Lefkoşa & Girne", heroTitleA: "Yeni", heroTitleB: "sezon geldi",
+    heroLede: "Eşofman takımları, keten gömlekler, triko ve ayakkabı. Beğendiğin parçayı seç, rengini ve bedenini işaretle, WhatsApp'tan sor. Mağazada senin için ayıralım.",
+    heroCta: "Yeni sezonu gör", waUs: "WhatsApp'tan yaz",
+    s1a: "İki mağaza", s1b: "Lefkoşa ve Girne", s2a: "Her gün açık", s3a: "Kargo 180₺", s3b: "Tüm KKTC'ye teslimat", s4a: "WhatsApp ile sipariş",
+    shopTitle: "Ürünler", shopSub: "Renk ve beden seç, “Sor” butonuna bas. Mesajın hazır şekilde WhatsApp'ta açılır.",
+    shopNote: "Ürün görselleri örnektir. Site yayına alınırken mağazanın kendi fotoğrafları ve güncel ürünleriyle doldurulur.",
+    orderTitle: "Nasıl sipariş verilir",
+    o1t: "Parçanı seç", o1p: "Rengi ve bedeni işaretle, “Sor” butonuna bas.",
+    o2t: "WhatsApp'tan onayla", o2p: "Stok ve fiyatı hemen yazalım. İstersen fotoğraf ya da video da gönderelim.",
+    o3t: "Mağazadan al ya da kargola", o3p: "Lefkoşa veya Girne mağazasından teslim al, ya da 180₺ kargo ile kapına gelsin.",
+    storesTitle: "Mağazalar", storesSub: "İki mağaza da haftanın her günü 09:30–19:30 arası açık.",
+    addr: "Adres", hours: "Saatler", phone: "Telefon", daily: "Pazartesi–Pazar",
+    addrLef: "Metropol yolu, D&P Parfüm yanı", addrGir: "Yeni Belediye karşısı, Şaşa Aksesuar yanı",
+    dir: "Yol tarifi", call: "Ara", footLine: "Lefkoşa & Girne, KKTC",
+    footConcept: "Konsept tasarım: Sifon Imaikop. Ürün görselleri örnektir.",
+    isNew: "Yeni", ask: "Sor", color: "Renk", size: "Beden", oneSize: "Tek beden",
+    open: t => `Şu an açık · ${t}'a kadar`, closed: t => `Kapalı · ${t}'da açılır`,
+    msgGeneral: "Merhaba Terri Berri, ürünleriniz hakkında bilgi almak istiyorum.",
+    msg: (p, c, s) => `Merhaba Terri Berri, ${p} (${c}${s ? ", " + s + " beden" : ""}) hakkında bilgi almak istiyorum. Stokta var mı, fiyatı nedir?`
+  },
+  en: {
+    concept: "Concept design · prepared for Terri Berri Menswear",
+    navShop: "Shop", navOrder: "How to order", navStores: "Stores",
+    heroEyebrow: "Menswear · Nicosia & Kyrenia", heroTitleA: "New", heroTitleB: "season is in",
+    heroLede: "Tracksuits, linen shirts, knitwear and shoes. Pick a piece, choose the colour and size, and ask on WhatsApp. We'll hold it for you in store.",
+    heroCta: "See the new season", waUs: "Message on WhatsApp",
+    s1a: "Two stores", s1b: "Nicosia and Kyrenia", s2a: "Open every day", s3a: "Delivery 180₺", s3b: "Anywhere in North Cyprus", s4a: "Order on WhatsApp",
+    shopTitle: "Shop", shopSub: "Choose a colour and size, then tap “Ask”. Your message opens in WhatsApp, ready to send.",
+    shopNote: "Product images are placeholders. The live site uses the store's own photos and current stock.",
+    orderTitle: "How to order",
+    o1t: "Pick your piece", o1p: "Choose the colour and size, then tap “Ask”.",
+    o2t: "Confirm on WhatsApp", o2p: "We reply with stock and price. Ask for photos or a video if you want a closer look.",
+    o3t: "Collect or get it delivered", o3p: "Pick it up in Nicosia or Kyrenia, or get it delivered to your door for 180₺.",
+    storesTitle: "Stores", storesSub: "Both stores are open every day, 09:30–19:30.",
+    addr: "Address", hours: "Hours", phone: "Phone", daily: "Monday–Sunday",
+    addrLef: "Metropol road, next to D&P Parfüm", addrGir: "Opposite the New Municipality, next to Şaşa Aksesuar",
+    dir: "Directions", call: "Call", footLine: "Nicosia & Kyrenia, North Cyprus",
+    footConcept: "Concept design by Sifon Imaikop. Product images are placeholders.",
+    isNew: "New", ask: "Ask", color: "Colour", size: "Size", oneSize: "One size",
+    open: t => `Open now · until ${t}`, closed: t => `Closed · opens ${t}`,
+    msgGeneral: "Hi Terri Berri, I'd like some information about your products.",
+    msg: (p, c, s) => `Hi Terri Berri, I'm interested in the ${p} (${c}${s ? ", size " + s : ""}). Is it in stock, and what's the price?`
+  }
+};
+
+/* Garment illustrations (placeholders until real photos) */
+function garment(shape, hex) {
+  const S = `stroke="var(--outline)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"`;
+  const torso = `M40 20 L52 15 Q60 22 68 15 L80 20 L102 38 L93 50 L85 44 L85 106 L35 106 L35 44 L27 50 L18 38 Z`;
+  const d = {
+    zip: `<path d="${torso}" fill="${hex}" ${S}/><path d="M60 21 L60 106" ${S} fill="none"/><path d="M52 15 Q60 10 68 15 L66 22 Q60 18 54 22 Z" fill="${hex}" ${S}/><path d="M35 98 L85 98 M18 38 L27 50" ${S} fill="none"/>`,
+    hood: `<path d="${torso}" fill="${hex}" ${S}/><path d="M48 18 Q48 2 60 2 Q72 2 72 18 Q66 26 60 26 Q54 26 48 18 Z" fill="${hex}" ${S}/><path d="M56 30 L55 44 M64 30 L65 44 M44 76 L76 76 L72 92 L48 92 Z" ${S} fill="none"/>`,
+    shirt: `<path d="${torso}" fill="${hex}" ${S}/><path d="M52 15 L57 28 L60 22 L63 28 L68 15" fill="${hex}" ${S}/><path d="M60 24 L60 106" ${S} fill="none"/><circle cx="60" cy="40" r="1.3" fill="var(--outline)"/><circle cx="60" cy="56" r="1.3" fill="var(--outline)"/><circle cx="60" cy="72" r="1.3" fill="var(--outline)"/><circle cx="60" cy="88" r="1.3" fill="var(--outline)"/><path d="M42 40 L52 40 L52 50 L42 50 Z" ${S} fill="none"/>`,
+    knit: `<path d="M40 22 L52 17 Q60 24 68 17 L80 22 L96 38 L88 48 L85 45 L85 106 L35 106 L35 45 L32 48 L24 38 Z" fill="${hex}" ${S}/><path d="M52 17 Q60 27 68 17" ${S} fill="none"/><path d="M35 99 L85 99 M40 99 L40 106 M46 99 L46 106 M52 99 L52 106 M58 99 L58 106 M64 99 L64 106 M70 99 L70 106 M76 99 L76 106 M82 99 L82 106" ${S} fill="none"/>`,
+    halfzip: `<path d="${torso}" fill="${hex}" ${S}/><path d="M52 15 Q60 10 68 15 L67 23 Q60 19 53 23 Z" fill="${hex}" ${S}/><path d="M60 20 L60 46" ${S} fill="none"/><path d="M35 99 L85 99" ${S} fill="none"/>`,
+    jogger: `<path d="M38 12 L82 12 L86 100 L66 100 L60 44 L54 100 L34 100 Z" fill="${hex}" ${S}/><path d="M38 20 L82 20 M34 92 L54 92 M66 92 L86 92 M60 20 L60 30" ${S} fill="none"/>`,
+    trousers: `<path d="M38 12 L82 12 L88 106 L66 106 L60 42 L54 106 L32 106 Z" fill="${hex}" ${S}/><path d="M38 20 L82 20 M60 20 L60 36 M44 22 Q46 30 40 34 M76 22 Q74 30 80 34" ${S} fill="none"/>`,
+    sneaker: `<path d="M10 80 Q12 60 28 58 L48 56 Q58 44 72 48 L98 64 Q112 68 110 82 L10 82 Z" fill="${hex}" ${S}/><path d="M10 82 L110 82 L110 90 Q60 94 10 90 Z" fill="var(--surface)" ${S}/><path d="M54 56 L60 50 M60 60 L66 54 M66 64 L72 58" ${S} fill="none"/>`,
+    belt: `<path d="M8 52 L90 52 Q96 52 96 58 L96 64 Q96 70 90 70 L8 70 Z" fill="${hex}" ${S}/><rect x="92" y="46" width="20" height="30" rx="3" fill="none" stroke="var(--outline)" stroke-width="3"/><path d="M92 61 L104 61" stroke="var(--outline)" stroke-width="3" stroke-linecap="round"/><circle cx="72" cy="61" r="1.8" fill="var(--outline)"/><circle cx="60" cy="61" r="1.8" fill="var(--outline)"/>`,
+    glasses: `<path d="M12 48 L50 48 Q52 72 32 74 Q12 72 12 48 Z" fill="${hex}" ${S}/><path d="M70 48 L108 48 Q108 72 88 74 Q68 72 70 48 Z" fill="${hex}" ${S}/><path d="M50 52 Q60 44 70 52 M12 48 L4 44 M108 48 L116 44" ${S} fill="none"/>`
+  };
+  return `<svg viewBox="0 0 120 120" aria-hidden="true">${d[shape]}</svg>`;
+}
+
+/* State */
+let lang = "tr";
+try { const s = localStorage.getItem("tb-lang"); if (s === "en" || s === "tr") lang = s; } catch {}
+let cat = "all";
+const pick = {};
+PRODUCTS.forEach(p => pick[p.id] = { color: p.colors[0], size: p.sizes.includes("M") ? "M" : (p.sizes[2] || p.sizes[0] || "") });
+
+const $ = (s, r = document) => r.querySelector(s);
+const wa = text => `https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(text)}`;
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function renderText() {
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.documentElement.dataset.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { const v = t[el.dataset.i18n]; if (typeof v === "string") el.textContent = v; });
+  document.querySelectorAll("[data-set-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.setLang === lang)));
+  document.querySelectorAll("[data-wa-general]").forEach(a => a.href = wa(t.msgGeneral));
+}
+
+function renderCats() {
+  $("#cats").innerHTML = CATS.map(c => {
+    const n = c.id === "all" ? PRODUCTS.length : PRODUCTS.filter(p => p.cat === c.id).length;
+    return `<button type="button" data-cat="${c.id}" aria-pressed="${c.id === cat}">${c[lang]}<span class="n">${n}</span></button>`;
+  }).join("");
+}
+
+function card(p) {
+  const t = T[lang], s = pick[p.id], col = C[s.color];
+  const name = p[lang], meta = lang === "tr" ? p.mtr : p.men;
+  const sizeLabel = p.sizes.length ? s.size : "";
+  const msg = t.msg(name.toLowerCase(), col[lang].toLowerCase(), sizeLabel);
+  return `<article class="card" data-id="${p.id}">
+    <div class="pic">${p.isNew ? `<span class="tag">${t.isNew}</span>` : ""}${garment(p.shape, col.hex)}</div>
+    <div><h3>${esc(name)}</h3><p class="meta">${esc(meta)} · ${esc(col[lang])}</p></div>
+    <div class="pickrow" role="group" aria-label="${t.color}">${p.colors.map(k => `<button type="button" class="sw" style="--c:${C[k].hex}" data-color="${k}" aria-pressed="${k === s.color}" aria-label="${esc(C[k][lang])}" title="${esc(C[k][lang])}"></button>`).join("")}</div>
+    <div class="pickrow" role="group" aria-label="${t.size}">${p.sizes.length ? p.sizes.map(z => `<button type="button" class="sz" data-size="${z}" aria-pressed="${z === s.size}">${z}</button>`).join("") : `<span class="meta">${t.oneSize}</span>`}</div>
+    <a class="ask" href="${wa(msg)}" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+      ${t.ask}</a>
+  </article>`;
+}
+
+function renderGrid() {
+  const list = PRODUCTS.filter(p => cat === "all" || p.cat === cat);
+  $("#grid").innerHTML = list.map(card).join("");
+}
+
+function renderHero() {
+  const picks = [["zip", C.gri.hex], ["shirt", C.mavi.hex], ["knit", C.haki.hex], ["sneaker", C.beyaz.hex]];
+  $("#hero-grid").innerHTML = picks.map(([s, h]) => `<div class="tile">${garment(s, h)}</div>`).join("");
+}
+
+function renderStatus() {
+  const t = T[lang];
+  const parts = new Intl.DateTimeFormat("en-GB", { timeZone: STORE.timeZone, hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date());
+  const hh = +parts.find(x => x.type === "hour").value % 24, mm = +parts.find(x => x.type === "minute").value;
+  const now = hh * 60 + mm;
+  const toMin = s => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
+  const isOpen = now >= toMin(STORE.open) && now < toMin(STORE.close);
+  document.querySelectorAll("[data-status]").forEach(el => {
+    el.className = "status " + (isOpen ? "open" : "closed");
+    el.textContent = isOpen ? t.open(STORE.close) : t.closed(STORE.open);
+  });
+}
+
+function renderAll() { renderText(); renderCats(); renderGrid(); renderStatus(); }
+
+document.addEventListener("click", e => {
+  const l = e.target.closest("[data-set-lang]");
+  if (l) { lang = l.dataset.setLang; try { localStorage.setItem("tb-lang", lang); } catch {} renderAll(); return; }
+  const c = e.target.closest("[data-cat]");
+  if (c) { cat = c.dataset.cat; renderCats(); renderGrid(); return; }
+  const cardEl = e.target.closest(".card");
+  if (!cardEl) return;
+  const id = cardEl.dataset.id;
+  const sw = e.target.closest("[data-color]"), sz = e.target.closest("[data-size]");
+  if (!sw && !sz) return;
+  if (sw) pick[id].color = sw.dataset.color;
+  if (sz) pick[id].size = sz.dataset.size;
+  const focusSel = sw ? `[data-color="${sw.dataset.color}"]` : `[data-size="${sz.dataset.size}"]`;
+  cardEl.outerHTML = card(PRODUCTS.find(p => p.id === id));
+  $(`.card[data-id="${id}"] ${focusSel}`)?.focus();
+});
+
+renderHero();
+renderAll();
+setInterval(renderStatus, 60000);
+</script>
+</body>
+</html>

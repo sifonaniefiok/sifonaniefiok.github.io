@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0;padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Saltwind Car Hire · Demo</title>
+<meta name="description" content="Automatic hire cars delivered free to Ercan Airport and any hotel in Kyrenia, North Cyprus. Book on WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sea-coloured hero band with the Five Finger ridge, booking card beside the headline; fleet, steps, facts, contact below on a limestone ground. */
+:root {
+  --bg: #F2F5F5;
+  --surface: #FFFFFF;
+  --ink: #0E2A33;
+  --muted: #506A72;
+  --line: #D3DDDF;
+  --sea: #0F5A69;
+  --sea-deep: #0A4552;
+  --on-sea: #E8F3F4;
+  --on-sea-muted: #A9CDD3;
+  --sun: #F2B705;
+  --on-sun: #1B1A10;
+  --error: #B42318;
+  --ok: #1E7A4C;
+  --shadow: 0 1px 2px rgba(14,42,51,.06), 0 8px 24px rgba(14,42,51,.08);
+
+  --f-display: "Archivo", "Arial Narrow", Arial, sans-serif;
+  --f-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --step--1: .8125rem;
+  --step-0: 1rem;
+  --step-1: 1.1875rem;
+  --step-2: 1.5rem;
+  --step-3: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
+  --step-4: clamp(2.25rem, 1.3rem + 4vw, 4rem);
+  --radius: 10px;
+  --gutter: clamp(16px, 4vw, 40px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B181C; --surface: #11242A; --ink: #E4EFF0; --muted: #9AB1B6; --line: #23393F;
+    --sea: #0E3B45; --sea-deep: #0A2C34; --on-sea: #E4F1F2; --on-sea-muted: #8FB6BD;
+    --sun: #F5C22B; --on-sun: #1B1A10; --error: #F97066; --ok: #4ADE9A;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B181C; --surface: #11242A; --ink: #E4EFF0; --muted: #9AB1B6; --line: #23393F;
+  --sea: #0E3B45; --sea-deep: #0A2C34; --on-sea: #E4F1F2; --on-sea-muted: #8FB6BD;
+  --sun: #F5C22B; --on-sun: #1B1A10; --error: #F97066; --ok: #4ADE9A;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: var(--step-0); line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1120px; margin-inline: auto; padding-inline: var(--gutter); }
+h1, h2, h3 { font-family: var(--f-display); font-stretch: 118%; line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font-size: var(--step--1); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Header */
+.top { background: var(--sea); color: var(--on-sea); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--f-display); font-stretch: 125%; font-weight: 800; font-size: 1.125rem; letter-spacing: .01em; }
+.brand svg { flex: none; }
+.nav { display: flex; gap: 22px; align-items: center; font-weight: 600; font-size: .9375rem; }
+.nav a { text-decoration: none; color: var(--on-sea-muted); }
+.nav a:hover { color: var(--on-sea); }
+.nav .wa-link { white-space: nowrap; color: var(--on-sea); background: rgba(255,255,255,.1); padding: 8px 14px; border-radius: 999px; }
+@media (max-width: 760px) { .nav a:not(.wa-link) { display: none; } }
+
+/* Hero */
+.hero { background: var(--sea); color: var(--on-sea); position: relative; overflow: hidden; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(28px, 5vw, 64px); align-items: start; padding-block: clamp(28px, 5vw, 64px) clamp(100px, 12vw, 150px); position: relative; z-index: 1; }
+@media (max-width: 860px) { .hero .wrap { grid-template-columns: 1fr; } }
+.hero h1 { font-size: var(--step-4); font-weight: 850; }
+.hero h1 em { font-style: normal; color: var(--sun); }
+.hero .lede { margin-top: 18px; font-size: var(--step-1); color: var(--on-sea-muted); max-width: 34ch; }
+.facts { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; max-width: 520px; }
+.facts li { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; font-size: .9688rem; }
+.facts svg { flex: none; margin-top: 3px; }
+@media (max-width: 420px) { .facts { grid-template-columns: 1fr; } }
+.ridge { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: clamp(70px, 10vw, 120px); z-index: 0; }
+.ridge .far { fill: var(--sea-deep); }
+.ridge .near { fill: var(--bg); }
+
+/* Booking card */
+.book { background: var(--surface); color: var(--ink); border-radius: 14px; box-shadow: var(--shadow); padding: clamp(18px, 3vw, 26px); display: grid; gap: 14px; }
+.book h2 { font-size: var(--step-2); font-weight: 800; }
+.book .sub { color: var(--muted); font-size: .9375rem; margin-top: -6px; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label { font-size: var(--step--1); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.field select, .field input {
+  width: 100%; min-width: 0; font: inherit; font-size: 1rem; color: var(--ink); background: var(--bg);
+  border: 1.5px solid var(--line); border-radius: 8px; padding: 11px 12px; appearance: none; -webkit-appearance: none;
+}
+.field select { background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
+.field select:focus, .field input:focus { border-color: var(--sea); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--sea) 25%, transparent); }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.check { display: flex; gap: 10px; align-items: center; font-size: .9375rem; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--sea); }
+.quote { border-top: 1.5px dashed var(--line); padding-top: 14px; display: grid; gap: 4px; }
+.quote .line { display: flex; justify-content: space-between; gap: 12px; font-size: .9375rem; color: var(--muted); }
+.quote .total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 4px; }
+.quote .total strong { font-family: var(--f-display); font-stretch: 110%; font-size: var(--step-3); font-weight: 850; }
+.quote .save { color: var(--ok); font-weight: 600; }
+.err { color: var(--error); font-size: .9375rem; font-weight: 600; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  font: inherit; font-weight: 700; font-size: 1.0625rem; text-decoration: none; cursor: pointer;
+  background: var(--sun); color: var(--on-sun); border: 0; border-radius: 10px; padding: 14px 20px;
+  transition: transform .15s ease, filter .15s ease;
+}
+.btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.fine { font-size: var(--step--1); color: var(--muted); text-align: center; }
+
+/* Sections */
+section { padding-block: clamp(48px, 7vw, 88px); }
+.sec-head { display: grid; gap: 10px; margin-bottom: clamp(24px, 4vw, 40px); max-width: 640px; }
+.sec-head h2 { font-size: var(--step-3); font-weight: 800; }
+.sec-head p { color: var(--muted); font-size: var(--step-1); }
+
+/* Fleet */
+.fleet { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr)); gap: 16px; }
+.car { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px; min-width: 0; }
+.car .pic { background: var(--bg); border-radius: 8px; aspect-ratio: 5 / 2.2; max-width: 100%; display: grid; place-items: center; padding: 10px 14px; }
+.car .pic svg { width: 100%; height: 100%; }
+.car .pic .body { fill: var(--car); }
+.car .pic .glass { fill: var(--bg); opacity: .85; }
+.car .pic .tyre { fill: var(--ink); }
+.car .pic .hub { fill: var(--line); }
+.car .pic .shadow { fill: var(--line); }
+.car .cls { font-size: var(--step--1); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.car h3 { font-size: 1.3125rem; font-weight: 800; margin-top: 2px; }
+.specs { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; align-items: flex-start; }
+.specs li { font-size: .8125rem; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--bg); color: var(--muted); }
+.car .foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+.price { font-family: var(--f-display); font-stretch: 110%; font-weight: 850; font-size: 1.75rem; line-height: 1; }
+.price small { font-family: var(--f-body); font-size: .8125rem; font-weight: 600; color: var(--muted); margin-left: 2px; }
+.pick { font: inherit; font-weight: 700; font-size: .9375rem; background: transparent; color: var(--ink); border: 1.5px solid var(--ink); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.pick:hover, .car.selected .pick { background: var(--ink); color: var(--bg); }
+.car.selected { border-color: var(--sea); box-shadow: 0 0 0 2px var(--sea); }
+.note { margin-top: 18px; color: var(--muted); font-size: .9375rem; }
+
+/* Steps */
+.steps-sec { background: var(--surface); border-block: 1px solid var(--line); }
+.steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; counter-reset: s; }
+@media (max-width: 860px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
+.steps li { counter-increment: s; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.steps li::before { content: counter(s); font-family: var(--f-display); font-stretch: 125%; font-weight: 900; font-size: 1.125rem; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--sun); color: var(--on-sun); }
+.steps h3 { font-size: 1.125rem; font-weight: 800; font-stretch: 110%; }
+.steps p { color: var(--muted); font-size: .9688rem; }
+
+/* Good to know */
+.know { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 0 40px; }
+.know details { border-top: 1px solid var(--line); padding-block: 16px; }
+.know summary { cursor: pointer; font-weight: 700; font-size: 1.0625rem; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.know summary::-webkit-details-marker { display: none; }
+.know summary::after { content: "+"; font-family: var(--f-display); font-weight: 800; font-size: 1.25rem; line-height: 1; color: var(--sea); transition: transform .2s; }
+.know details[open] summary::after { transform: rotate(45deg); }
+.know details p { margin-top: 10px; color: var(--muted); max-width: 60ch; }
+
+/* Left-hand drive callout */
+.lhd { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; background: var(--sea); color: var(--on-sea); border-radius: 14px; padding: clamp(18px, 3vw, 28px); margin-bottom: 36px; }
+.lhd h3 { font-size: var(--step-2); font-weight: 850; }
+.lhd p { color: var(--on-sea-muted); margin-top: 6px; }
+.lhd .sign { width: 72px; height: 72px; }
+@media (max-width: 480px) { .lhd { grid-template-columns: 1fr; } }
+
+/* Reviews */
+.reviews { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 18px; }
+.review { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.stars { color: var(--sun); letter-spacing: 2px; font-size: 1.0625rem; }
+.review blockquote { margin: 0; font-size: 1rem; }
+.review cite { font-style: normal; font-weight: 700; font-size: .9375rem; }
+.review cite span { display: block; font-weight: 500; color: var(--muted); font-size: .8125rem; }
+.sample-tag { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: var(--bg); border: 1px dashed var(--line); color: var(--muted); padding: 3px 8px; border-radius: 6px; }
+
+/* Contact */
+.contact { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+@media (max-width: 760px) { .contact { grid-template-columns: 1fr; } }
+.contact dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 24px; }
+.contact dt { font-size: var(--step--1); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 2px; }
+.contact dd { margin: 0; font-weight: 600; }
+.copy { font: inherit; font-size: .8125rem; font-weight: 700; margin-left: 8px; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.hours { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.hours li { display: flex; justify-content: space-between; gap: 16px; }
+.cta-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: grid; gap: 14px; }
+.cta-card h3 { font-size: var(--step-2); font-weight: 850; }
+.cta-card p { color: var(--muted); }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px 100px; color: var(--muted); font-size: .875rem; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+@media (min-width: 761px) { footer { padding-block: 28px; } }
+
+/* Mobile sticky bar */
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); display: none; gap: 12px; align-items: center; }
+.dock .btn { flex: 1; padding: 12px 16px; font-size: 1rem; }
+.dock .from { font-size: .8125rem; color: var(--muted); line-height: 1.2; }
+.dock .from strong { display: block; font-family: var(--f-display); font-stretch: 110%; font-size: 1.25rem; color: var(--ink); }
+@media (max-width: 760px) { .dock { display: flex; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Saltwind Car Hire, home">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="14" fill="var(--sun)"/><path d="M5 18 Q10 13 15 18 T25 18" stroke="var(--sea)" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M5 22.5 Q10 17.5 15 22.5 T25 22.5" stroke="var(--sea)" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>
+      <span data-brand>Saltwind Car Hire</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#fleet">Cars &amp; prices</a>
+      <a href="#how">How it works</a>
+      <a href="#know">Good to know</a>
+      <a class="wa-link" data-wa href="#contact" target="_blank" rel="noopener">WhatsApp us</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow" style="color:var(--on-sea-muted)">Kyrenia · North Cyprus</p>
+        <h1 style="margin-top:12px">Land at Ercan.<br>Your car is <em>already there.</em></h1>
+        <p class="lede">Automatic, air‑conditioned cars delivered free to Ercan Airport or your hotel in Kyrenia. Book in two minutes on WhatsApp.</p>
+        <ul class="facts">
+          <li><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--sun)"/><path d="M5 9.2l2.6 2.6L13 6.4" stroke="var(--on-sun)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Free airport &amp; hotel delivery</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--sun)"/><path d="M5 9.2l2.6 2.6L13 6.4" stroke="var(--on-sun)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Full insurance included</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--sun)"/><path d="M5 9.2l2.6 2.6L13 6.4" stroke="var(--on-sun)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>No credit card deposit</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="var(--sun)"/><path d="M5 9.2l2.6 2.6L13 6.4" stroke="var(--on-sun)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Second driver free</li>
+        </ul>
+      </div>
+
+      <form class="book" id="book" novalidate aria-labelledby="book-title">
+        <div>
+          <h2 id="book-title">Get your price</h2>
+        </div>
+        <p class="sub">No payment now. We confirm on WhatsApp.</p>
+        <div class="field">
+          <label for="f-car">Car</label>
+          <select id="f-car"></select>
+        </div>
+        <div class="field">
+          <label for="f-where">Pick‑up</label>
+          <select id="f-where"></select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="f-from">From</label>
+            <input id="f-from" type="date" required>
+          </div>
+          <div class="field">
+            <label for="f-to">Until</label>
+            <input id="f-to" type="date" required>
+          </div>
+        </div>
+        <label class="check" for="f-seat"><input id="f-seat" type="checkbox"> Child seat (+<span class="num" id="seat-price">£3</span>/day)</label>
+        <div class="quote" aria-live="polite">
+          <div class="line"><span id="q-days">7 days × £28</span><span class="num" id="q-base">£196</span></div>
+          <div class="line" id="q-extras-row" hidden><span id="q-extras-label">Extras</span><span class="num" id="q-extras">£0</span></div>
+          <div class="line save" id="q-save-row" hidden><span>Weekly discount (10%)</span><span class="num" id="q-save">−£0</span></div>
+          <div class="total"><span>Total</span><strong class="num" id="q-total">£196</strong></div>
+          <p class="err" id="q-err" hidden></p>
+        </div>
+        <a class="btn" id="send" data-wa href="#contact" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
+          Request on WhatsApp
+        </a>
+        <p class="fine">Opens WhatsApp with your dates and car filled in.</p>
+      </form>
+    </div>
+    <svg class="ridge" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path class="far" d="M0 120 L0 78 L120 70 L230 58 L300 64 L360 44 L400 52 L440 30 L470 46 L505 18 L540 40 L575 24 L610 50 L650 38 L700 60 L790 54 L880 66 L1000 58 L1120 70 L1260 62 L1440 74 L1440 120 Z"/>
+      <path class="near" d="M0 120 L0 104 Q360 88 720 100 T1440 96 L1440 120 Z"/>
+    </svg>
+  </div>
+
+  <section id="fleet">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Cars &amp; prices</p>
+        <h2>Every car is automatic, with air‑con</h2>
+        <p>Prices are per day with full insurance. Rent for 7 days or more and we take 10% off.</p>
+      </div>
+      <div class="fleet" id="fleet-grid"></div>
+      <p class="note">All cars are right‑hand drive, the same as in the UK. Unlimited mileage in North Cyprus.</p>
+    </div>
+  </section>
+
+  <section id="how" class="steps-sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">How it works</p>
+        <h2>From the plane to the road in ten minutes</h2>
+      </div>
+      <ol class="steps">
+        <li><h3>Choose a car and dates</h3><p>Use the price box above. You see the full price before you send anything.</p></li>
+        <li><h3>Confirm on WhatsApp</h3><p>We reply within 15 minutes, 8am to 10pm, and hold the car for you.</p></li>
+        <li><h3>Meet us at arrivals</h3><p>We track your flight and wait with a sign with your name. Pay by cash or card on handover.</p></li>
+        <li><h3>Drop it off anywhere</h3><p>Leave the car at your hotel or back at Ercan. Return it with the same fuel level.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="know">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Good to know</p>
+        <h2>Driving in North Cyprus</h2>
+      </div>
+      <div class="lhd">
+        <svg class="sign" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" fill="var(--on-sea)"/><circle cx="36" cy="36" r="28" fill="var(--sea)"/><path d="M44 50 V30 a8 8 0 0 0-8-8 H28" stroke="var(--on-sea)" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M31 14 L21 22 L31 30" stroke="var(--on-sea)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div>
+          <h3>Keep left</h3>
+          <p>Cyprus drives on the left, and roundabouts go clockwise. If you drive in the UK or Ireland, it will feel like home.</p>
+        </div>
+      </div>
+      <div class="know">
+        <details><summary>What do I need to rent a car?</summary><p>Your passport and your driving licence. Most visitors can drive on the licence from their home country. You need to be 21 or older and have held your licence for at least two years.</p></details>
+        <details><summary>Can I drive to the South?</summary><p>Yes. Our insurance covers the North only, so buy separate cover for the South at the crossing point before you drive through. It takes a few minutes.</p></details>
+        <details><summary>What does the insurance cover?</summary><p>Full cover with no excess for accidents, theft and damage to the car in North Cyprus. Tyres, glass and damage from off‑road driving are not covered.</p></details>
+        <details><summary>What if my flight is late?</summary><p>We track every flight, so we wait for you at no extra cost. If your plans change, send us a WhatsApp message.</p></details>
+        <details><summary>How do I pay?</summary><p>Pay when you get the car, by cash (pounds, euros or lira) or card. There is no deposit and no hold on your card.</p></details>
+        <details><summary>Can I pick up at Larnaca Airport?</summary><p>Yes, for a £25 delivery charge. We meet you at arrivals in Larnaca and drive you across to the North to start your rental.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="reviews" class="steps-sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Reviews</p>
+        <h2>What customers say</h2>
+        <p><span class="sample-tag">Example reviews</span> Your real Google reviews go here.</p>
+      </div>
+      <div class="reviews">
+        <div class="review"><div class="stars" aria-label="5 out of 5">★★★★★</div><blockquote>They were waiting at arrivals at 1am with my name on a sign. The car was spotless and handover took five minutes.</blockquote><cite>Example customer<span>Family trip · 10 days</span></cite></div>
+        <div class="review"><div class="stars" aria-label="5 out of 5">★★★★★</div><blockquote>Booked on WhatsApp the night before and got a reply in minutes. The price was exactly what the website said.</blockquote><cite>Example customer<span>Couple · 7 days</span></cite></div>
+        <div class="review"><div class="stars" aria-label="5 out of 5">★★★★★</div><blockquote>We left the car at our hotel in Kyrenia on the last day, which saved us a trip. Would rent again.</blockquote><cite>Example customer<span>Solo traveller · 4 days</span></cite></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap contact">
+      <div>
+        <div class="sec-head">
+          <p class="eyebrow">Contact</p>
+          <h2>Find us by the old harbour</h2>
+        </div>
+        <dl>
+          <dt>WhatsApp</dt>
+          <dd><span class="num" id="phone-text">+90 533 000 00 00</span><button class="copy" type="button" id="copy-phone">Copy</button></dd>
+          <dt>Office</dt>
+          <dd>Harbour Road, Kyrenia (Girne)</dd>
+          <dt>Hours</dt>
+          <dd>
+            <ul class="hours num">
+              <li><span>Every day</span><span>08:00–22:00</span></li>
+              <li><span>Airport pick‑ups</span><span>24 hours</span></li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <div class="cta-card">
+        <h3>Ready when you land</h3>
+        <p>Send your flight number and dates. We reply with a confirmed price and hold the car.</p>
+        <a class="btn" data-wa href="#contact" target="_blank" rel="noopener">Message us on WhatsApp</a>
+        <a class="btn ghost" href="#top">Get a price first</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> <span data-brand>Saltwind Car Hire</span>, Kyrenia</span>
+    <span>Demo site. Saltwind Car Hire is a sample business.</span>
+  </div>
+</footer>
+
+<div class="dock" aria-label="Quick booking">
+  <div class="from">From<strong class="num" id="dock-from">£22/day</strong></div>
+  <a class="btn" data-wa href="#contact" target="_blank" rel="noopener">Book on WhatsApp</a>
+</div>
+
+<script>
+/* ============================================================
+   EDIT THIS BLOCK to turn the demo into a real client's site.
+   ============================================================ */
+const CONFIG = {
+  brand: "Saltwind Car Hire",
+  whatsapp: "905330000000",        // international format, digits only
+  phoneDisplay: "+90 533 000 00 00",
+  currency: "£",
+  weeklyDiscount: 0.10,            // 10% off for 7+ days
+  weeklyFrom: 7,
+  childSeatPerDay: 3,
+  locations: [
+    { name: "Ercan Airport (ECN)", fee: 0 },
+    { name: "Kyrenia hotel or address", fee: 0 },
+    { name: "Our office, Kyrenia harbour", fee: 0 },
+    { name: "Larnaca Airport (LCA)", fee: 25 }
+  ],
+  fleet: [
+    { id: "picanto", model: "Kia Picanto", cls: "Economy", shape: "hatch", color: "#E8A33C", perDay: 22, seats: 4, bags: 1, specs: ["Automatic", "A/C"] },
+    { id: "yaris",   model: "Toyota Yaris", cls: "Compact", shape: "hatch", color: "#C94A3C", perDay: 28, seats: 5, bags: 2, specs: ["Automatic", "A/C", "Apple CarPlay"] },
+    { id: "corolla", model: "Toyota Corolla", cls: "Saloon", shape: "sedan", color: "#5A7C8A", perDay: 34, seats: 5, bags: 3, specs: ["Automatic", "A/C", "Cruise control"] },
+    { id: "chr",     model: "Toyota C‑HR", cls: "SUV", shape: "suv", color: "#2F6B57", perDay: 45, seats: 5, bags: 3, specs: ["Automatic", "A/C", "Hybrid"] },
+    { id: "noah",    model: "Toyota Noah", cls: "7‑seater", shape: "van", color: "#8C8F94", perDay: 55, seats: 7, bags: 4, specs: ["Automatic", "A/C", "Sliding doors"] }
+  ]
+};
+/* ============================================================ */
+
+const $ = (s, r = document) => r.querySelector(s);
+const money = n => CONFIG.currency + (Math.round(n * 100) / 100).toLocaleString("en-GB", { maximumFractionDigits: 2 });
+
+/* Car silhouettes, drawn per body shape */
+const SHAPES = {
+  hatch: { body: "M14 62 L14 50 Q15 42 28 40 L58 37 L80 20 Q86 15 98 15 L132 15 Q142 15 148 23 L160 38 Q184 41 188 50 L188 62 Z", glass: "M86 23 Q90 20 98 20 L118 20 L118 36 L66 37 Z M123 20 L132 20 Q139 20 143 25 L153 37 L123 37 Z", wheels: [52, 154] },
+  sedan: { body: "M10 62 L10 51 Q11 44 24 42 L56 38 L78 22 Q84 17 96 17 L128 17 Q138 17 146 25 L160 38 L182 40 Q192 42 192 52 L192 62 Z", glass: "M84 25 Q88 22 96 22 L114 22 L114 37 L64 38 Z M119 22 L128 22 Q135 22 141 28 L151 37 L119 37 Z", wheels: [50, 156] },
+  suv:   { body: "M12 62 L12 46 Q13 38 26 36 L54 33 L70 14 Q75 9 86 9 L140 9 Q150 9 156 17 L166 32 Q186 34 190 44 L190 62 Z", glass: "M76 17 Q80 13 88 13 L112 13 L112 31 L60 32 Z M117 13 L140 13 Q147 13 151 19 L159 31 L117 31 Z", wheels: [52, 154] },
+  van:   { body: "M12 62 L12 30 Q12 22 20 18 L36 8 Q40 6 48 6 L176 6 Q188 6 188 18 L188 62 Z", glass: "M24 24 L40 12 L60 12 L60 30 L24 30 Z M66 12 L104 12 L104 30 L66 30 Z M110 12 L148 12 L148 30 L110 30 Z", wheels: [50, 156] }
+};
+function carSVG(c) {
+  const s = SHAPES[c.shape];
+  const w = s.wheels.map(x => `<circle class="tyre" cx="${x}" cy="62" r="12"/><circle class="hub" cx="${x}" cy="62" r="5"/>`).join("");
+  return `<svg viewBox="0 0 200 82" role="img" aria-label="${c.cls} car illustration" style="--car:${c.color}">
+    <ellipse class="shadow" cx="100" cy="76" rx="92" ry="4"/>
+    <path class="body" d="${s.body}"/><path class="glass" d="${s.glass}"/>${w}</svg>`;
+}
+
+/* Fleet grid */
+const grid = $("#fleet-grid");
+grid.innerHTML = CONFIG.fleet.map(c => `
+  <article class="car" data-id="${c.id}">
+    <div class="pic">${carSVG(c)}</div>
+    <div><p class="cls">${c.cls}</p><h3>${c.model}</h3></div>
+    <ul class="specs"><li>${c.seats} seats</li><li>${c.bags} ${c.bags === 1 ? "bag" : "bags"}</li>${c.specs.map(s => `<li>${s}</li>`).join("")}</ul>
+    <div class="foot"><p class="price num">${money(c.perDay)}<small>/day</small></p><button class="pick" type="button" data-pick="${c.id}">Choose</button></div>
+  </article>`).join("");
+
+/* Form setup */
+const fCar = $("#f-car"), fWhere = $("#f-where"), fFrom = $("#f-from"), fTo = $("#f-to"), fSeat = $("#f-seat");
+fCar.innerHTML = CONFIG.fleet.map(c => `<option value="${c.id}">${c.model} · ${money(c.perDay)}/day</option>`).join("");
+fWhere.innerHTML = CONFIG.locations.map((l, i) => `<option value="${i}">${l.name}${l.fee ? " (+" + money(l.fee) + ")" : ""}</option>`).join("");
+fCar.value = "yaris";
+$("#seat-price").textContent = money(CONFIG.childSeatPerDay);
+$("#dock-from").textContent = money(Math.min(...CONFIG.fleet.map(c => c.perDay))) + "/day";
+document.querySelectorAll("[data-brand]").forEach(el => el.textContent = CONFIG.brand);
+$("#phone-text").textContent = CONFIG.phoneDisplay;
+$("#yr").textContent = new Date().getFullYear();
+
+const iso = d => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); };
+const today = new Date(); today.setHours(0, 0, 0, 0);
+const plus = n => { const d = new Date(today); d.setDate(d.getDate() + n); return d; };
+fFrom.min = iso(today); fTo.min = iso(plus(1));
+fFrom.value = iso(plus(14)); fTo.value = iso(plus(21));
+
+const fmtDate = s => new Date(s + "T00:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+
+function quote() {
+  const car = CONFIG.fleet.find(c => c.id === fCar.value);
+  const loc = CONFIG.locations[+fWhere.value];
+  const a = new Date(fFrom.value + "T00:00:00"), b = new Date(fTo.value + "T00:00:00");
+  const days = Math.round((b - a) / 86400000);
+  if (!fFrom.value || !fTo.value || isNaN(days)) return { error: "Choose your pick‑up and return dates." };
+  if (a < today) return { error: "The pick‑up date is in the past." };
+  if (days < 1) return { error: "The return date needs to be after the pick‑up date." };
+  const base = car.perDay * days;
+  const seat = fSeat.checked ? CONFIG.childSeatPerDay * days : 0;
+  const save = days >= CONFIG.weeklyFrom ? Math.round(base * CONFIG.weeklyDiscount) : 0;
+  const total = base - save + seat + loc.fee;
+  return { car, loc, days, base, seat, save, total };
+}
+
+function waUrl(text) { return "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(text); }
+
+function render() {
+  const q = quote(), err = $("#q-err"), send = $("#send");
+  document.querySelectorAll(".car").forEach(el => el.classList.toggle("selected", el.dataset.id === fCar.value));
+  if (q.error) {
+    err.textContent = q.error; err.hidden = false;
+    send.setAttribute("aria-disabled", "true");
+    return;
+  }
+  err.hidden = true; send.removeAttribute("aria-disabled");
+  $("#q-days").textContent = `${q.days} ${q.days === 1 ? "day" : "days"} × ${money(q.car.perDay)}`;
+  $("#q-base").textContent = money(q.base);
+  const extras = q.seat + q.loc.fee;
+  $("#q-extras-row").hidden = extras === 0;
+  $("#q-extras-label").textContent = [q.seat ? "Child seat" : "", q.loc.fee ? "Larnaca delivery" : ""].filter(Boolean).join(" + ");
+  $("#q-extras").textContent = money(extras);
+  $("#q-save-row").hidden = q.save === 0;
+  $("#q-save").textContent = "−" + money(q.save);
+  $("#q-total").textContent = money(q.total);
+
+  const msg = `Hi ${CONFIG.brand}, I'd like to book:\n` +
+    `Car: ${q.car.model}\nPick-up: ${q.loc.name}\n` +
+    `From: ${fmtDate(fFrom.value)}\nUntil: ${fmtDate(fTo.value)} (${q.days} ${q.days === 1 ? "day" : "days"})\n` +
+    (q.seat ? "Child seat: yes\n" : "") +
+    `Quoted total: ${money(q.total)}\n\nMy flight number is: `;
+  send.href = waUrl(msg);
+}
+
+document.querySelectorAll("[data-wa]").forEach(a => { if (a.id !== "send") a.href = waUrl(`Hi ${CONFIG.brand}, I'd like to rent a car.`); });
+[fCar, fWhere, fFrom, fTo, fSeat].forEach(el => el.addEventListener("input", () => {
+  if (el === fFrom && fFrom.value) {
+    const next = new Date(fFrom.value + "T00:00:00"); next.setDate(next.getDate() + 1);
+    fTo.min = iso(next);
+  }
+  render();
+}));
+$("#book").addEventListener("submit", e => e.preventDefault());
+
+grid.addEventListener("click", e => {
+  const b = e.target.closest("[data-pick]"); if (!b) return;
+  fCar.value = b.dataset.pick; render();
+  $("#book").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+  fCar.focus({ preventScroll: true });
+});
+
+$("#copy-phone").addEventListener("click", async e => {
+  const btn = e.currentTarget;
+  try { await navigator.clipboard.writeText(CONFIG.phoneDisplay); btn.textContent = "Copied"; }
+  catch { const r = document.createRange(); r.selectNodeContents($("#phone-text")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected"; }
+  setTimeout(() => btn.textContent = "Copy", 1600);
+});
+
+render();
+</script>
+
+</body>
+</html>

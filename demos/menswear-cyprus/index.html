@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>body{margin:0;padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Menswear Cyprus Concept</title>
+<meta name="description" content="Menswear Cyprus: KKTC'nin online erkek giyim platformu. Eşofman, hoodie, ceket ve retro formalar. Sepete ekle, siparişini tek mesajla gönder.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500..800;1,6..96,500..700&family=Albert+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: black-and-gold storefront in the brand's own colours; serif wordmark and headlines, product grid with colour and size pickers, a bag drawer that turns the whole order into one message. */
+:root {
+  --bg: #0D0C0A;
+  --surface: #16140F;
+  --tile: #2A261E;
+  --ink: #EFE9DC;
+  --muted: #A59D8B;
+  --line: #2E2A21;
+  --gold: #CDA85C;
+  --on-gold: #15120B;
+  --outline: rgba(239,233,220,.38);
+  --scrim: rgba(0,0,0,.6);
+  --f-display: "Bodoni Moda", "Didot", Georgia, serif;
+  --f-body: "Albert Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gutter: clamp(16px, 4vw, 44px);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F4F1E9; --surface: #FFFDF8; --tile: #E8E3D6; --ink: #17150F; --muted: #686152; --line: #DAD3C2;
+    --gold: #8A6820; --on-gold: #FFFDF8; --outline: rgba(23,21,15,.28); --scrim: rgba(23,21,15,.45);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F4F1E9; --surface: #FFFDF8; --tile: #E8E3D6; --ink: #17150F; --muted: #686152; --line: #DAD3C2;
+  --gold: #8A6820; --on-gold: #FFFDF8; --outline: rgba(23,21,15,.28); --scrim: rgba(23,21,15,.45);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 3px; }
+.wrap { max-width: 1200px; margin-inline: auto; padding-inline: var(--gutter); }
+h1, h2, h3 { margin: 0; font-family: var(--f-display); font-weight: 600; line-height: 1; text-wrap: balance; }
+p { margin: 0; }
+.label { font-size: .75rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+
+.concept { background: var(--gold); color: var(--on-gold); font-size: .8125rem; font-weight: 700; text-align: center; padding: 7px 16px; }
+
+/* Header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.mark { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.mark .m { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--gold); display: grid; place-items: center; font-family: var(--f-display); font-weight: 700; font-size: 1.25rem; color: var(--gold); }
+.mark .w { display: grid; line-height: 1.05; }
+.mark .w b { font-family: var(--f-display); font-weight: 600; letter-spacing: .28em; font-size: .9375rem; }
+.mark .w span { font-size: .625rem; letter-spacing: .42em; color: var(--muted); font-weight: 600; }
+.tools { display: flex; align-items: center; gap: 10px; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+.lang button { border: 0; background: transparent; padding: 5px 10px; border-radius: 999px; font-size: .8125rem; font-weight: 700; cursor: pointer; color: var(--muted); }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.bag-btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--gold); background: transparent; color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-weight: 700; font-size: .9375rem; }
+@media (max-width: 480px) { .bag-btn [data-i18n="bag"] { display: none; } .bag-btn { padding: 7px 11px; } .mark .w b { letter-spacing: .18em; } .mark .w span { letter-spacing: .3em; } .mark .m { width: 34px; height: 34px; } }
+.bag-btn .count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-size: .75rem; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+
+/* Hero */
+.hero .wrap { padding-block: clamp(36px, 6vw, 80px) clamp(28px, 4vw, 48px); display: grid; gap: 22px; }
+.hero h1 { font-size: clamp(2.75rem, 1.4rem + 6vw, 6.25rem); letter-spacing: -.02em; max-width: 13ch; }
+.hero h1 i { font-style: italic; color: var(--gold); font-weight: 500; }
+.hero .lede { font-size: 1.1875rem; color: var(--muted); max-width: 46ch; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; border-radius: 999px; padding: 13px 22px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; transition: transform .15s ease; }
+.btn.gold { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.btn:hover { transform: translateY(-1px); }
+.btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+.promise { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 26px; color: var(--muted); font-size: .9375rem; font-weight: 600; }
+.promise li::before { content: "◆"; color: var(--gold); font-size: .625rem; margin-right: 8px; vertical-align: 2px; }
+
+/* Shop */
+section { padding-block: clamp(40px, 6vw, 76px); }
+.sec-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 32px; margin-bottom: 20px; }
+.sec-head h2 { font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem); }
+.sec-head p { color: var(--muted); max-width: 44ch; }
+.cats { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 22px; scrollbar-width: thin; }
+.cats button { flex: none; border: 1px solid var(--line); background: var(--surface); padding: 9px 16px; border-radius: 999px; font-weight: 600; font-size: .9375rem; cursor: pointer; white-space: nowrap; }
+.cats button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.cats .n { opacity: .6; margin-left: 4px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(max(150px, calc((100% - 60px) / 4)), 1fr)); gap: 30px 20px; }
+@media (max-width: 560px) { .grid { gap: 26px 12px; } }
+.card { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card .pic { position: relative; aspect-ratio: 4 / 5; max-width: 100%; background: var(--tile); border-radius: 3px; display: grid; place-items: center; padding: 15%; overflow: hidden; }
+.card .pic svg { width: 100%; height: 100%; transition: transform .35s ease; }
+.card:hover .pic svg { transform: scale(1.04); }
+.tag { position: absolute; top: 12px; left: 12px; border: 1px solid var(--gold); color: var(--gold); background: color-mix(in srgb, var(--bg) 70%, transparent); font-size: .6875rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
+.card h3 { font-family: var(--f-body); font-weight: 700; font-size: 1.0625rem; line-height: 1.25; }
+.card .meta { font-size: .875rem; color: var(--muted); margin-top: 3px; }
+.pickrow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sw { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--outline); background: var(--c); cursor: pointer; padding: 0; }
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--gold); }
+.sz { min-width: 40px; height: 32px; padding: 0 8px; border: 1px solid var(--line); border-radius: 3px; background: var(--surface); font-size: .8125rem; font-weight: 700; cursor: pointer; font-variant-numeric: tabular-nums; }
+.sz[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+@media (max-width: 560px) { .sz { min-width: 32px; padding: 0 6px; } .sw { width: 24px; height: 24px; } .card h3 { font-size: .9688rem; } }
+.add { margin-top: auto; border: 1px solid var(--gold); background: transparent; color: var(--ink); border-radius: 999px; padding: 10px 14px; font-weight: 700; font-size: .9375rem; cursor: pointer; }
+.add:hover, .add.done { background: var(--gold); color: var(--on-gold); }
+.note { margin-top: 26px; font-size: .875rem; color: var(--muted); }
+
+/* Steps */
+.how { background: var(--surface); border-block: 1px solid var(--line); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; counter-reset: s; }
+@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+.steps li { counter-increment: s; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.steps li::before { content: counter(s, upper-roman); font-family: var(--f-display); font-style: italic; font-size: 2.25rem; line-height: 1; color: var(--gold); }
+.steps h3 { font-family: var(--f-body); font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
+.steps p { color: var(--muted); }
+
+footer { border-top: 1px solid var(--line); padding-block: 32px; font-size: .875rem; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 32px; }
+footer a { color: var(--ink); font-weight: 600; text-decoration: none; }
+footer .links { display: flex; gap: 18px; }
+
+/* Bag drawer */
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 50; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: var(--surface); border-left: 1px solid var(--line); z-index: 60; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.drawer header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--line); }
+.drawer header h2 { font-size: 1.75rem; }
+.x { border: 1px solid var(--line); background: transparent; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1.125rem; line-height: 1; }
+.drawer .body { flex: 1; overflow-y: auto; padding: 16px 20px; display: grid; gap: 18px; align-content: start; }
+.empty { color: var(--muted); display: grid; gap: 12px; justify-items: start; padding-block: 12px; }
+.line { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.line .th { width: 64px; height: 80px; background: var(--tile); border-radius: 3px; padding: 10px; display: grid; place-items: center; }
+.line .th svg { width: 100%; height: 100%; }
+.line b { display: block; font-size: .9375rem; line-height: 1.3; }
+.line span { font-size: .8125rem; color: var(--muted); }
+.qty { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; }
+.qty button { border: 0; background: transparent; width: 30px; height: 30px; cursor: pointer; font-weight: 700; }
+.qty output { min-width: 18px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; font-size: .875rem; }
+.who { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 16px; }
+.who .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.fld { display: grid; gap: 5px; min-width: 0; }
+.fld label { font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.fld input, .fld select { width: 100%; min-width: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 11px; font-size: 1rem; }
+.fld input:focus, .fld select:focus { outline: none; border-color: var(--gold); }
+.preview { width: 100%; min-height: 120px; resize: vertical; background: var(--bg); border: 1px dashed var(--line); border-radius: 6px; padding: 10px; font-size: .8125rem; color: var(--muted); line-height: 1.5; }
+.drawer footer { border-top: 1px solid var(--line); padding: 16px 20px; display: grid; gap: 8px; }
+.drawer footer p { font-size: .8125rem; color: var(--muted); text-align: center; }
+.drawer:not([hidden]) ~ .toast { bottom: calc(120px + env(safe-area-inset-bottom, 0px)); }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 70; background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: 999px; font-weight: 600; font-size: .9375rem; max-width: calc(100% - 32px); text-align: center; }
+</style>
+
+<div class="concept" data-i18n="concept">Konsept tasarım · Menswear Cyprus için hazırlandı</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#top" aria-label="Menswear Cyprus">
+      <span class="m" aria-hidden="true">M</span>
+      <span class="w"><b>MENSWEAR</b><span>CYPRUS</span></span>
+    </a>
+    <div class="tools">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-set-lang="tr" aria-pressed="true">TR</button>
+        <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="bag-btn" type="button" id="open-bag" aria-haspopup="dialog">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 13H7L6 8Zm3 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span data-i18n="bag">Sepet</span><span class="count" id="bag-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <p class="label" data-i18n="eyebrow">KKTC'nin online erkek giyim platformu</p>
+      <h1><span data-i18n="h1a">Sezonun parçaları,</span> <i data-i18n="h1b">tek mesajla kapında.</i></h1>
+      <p class="lede" data-i18n="lede">Eşofman takımları, hoodie, ceket ve retro formalar. Beğendiklerini sepete ekle, bedenini seç, siparişini tek mesajla gönder.</p>
+      <div class="ctas">
+        <a class="btn gold" href="#shop" data-i18n="cta">Koleksiyonu gör</a>
+        <a class="btn" href="https://www.instagram.com/menswear_cyprus/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+      <ul class="promise">
+        <li data-i18n="p1">Tüm KKTC'ye gönderim</li>
+        <li data-i18n="p2">Sipariş Instagram DM ile</li>
+        <li data-i18n="p3">Beden değişimi kolay</li>
+      </ul>
+    </div>
+  </div>
+
+  <section id="shop" style="padding-top:12px">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 data-i18n="shopTitle">Koleksiyon</h2>
+        <p data-i18n="shopSub">Rengi ve bedeni seç, sepete ekle. Fiyat ve stok bilgisini mesajla hemen iletiyoruz.</p>
+      </div>
+      <div class="cats" id="cats" role="group" aria-label="Kategoriler"></div>
+      <div class="grid" id="grid"></div>
+      <p class="note" data-i18n="note">Ürün görselleri örnektir. Site yayına alınırken mağazanın kendi fotoğrafları ve güncel ürünleriyle doldurulur.</p>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="wrap">
+      <div class="sec-head"><h2 data-i18n="howTitle">Nasıl sipariş verilir</h2></div>
+      <ol class="steps">
+        <li><h3 data-i18n="h1t">Sepetini doldur</h3><p data-i18n="h1p">Birden fazla ürün, renk ve beden seçebilirsin.</p></li>
+        <li><h3 data-i18n="h2t">Tek mesajla gönder</h3><p data-i18n="h2p">Siparişin hazır mesaja dönüşür. Instagram'da yapıştır ve gönder.</p></li>
+        <li><h3 data-i18n="h3t">Onayla, teslim al</h3><p data-i18n="h3p">Fiyat ve teslimatı mesajla onaylıyoruz, ürünün kapına geliyor.</p></li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p><strong style="color:var(--ink)">Menswear Cyprus</strong> · <span data-i18n="foot">KKTC, online satış</span></p>
+      <p style="margin-top:6px" data-i18n="footConcept">Konsept tasarım: Sifon Imaikop. Ürün görselleri örnektir.</p>
+    </div>
+    <div class="links">
+      <a href="https://www.instagram.com/menswear_cyprus/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="bag-title" hidden>
+  <header>
+    <h2 id="bag-title" data-i18n="bagTitle">Sepetin</h2>
+    <button class="x" type="button" id="close-bag" aria-label="Kapat">×</button>
+  </header>
+  <div class="body">
+    <div class="empty" id="empty">
+      <p data-i18n="empty">Sepetin boş. Koleksiyondan bir parça ekle.</p>
+      <button class="btn" type="button" id="empty-go" data-i18n="cta">Koleksiyonu gör</button>
+    </div>
+    <div id="lines" style="display:grid;gap:14px"></div>
+    <form class="who" id="who" novalidate>
+      <div class="row">
+        <div class="fld"><label for="f-name" data-i18n="name">Ad Soyad</label><input id="f-name" autocomplete="name"></div>
+        <div class="fld"><label for="f-city" data-i18n="city">Şehir</label>
+          <select id="f-city"><option>Lefkoşa</option><option>Girne</option><option>Gazimağusa</option><option>Güzelyurt</option><option>İskele</option><option>Lefke</option></select>
+        </div>
+      </div>
+      <div class="fld"><label for="f-phone" data-i18n="phone">Telefon</label><input id="f-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="05XX XXX XX XX"></div>
+      <div class="fld"><label for="f-msg" data-i18n="yourMsg">Gönderilecek mesaj</label><textarea class="preview" id="f-msg" readonly></textarea></div>
+    </form>
+  </div>
+  <footer>
+    <a class="btn gold" id="send" href="https://ig.me/m/menswear_cyprus" target="_blank" rel="noopener" aria-disabled="true"><span data-i18n="send">Siparişi gönder</span></a>
+    <p id="send-hint" data-i18n="hintIg">Mesaj kopyalanır ve Instagram açılır. Sohbete yapıştırıp gönder.</p>
+  </footer>
+</aside>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+/* ============================================================
+   STORE SETTINGS: edit here.
+   If the store gives a WhatsApp number, put it in `whatsapp`
+   (digits only, e.g. "90533XXXXXXX") and orders go to WhatsApp
+   with the message pre-filled. Otherwise they go to Instagram DM.
+   ============================================================ */
+const STORE = { name: "Menswear Cyprus", instagram: "menswear_cyprus", whatsapp: "" };
+
+const CATS = [
+  { id: "all", tr: "Tümü", en: "All" },
+  { id: "takim", tr: "Takım", en: "Sets" },
+  { id: "ust", tr: "Sweatshirt & hoodie", en: "Sweats & hoodies" },
+  { id: "alt", tr: "Eşofman altı", en: "Joggers" },
+  { id: "ceket", tr: "Ceket & mont", en: "Jackets" },
+  { id: "forma", tr: "Retro forma", en: "Retro shirts" },
+  { id: "tisort", tr: "Tişört", en: "T-shirts" }
+];
+const C = {
+  siyah: { tr: "Siyah", en: "Black", hex: "#1C1C1B" },
+  gri: { tr: "Gri melanj", en: "Grey marl", hex: "#A9ABA7" },
+  lacivert: { tr: "Lacivert", en: "Navy", hex: "#23304A" },
+  bordo: { tr: "Bordo", en: "Burgundy", hex: "#6E1F2B" },
+  sari: { tr: "Sarı", en: "Yellow", hex: "#E0B52B" },
+  kirmizi: { tr: "Kırmızı", en: "Red", hex: "#B3262E" },
+  beyaz: { tr: "Beyaz", en: "White", hex: "#F1EFEA" },
+  krem: { tr: "Krem", en: "Cream", hex: "#E6DDC8" }
+};
+const TOP = ["S", "M", "L", "XL", "XXL"];
+const PRODUCTS = [
+  { id: "m1", cat: "alt", tr: "Fleece eşofman altı", en: "Fleece joggers", mtr: "Fermuarlı cep, lastikli paça", men: "Zip pockets, cuffed hem", colors: ["gri", "siyah"], sizes: TOP, shape: "jogger", isNew: true },
+  { id: "m2", cat: "ust", tr: "Fermuarlı fleece hoodie", en: "Zip fleece hoodie", mtr: "Kapüşonlu, ince fleece", men: "Hooded, light fleece", colors: ["gri", "siyah"], sizes: TOP, shape: "ziphood", isNew: true },
+  { id: "m3", cat: "takim", tr: "Fleece takım", en: "Fleece tracksuit set", mtr: "Hoodie + eşofman altı", men: "Hoodie + joggers", colors: ["lacivert", "gri", "siyah"], sizes: TOP, shape: "ziphood" },
+  { id: "m4", cat: "ust", tr: "Retro polo yaka sweatshirt", en: "Retro polo-collar sweatshirt", mtr: "Baskılı, oversize", men: "Printed, oversized", colors: ["bordo", "lacivert"], sizes: TOP, shape: "polo", isNew: true },
+  { id: "m5", cat: "forma", tr: "Retro futbol forması", en: "Retro football shirt", mtr: "İsim ve numara baskılı", men: "Name and number print", colors: ["sari", "kirmizi", "beyaz"], sizes: TOP, shape: "jersey" },
+  { id: "m6", cat: "ceket", tr: "Bomber ceket", en: "Bomber jacket", mtr: "Ribanalı yaka ve bel", men: "Ribbed collar and hem", colors: ["krem", "kirmizi", "siyah"], sizes: TOP, shape: "bomber" },
+  { id: "m7", cat: "ceket", tr: "Şişme mont", en: "Puffer jacket", mtr: "Kapitone, dik yaka", men: "Quilted, high collar", colors: ["lacivert", "siyah"], sizes: TOP, shape: "puffer" },
+  { id: "m8", cat: "tisort", tr: "Oversize tişört", en: "Oversized T-shirt", mtr: "Kalın pamuk", men: "Heavy cotton", colors: ["beyaz", "siyah"], sizes: TOP, shape: "tee" }
+];
+
+const T = {
+  tr: {
+    concept: "Konsept tasarım · Menswear Cyprus için hazırlandı",
+    bag: "Sepet", eyebrow: "KKTC'nin online erkek giyim platformu",
+    h1a: "Sezonun parçaları,", h1b: "tek mesajla kapında.",
+    lede: "Eşofman takımları, hoodie, ceket ve retro formalar. Beğendiklerini sepete ekle, bedenini seç, siparişini tek mesajla gönder.",
+    cta: "Koleksiyonu gör", p1: "Tüm KKTC'ye gönderim", p2: "Sipariş Instagram DM ile", p2w: "Sipariş WhatsApp ile", p3: "Beden değişimi kolay",
+    shopTitle: "Koleksiyon", shopSub: "Rengi ve bedeni seç, sepete ekle. Fiyat ve stok bilgisini mesajla hemen iletiyoruz.",
+    note: "Ürün görselleri örnektir. Site yayına alınırken mağazanın kendi fotoğrafları ve güncel ürünleriyle doldurulur.",
+    howTitle: "Nasıl sipariş verilir", h1t: "Sepetini doldur", h1p: "Birden fazla ürün, renk ve beden seçebilirsin.",
+    h2t: "Tek mesajla gönder", h2p: "Siparişin hazır mesaja dönüşür. Instagram'da yapıştır ve gönder.", h2pw: "Siparişin WhatsApp'ta hazır mesaj olarak açılır. Sadece gönder.",
+    h3t: "Onayla, teslim al", h3p: "Fiyat ve teslimatı mesajla onaylıyoruz, ürünün kapına geliyor.",
+    foot: "KKTC, online satış", footConcept: "Konsept tasarım: Sifon Imaikop. Ürün görselleri örnektir.",
+    bagTitle: "Sepetin", empty: "Sepetin boş. Koleksiyondan bir parça ekle.",
+    name: "Ad Soyad", city: "Şehir", phone: "Telefon", yourMsg: "Gönderilecek mesaj",
+    send: "Siparişi gönder", hintIg: "Mesaj kopyalanır ve Instagram açılır. Sohbete yapıştırıp gönder.", hintWa: "WhatsApp mesajın hazır şekilde açılır.",
+    add: "Sepete ekle", added: "Sepette ✓", isNew: "Yeni", color: "Renk", size: "Beden", minus: "Azalt", plus: "Artır",
+    toastAdd: "Sepete eklendi", toastCopied: "Sipariş kopyalandı. Instagram'da sohbete yapıştır.", toastSelect: "Mesajı seç ve kopyala, sonra Instagram'da yapıştır.",
+    msg: (lines, name, city, phone) => `Merhaba ${STORE.name}, sipariş vermek istiyorum:\n${lines}\n\nAd: ${name || "-"}\nŞehir: ${city}\nTelefon: ${phone || "-"}\n\nFiyat ve stok bilgisini alabilir miyim?`,
+    lineFmt: (n, q, p, c, s) => `${n}. ${q} x ${p} (${c}, ${s} beden)`
+  },
+  en: {
+    concept: "Concept design · prepared for Menswear Cyprus",
+    bag: "Bag", eyebrow: "North Cyprus's online menswear store",
+    h1a: "This season's pieces,", h1b: "at your door in one message.",
+    lede: "Tracksuits, hoodies, jackets and retro football shirts. Add what you like to your bag, choose your size, and send the whole order in one message.",
+    cta: "Shop the collection", p1: "Delivery across North Cyprus", p2: "Order by Instagram DM", p2w: "Order on WhatsApp", p3: "Easy size exchanges",
+    shopTitle: "Collection", shopSub: "Choose a colour and size, then add to your bag. We reply with price and stock straight away.",
+    note: "Product images are placeholders. The live site uses the store's own photos and current stock.",
+    howTitle: "How to order", h1t: "Fill your bag", h1p: "Add as many pieces, colours and sizes as you like.",
+    h2t: "Send it in one message", h2p: "Your order becomes a ready message. Paste it into Instagram and send.", h2pw: "Your order opens in WhatsApp as a ready message. Just send it.",
+    h3t: "Confirm and receive", h3p: "We confirm price and delivery by message, and your order comes to your door.",
+    foot: "North Cyprus, online store", footConcept: "Concept design by Sifon Imaikop. Product images are placeholders.",
+    bagTitle: "Your bag", empty: "Your bag is empty. Add something from the collection.",
+    name: "Full name", city: "City", phone: "Phone", yourMsg: "Message to send",
+    send: "Send order", hintIg: "The message is copied and Instagram opens. Paste it into the chat and send.", hintWa: "WhatsApp opens with your message ready.",
+    add: "Add to bag", added: "In bag ✓", isNew: "New", color: "Colour", size: "Size", minus: "Decrease", plus: "Increase",
+    toastAdd: "Added to bag", toastCopied: "Order copied. Paste it into the Instagram chat.", toastSelect: "Select and copy the message, then paste it in Instagram.",
+    msg: (lines, name, city, phone) => `Hi ${STORE.name}, I'd like to order:\n${lines}\n\nName: ${name || "-"}\nCity: ${city}\nPhone: ${phone || "-"}\n\nCould you confirm price and stock?`,
+    lineFmt: (n, q, p, c, s) => `${n}. ${q} x ${p} (${c}, size ${s})`
+  }
+};
+
+function garment(shape, hex) {
+  const S = `stroke="var(--outline)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"`;
+  const longT = `M40 20 L52 15 Q60 22 68 15 L80 20 L96 28 L110 94 L97 97 L85 50 L85 106 L35 106 L35 50 L23 97 L10 94 L24 28 Z`;
+  const shortT = `M40 20 L52 15 Q60 22 68 15 L80 20 L104 36 L95 50 L85 44 L85 106 L35 106 L35 44 L25 50 L16 36 Z`;
+  const f = `fill="${hex}"`;
+  const d = {
+    jogger: `<path d="M38 12 L82 12 L86 100 L66 100 L60 44 L54 100 L34 100 Z" ${f} ${S}/><path d="M38 20 L82 20 M34 92 L54 92 M66 92 L86 92 M44 30 L44 50 M76 30 L76 50" ${S} fill="none"/>`,
+    ziphood: `<path d="${longT}" ${f} ${S}/><path d="M48 18 Q48 3 60 3 Q72 3 72 18 Q66 25 60 25 Q54 25 48 18 Z" ${f} ${S}/><path d="M60 24 L60 106 M35 99 L85 99 M40 70 L52 70 M68 70 L80 70" ${S} fill="none"/>`,
+    polo: `<path d="${longT}" ${f} ${S}/><path d="M52 15 L60 30 L68 15 L74 19 L62 34 L58 34 L46 19 Z" fill="var(--bg)" ${S}/><path d="M35 99 L85 99 M22 90 L10 88 M98 90 L110 88" ${S} fill="none"/><circle cx="60" cy="68" r="12" fill="none" ${S}/><path d="M50 58 L70 78 M70 58 L50 78" ${S} fill="none" opacity=".6"/>`,
+    jersey: `<path d="${shortT}" ${f} ${S}/><path d="M52 15 Q60 26 68 15" ${S} fill="none"/><path d="M50 48 L70 48 L70 84 L50 84 Z" fill="none" ${S}/><path d="M55 58 L65 58 L65 74 L55 74 Z" fill="var(--outline)" stroke="none"/>`,
+    bomber: `<path d="${longT}" ${f} ${S}/><path d="M50 16 Q60 24 70 16 L70 20 Q60 28 50 20 Z" fill="var(--outline)" stroke="none"/><path d="M60 24 L60 100 M35 98 L85 98 L85 106 L35 106 M40 56 L48 66 M80 56 L72 66" ${S} fill="none"/>`,
+    puffer: `<path d="${longT}" ${f} ${S}/><path d="M50 10 L70 10 L70 22 L50 22 Z" ${f} ${S}/><path d="M60 22 L60 106 M35 40 L85 40 M35 58 L85 58 M35 76 L85 76 M35 94 L85 94 M17 60 L27 62 M103 60 L93 62" ${S} fill="none"/>`,
+    tee: `<path d="${shortT}" ${f} ${S}/><path d="M52 15 Q60 24 68 15" ${S} fill="none"/>`
+  };
+  return `<svg viewBox="0 0 120 120" aria-hidden="true">${d[shape]}</svg>`;
+}
+
+let lang = "tr";
+try { const s = localStorage.getItem("mc-lang"); if (s === "en" || s === "tr") lang = s; } catch {}
+let cat = "all";
+const pick = {};
+PRODUCTS.forEach(p => pick[p.id] = { color: p.colors[0], size: "M" });
+const bag = [];
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const useWa = () => /^\d{8,15}$/.test(STORE.whatsapp);
+
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2600);
+}
+
+function renderText() {
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { const v = t[el.dataset.i18n]; if (typeof v === "string") el.textContent = v; });
+  if (useWa()) {
+    document.querySelector('[data-i18n="p2"]').textContent = t.p2w;
+    document.querySelector('[data-i18n="h2p"]').textContent = t.h2pw;
+    $("#send-hint").textContent = t.hintWa;
+  }
+  document.querySelectorAll("[data-set-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.setLang === lang)));
+}
+
+function renderCats() {
+  $("#cats").innerHTML = CATS.map(c => {
+    const n = c.id === "all" ? PRODUCTS.length : PRODUCTS.filter(p => p.cat === c.id).length;
+    return `<button type="button" data-cat="${c.id}" aria-pressed="${c.id === cat}">${esc(c[lang])}<span class="n">${n}</span></button>`;
+  }).join("");
+}
+
+function card(p) {
+  const t = T[lang], s = pick[p.id], col = C[s.color];
+  const inBag = bag.some(b => b.id === p.id && b.color === s.color && b.size === s.size);
+  return `<article class="card" data-id="${p.id}">
+    <div class="pic">${p.isNew ? `<span class="tag">${t.isNew}</span>` : ""}${garment(p.shape, col.hex)}</div>
+    <div><h3>${esc(p[lang])}</h3><p class="meta">${esc(lang === "tr" ? p.mtr : p.men)} · ${esc(col[lang])}</p></div>
+    <div class="pickrow" role="group" aria-label="${t.color}">${p.colors.map(k => `<button type="button" class="sw" style="--c:${C[k].hex}" data-color="${k}" aria-pressed="${k === s.color}" aria-label="${esc(C[k][lang])}" title="${esc(C[k][lang])}"></button>`).join("")}</div>
+    <div class="pickrow" role="group" aria-label="${t.size}">${p.sizes.map(z => `<button type="button" class="sz" data-size="${z}" aria-pressed="${z === s.size}">${z}</button>`).join("")}</div>
+    <button type="button" class="add${inBag ? " done" : ""}" data-add>${inBag ? t.added : t.add}</button>
+  </article>`;
+}
+
+function renderGrid() {
+  $("#grid").innerHTML = PRODUCTS.filter(p => cat === "all" || p.cat === cat).map(card).join("");
+}
+
+function orderText() {
+  const t = T[lang];
+  const lines = bag.map((b, i) => { const p = PRODUCTS.find(x => x.id === b.id); return t.lineFmt(i + 1, b.qty, p[lang], C[b.color][lang].toLowerCase(), b.size); }).join("\n");
+  return t.msg(lines, $("#f-name").value.trim(), $("#f-city").value, $("#f-phone").value.trim());
+}
+
+function renderBag() {
+  const t = T[lang];
+  const count = bag.reduce((n, b) => n + b.qty, 0);
+  $("#bag-count").textContent = count;
+  $("#empty").hidden = bag.length > 0;
+  $("#who").hidden = bag.length === 0;
+  $("#lines").innerHTML = bag.map((b, i) => {
+    const p = PRODUCTS.find(x => x.id === b.id);
+    return `<div class="line">
+      <div class="th">${garment(p.shape, C[b.color].hex)}</div>
+      <div><b>${esc(p[lang])}</b><span>${esc(C[b.color][lang])} · ${t.size} ${b.size}</span></div>
+      <div class="qty"><button type="button" data-q="-1" data-i="${i}" aria-label="${t.minus}">−</button><output>${b.qty}</output><button type="button" data-q="1" data-i="${i}" aria-label="${t.plus}">+</button></div>
+    </div>`;
+  }).join("");
+  const send = $("#send");
+  if (bag.length) {
+    send.removeAttribute("aria-disabled");
+    const text = orderText();
+    $("#f-msg").value = text;
+    send.href = useWa() ? `https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(text)}` : `https://ig.me/m/${STORE.instagram}`;
+  } else {
+    send.setAttribute("aria-disabled", "true");
+    $("#f-msg").value = "";
+  }
+}
+
+let lastFocus = null;
+function openBag() { lastFocus = document.activeElement; $("#scrim").hidden = false; $("#drawer").hidden = false; renderBag(); $("#close-bag").focus(); }
+function closeBag() { $("#scrim").hidden = true; $("#drawer").hidden = true; lastFocus?.focus?.(); }
+
+function renderAll() { renderText(); renderCats(); renderGrid(); renderBag(); }
+
+document.addEventListener("click", e => {
+  const l = e.target.closest("[data-set-lang]");
+  if (l) { lang = l.dataset.setLang; try { localStorage.setItem("mc-lang", lang); } catch {} renderAll(); return; }
+  const c = e.target.closest("[data-cat]");
+  if (c) { cat = c.dataset.cat; renderCats(); renderGrid(); return; }
+  const q = e.target.closest("[data-q]");
+  if (q) { const b = bag[+q.dataset.i]; b.qty += +q.dataset.q; if (b.qty < 1) bag.splice(+q.dataset.i, 1); renderBag(); renderGrid(); return; }
+  const cardEl = e.target.closest(".card");
+  if (!cardEl) return;
+  const id = cardEl.dataset.id, s = pick[id];
+  const sw = e.target.closest("[data-color]"), sz = e.target.closest("[data-size]"), add = e.target.closest("[data-add]");
+  if (!sw && !sz && !add) return;
+  if (sw) s.color = sw.dataset.color;
+  if (sz) s.size = sz.dataset.size;
+  if (add) {
+    const ex = bag.find(b => b.id === id && b.color === s.color && b.size === s.size);
+    if (ex) ex.qty += 1; else bag.push({ id, color: s.color, size: s.size, qty: 1 });
+    renderBag(); toast(T[lang].toastAdd);
+  }
+  const sel = sw ? `[data-color="${sw.dataset.color}"]` : sz ? `[data-size="${sz.dataset.size}"]` : "[data-add]";
+  cardEl.outerHTML = card(PRODUCTS.find(p => p.id === id));
+  document.querySelector(`.card[data-id="${id}"] ${sel}`)?.focus();
+});
+
+$("#open-bag").addEventListener("click", openBag);
+$("#close-bag").addEventListener("click", closeBag);
+$("#scrim").addEventListener("click", closeBag);
+$("#empty-go").addEventListener("click", () => { closeBag(); $("#shop").scrollIntoView({ behavior: "smooth" }); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#drawer").hidden) closeBag(); });
+["f-name", "f-city", "f-phone"].forEach(id => $("#" + id).addEventListener("input", renderBag));
+$("#who").addEventListener("submit", e => e.preventDefault());
+
+$("#send").addEventListener("click", e => {
+  if (!bag.length) { e.preventDefault(); return; }
+  if (useWa()) return;
+  const text = orderText();
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(() => toast(T[lang].toastCopied)).catch(() => { const m = $("#f-msg"); m.focus(); m.select(); toast(T[lang].toastSelect); });
+  } else { const m = $("#f-msg"); m.focus(); m.select(); toast(T[lang].toastSelect); }
+});
+
+renderAll();
+</script>
+
+</body>
+</html>

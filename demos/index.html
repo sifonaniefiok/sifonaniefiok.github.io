@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Websites by Sifon Imaikop</title>
+<meta name="description" content="Fast, bilingual websites for North Cyprus businesses that turn Instagram followers into WhatsApp orders. Built and looked after by Sifon Imaikop.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a one-page offer. Headline and promise, the live demo, what's included, prices, contact. Cool paper ground, deep green ink, one signal-green accent. */
+:root {
+  --bg: #F1F3F1;
+  --surface: #FFFFFF;
+  --ink: #0F1B17;
+  --muted: #53625C;
+  --line: #D5DDD9;
+  --accent: #17804F;
+  --on-accent: #F3FBF7;
+  --soft: #E2EEE7;
+  --f-display: "Bricolage Grotesque", "Arial Narrow", Arial, sans-serif;
+  --f-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gutter: clamp(16px, 4vw, 44px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0B1210; --surface: #121B18; --ink: #E7F0EC; --muted: #9BB0A7; --line: #22312C; --accent: #45C489; --on-accent: #0B1210; --soft: #16261F; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.6; -webkit-font-smoothing: antialiased; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+[hidden] { display: none !important; }
+.wrap { max-width: 1040px; margin-inline: auto; padding-inline: var(--gutter); }
+h1, h2, h3 { margin: 0; font-family: var(--f-display); line-height: 1.02; text-wrap: balance; letter-spacing: -.02em; }
+p { margin: 0; }
+.label { font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; }
+.name { font-family: var(--f-display); font-weight: 700; font-size: 1.125rem; text-decoration: none; }
+.name span { color: var(--muted); font-weight: 500; }
+.top a.contact-link { font-weight: 700; font-size: .9375rem; text-decoration: none; border: 1.5px solid var(--ink); border-radius: 999px; padding: 7px 14px; }
+
+.hero .wrap { padding-block: clamp(28px, 6vw, 72px) clamp(32px, 5vw, 56px); display: grid; gap: 20px; }
+.hero h1 { font-size: clamp(2.5rem, 1.3rem + 5vw, 4.75rem); font-weight: 800; max-width: 16ch; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero .lede { font-size: 1.1875rem; color: var(--muted); max-width: 52ch; }
+.promise { display: flex; gap: 14px; align-items: flex-start; background: var(--soft); border-radius: 12px; padding: 16px 18px; max-width: 640px; }
+.promise svg { flex: none; margin-top: 3px; }
+.promise strong { display: block; }
+.promise span { color: var(--muted); font-size: .9375rem; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; border-radius: 999px; padding: 13px 22px; border: 1.5px solid var(--ink); background: transparent; transition: transform .15s ease; }
+.btn.fill { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn:hover { transform: translateY(-1px); }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+
+section { padding-block: clamp(40px, 6vw, 72px); border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 10px; margin-bottom: 26px; max-width: 640px; }
+.sec-head h2 { font-size: clamp(1.875rem, 1.3rem + 2.2vw, 2.75rem); font-weight: 750; }
+.sec-head p { color: var(--muted); font-size: 1.0625rem; }
+
+.demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+@media (max-width: 760px) { .demo { grid-template-columns: 1fr; } }
+.demo .shot { background: #0F5A69; padding: 22px; display: grid; align-content: center; gap: 10px; min-height: 240px; color: #E8F3F4; }
+.demo .shot .bar { display: flex; gap: 6px; }
+.demo .shot .bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.3); }
+.demo .shot b { font-family: var(--f-display); font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem); line-height: 1.05; }
+.demo .shot b em { font-style: normal; color: #F2B705; }
+.demo .shot .fake-card { background: #fff; color: #0E2A33; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700; font-size: .9375rem; max-width: 320px; }
+.demo .shot .fake-card span { background: #F2B705; color: #1B1A10; border-radius: 8px; padding: 6px 10px; font-size: .8125rem; }
+.demo .info { padding: clamp(20px, 3vw, 30px); display: grid; gap: 14px; align-content: start; }
+.demo h3 { font-size: 1.5rem; font-weight: 750; }
+.demo ul { margin: 0; padding-left: 18px; color: var(--muted); display: grid; gap: 4px; }
+
+.inc { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 22px 36px; }
+.inc div { display: grid; gap: 4px; align-content: start; }
+.inc strong { font-size: 1.0625rem; }
+.inc span { color: var(--muted); }
+
+.prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .prices { grid-template-columns: 1fr; } }
+.price { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 10px; align-content: start; }
+.price.pick { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.price h3 { font-size: 1.25rem; font-weight: 750; }
+.price .amt { font-family: var(--f-display); font-size: 2.25rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.price .amt small { font-family: var(--f-body); font-size: .875rem; font-weight: 600; color: var(--muted); }
+.price p { color: var(--muted); font-size: .9375rem; }
+.care { margin-top: 18px; color: var(--muted); }
+.care strong { color: var(--ink); }
+
+.contact { display: grid; gap: 18px; }
+.contact .ctas { margin-top: 4px; }
+.num { font-variant-numeric: tabular-nums; }
+footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--muted); font-size: .875rem; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="name" href="#top">Sifon Imaikop <span>· Websites</span></a>
+    <a class="contact-link" href="#contact">Contact</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <p class="label">Web design · North Cyprus</p>
+      <h1>Websites that turn your followers into <em>WhatsApp orders.</em></h1>
+      <p class="lede">I'm a software engineering and cybersecurity student at the University of Kyrenia. I build fast, bilingual websites for local shops, car rentals and online stores, and look after them for a small monthly fee.</p>
+      <div class="promise">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="var(--accent)"/><path d="M7 12.4l3.2 3.2L17 8.8" stroke="var(--on-accent)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><strong>See your site before you pay anything.</strong><span>I build a free demo for your business first. You only decide once you've seen it.</span></div>
+      </div>
+      <div class="ctas">
+        <a class="btn fill" href="car-hire/">See a live demo</a>
+        <a class="btn" href="#prices">Prices</a>
+      </div>
+    </div>
+  </div>
+
+  <section id="demo">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Try a demo</h2>
+        <p>A sample car rental site. Pick a car and dates, see the price, and send a booking to WhatsApp in one tap.</p>
+      </div>
+      <article class="demo">
+        <div class="shot" aria-hidden="true">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <b>Land at Ercan.<br>Your car is <em>already there.</em></b>
+          <div class="fake-card">7 days · £176 <span>Request on WhatsApp</span></div>
+        </div>
+        <div class="info">
+          <h3>Saltwind Car Hire</h3>
+          <ul>
+            <li>Live price calculator with weekly discount</li>
+            <li>Bookings arrive in WhatsApp, already filled in</li>
+            <li>Fleet, delivery, FAQ and contact on one page</li>
+            <li>Works on any phone, light and dark mode</li>
+          </ul>
+          <div><a class="btn fill" href="car-hire/">Open the demo</a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><h2>What every site includes</h2></div>
+      <div class="inc">
+        <div><strong>WhatsApp ordering</strong><span>Customers pick products, sizes or dates, and the order reaches you as one message.</span></div>
+        <div><strong>Turkish and English</strong><span>One tap to switch, so you reach locals, students and tourists.</span></div>
+        <div><strong>Made for phones</strong><span>Most of your customers come from Instagram on their phone. The site is built for that first.</span></div>
+        <div><strong>Secure by default</strong><span>HTTPS, safe settings and a monthly security check. I'm training in cybersecurity, so this part is taken seriously.</span></div>
+        <div><strong>Your domain, your site</strong><span>The domain is registered in your name. If you ever leave, you keep everything.</span></div>
+        <div><strong>Updates on WhatsApp</strong><span>New prices, products or photos? Send them to me and the site is updated.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Prices</h2>
+        <p>One setup fee, then a monthly plan that keeps the site online and up to date.</p>
+      </div>
+      <div class="prices">
+        <div class="price"><h3>Starter</h3><p class="amt">€150</p><p>One page with your services, prices, photos, WhatsApp button, hours and map. Ready in 5 days.</p></div>
+        <div class="price pick"><h3>Business</h3><p class="amt">€300</p><p>Up to 5 pages, product catalogue or booking calculator, Turkish and English, Google Business Profile set up. Ready in 7 days.</p></div>
+        <div class="price"><h3>Premium</h3><p class="amt">€500</p><p>Everything in Business, plus a third language, an availability calendar and email at your own domain. Ready in 10 days.</p></div>
+      </div>
+      <p class="care"><strong>Monthly care from €25.</strong> Hosting, backups, security checks and updates. The first month is free. Payment is half when you approve the demo, half at launch.</p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap contact">
+      <div class="sec-head" style="margin-bottom:0">
+        <h2>Get a free demo for your business</h2>
+        <p>Send me your business name or Instagram page. I'll build a demo and send you screenshots first, so you can see it before opening any link.</p>
+      </div>
+      <p id="contact-lines" class="num"></p>
+      <div class="ctas" id="contact-buttons"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© <span id="yr">2026</span> Sifon Imaikop · Kyrenia, North Cyprus</div>
+</footer>
+
+<script>
+/* ============================================================
+   CONTACT: fill these in before uploading.
+   whatsapp: digits only with country code, e.g. "905331234567"
+   instagram: your handle without @
+   ============================================================ */
+const CONTACT = { whatsapp: "", phoneDisplay: "", instagram: "" };
+
+(function () {
+  const btns = [], lines = [];
+  if (/^\d{8,15}$/.test(CONTACT.whatsapp)) {
+    btns.push(`<a class="btn fill" href="https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent("Hi Sifon, I'd like a free website demo for my business.")}" target="_blank" rel="noopener">Message me on WhatsApp</a>`);
+    if (CONTACT.phoneDisplay) lines.push("WhatsApp: " + CONTACT.phoneDisplay);
+  }
+  if (CONTACT.instagram) btns.push(`<a class="btn" href="https://www.instagram.com/${CONTACT.instagram}/" target="_blank" rel="noopener">Instagram @${CONTACT.instagram}</a>`);
+  document.getElementById("contact-buttons").innerHTML = btns.join("");
+  document.getElementById("contact-lines").textContent = lines.join(" · ");
+  document.getElementById("yr").textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
