@@ -97,6 +97,7 @@ def main():
         check("duplicate titles get unique links", "the-world-is-loud-with-bad-advice" in slugs
               and "the-world-is-loud-with-bad-advice-31" in slugs)
         check("curly-quoted title makes a clean link", "heaven-knows-why" in slugs)
+        check("apostrophes are dropped, not turned into hyphens", "heres-what-aint-right" in slugs)
 
         for s in slugs:
             b = Balance()
