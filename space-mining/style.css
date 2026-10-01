@@ -1,0 +1,30 @@
+:root{--bg:#f5f4f0;--ink:#141414;--mute:#666;--line:#dcdad3;--card:#fff;--acc:#141414}
+@media(prefers-color-scheme:dark){:root{--bg:#121211;--ink:#f1efe9;--mute:#9a978f;--line:#2c2b28;--card:#1a1a18;--acc:#f1efe9}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 Inter,system-ui,-apple-system,sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px}
+nav{border-bottom:1px solid var(--line);padding:14px 0;font:14px ui-monospace,"JetBrains Mono",monospace}
+nav .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+nav a{color:var(--mute);text-decoration:none}nav a:hover,nav a.on{color:var(--ink)}
+nav b{margin-right:auto;color:var(--ink)}
+h1,h2,h3{font-family:ui-monospace,"JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.02em;line-height:1.15}
+h1{font-size:clamp(30px,6vw,52px);margin:64px 0 12px}
+h2{font-size:26px;margin:0}
+h3{font-size:17px;margin:28px 0 6px}
+p.lead{color:var(--mute);font-size:21px;margin:0 0 28px}
+.badge{display:inline-grid;place-items:center;width:54px;height:54px;border-radius:10px;background:var(--acc);color:var(--bg);font:600 22px ui-monospace,monospace;flex:none}
+.head{display:flex;align-items:center;gap:18px;margin-top:56px}
+section p,section li{color:var(--mute)}
+section{border-bottom:1px solid var(--line);padding-bottom:28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.btn{display:inline-block;background:var(--acc);color:var(--bg);padding:12px 20px;border-radius:8px;text-decoration:none;font:600 15px ui-monospace,monospace;border:0;cursor:pointer}
+.btn.o{background:none;color:var(--ink);border:1px solid var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+td,th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+th{font-family:ui-monospace,monospace;font-size:13px;text-transform:uppercase}
+small,.note{color:var(--mute);font-size:14px}
+footer{padding:40px 0;color:var(--mute);font-size:14px}
+input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);width:100%}
+label{display:block;font:13px ui-monospace,monospace;text-transform:uppercase;color:var(--mute);margin:14px 0 4px}
+.big{font:600 34px ui-monospace,monospace}

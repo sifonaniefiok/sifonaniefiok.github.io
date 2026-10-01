@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Calculator — Space Material Mining</title><meta name="description" content="Estimate the economics of mining materials in space instead of launching them."><link rel="stylesheet" href="/space-mining/style.css"></head><body><nav><div class="wrap"><b>REGOLITH</b><a href="/space-mining/" class="on1">Overview</a><a href="/space-mining/research.html">Research</a><a href="/space-mining/calculator.html">Calculator</a><a href="/space-mining/deck.html">Deck</a></div></nav><main class="wrap">
+<h1>Economics calculator</h1><p class="lead">How much does it cost to launch material, versus making it there? Change the numbers.</p>
+<div class="grid">
+<div><label>Delivery cost to destination ($/kg)</label><input id="launch" type="number" value="500000"><small>Orbit: ~$3,000/kg (Falcon 9 class). Lunar surface: often $100k&ndash;$1M+/kg.</small></div>
+<div><label>Material needed per year (tonnes)</label><input id="tons" type="number" value="20"></div>
+<div><label>Price vs launch cost (%)</label><input id="disc" type="number" value="50"><small>What you charge as a share of the launch cost saved.</small></div>
+<div><label>Up-front capex ($M)</label><input id="capex" type="number" value="150"></div>
+<div><label>Operating cost per year ($M)</label><input id="opex" type="number" value="15"></div>
+<div><label>Up-front weight of equipment (tonnes)</label><input id="equip" type="number" value="10"><small>Paid at the delivery cost above.</small></div>
+</div>
+<div class="card"><div class="grid">
+<div><small>Revenue / year</small><div class="big" id="rev"></div></div>
+<div><small>Profit / year</small><div class="big" id="prof"></div></div>
+<div><small>Total up-front</small><div class="big" id="up"></div></div>
+<div><small>Payback</small><div class="big" id="pay"></div></div></div></div>
+<p class="note">Model: revenue = tonnes &times; 1000 &times; delivery cost &times; price%. Up-front = capex + equipment mass &times; delivery cost. Simple and deliberately rough; it shows the break-even rather than predicting it.</p>
+<script>
+const $=id=>document.getElementById(id),f=n=>'$'+(Math.abs(n)>=1e9?(n/1e9).toFixed(2)+'B':Math.abs(n)>=1e6?(n/1e6).toFixed(1)+'M':Math.round(n).toLocaleString());
+function calc(){const L=+$('launch').value,T=+$('tons').value,D=+$('disc').value/100,C=+$('capex').value*1e6,O=+$('opex').value*1e6,E=+$('equip').value;
+const rev=T*1000*L*D,prof=rev-O,up=C+E*1000*L;
+$('rev').textContent=f(rev);$('prof').textContent=(prof<0?'-':'')+f(prof);$('up').textContent=f(up);
+$('pay').textContent=prof>0?(up/prof).toFixed(1)+' yrs':'never';}
+document.querySelectorAll('input').forEach(i=>i.oninput=calc);calc();
+</script>
+</main><footer><div class="wrap">Idea 09 &middot; concept stage. Figures are rough public estimates, not financial advice. <a href="/">sifonaniefiok.github.io</a></div></footer></body></html>
