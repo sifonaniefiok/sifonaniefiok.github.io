@@ -1,0 +1,3 @@
+# Fonts downloaded by scripts/build_posts.py when run locally
+.fonts-cache/
+__pycache__/
