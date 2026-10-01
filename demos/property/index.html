@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Harbourstone Property · Demo</title>
+<meta name="description" content="Demo estate agent website for Kyrenia, North Cyprus: search homes to buy or rent, filter by area, type and budget, and enquire on WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: search-first property portal. Serif headline over a filter bar, card grid of listings, a detail sheet with specs and WhatsApp enquiry. Chalk white, harbour ink, one bougainvillea accent. */
+:root {
+  --bg: #F7F6F3;
+  --surface: #FFFFFF;
+  --sand: #ECE7DE;
+  --ink: #14222C;
+  --muted: #5B6670;
+  --line: #E0DCD4;
+  --accent: #A82D5F;
+  --on-accent: #FFFFFF;
+  --ok: #2B7A4B;
+  --scrim: rgba(20,34,44,.5);
+  --shadow: 0 1px 2px rgba(20,34,44,.06), 0 10px 30px rgba(20,34,44,.10);
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-body: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gutter: clamp(16px, 4vw, 44px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0E161C; --surface: #152029; --sand: #1C2A34; --ink: #E9EEF1; --muted: #9DAAB4; --line: #263540;
+    --accent: #E9799F; --on-accent: #1A0D13; --ok: #66CF92; --scrim: rgba(0,0,0,.6);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4);
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.55; -webkit-font-smoothing: antialiased; padding-top: env(safe-area-inset-top, 0px); }
+a { color: inherit; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 1200px; margin-inline: auto; padding-inline: var(--gutter); }
+h1, h2, h3 { margin: 0; font-family: var(--f-display); font-weight: 600; line-height: 1.05; text-wrap: balance; letter-spacing: -.01em; }
+p { margin: 0; }
+.num { font-variant-numeric: tabular-nums; }
+.label { font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+.demo-bar { background: var(--ink); color: var(--bg); font-size: .8125rem; font-weight: 600; text-align: center; padding: 7px 16px; }
+.demo-bar a { color: inherit; }
+
+/* Header */
+.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand svg { flex: none; }
+.brand b { font-family: var(--f-display); font-weight: 600; font-size: 1.375rem; letter-spacing: -.01em; }
+@media (max-width: 480px) { .brand span { letter-spacing: .08em; } }
+.brand span { display: block; font-size: .6875rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-top: -2px; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+.lang button { border: 0; background: transparent; padding: 5px 10px; border-radius: 999px; font-size: .8125rem; font-weight: 700; cursor: pointer; color: var(--muted); }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* Hero + search */
+.hero .wrap { padding-block: clamp(28px, 5vw, 60px) 0; display: grid; gap: 14px; }
+.hero h1 { font-size: clamp(2.25rem, 1.3rem + 4vw, 4rem); max-width: 18ch; }
+.hero h1 em { font-style: italic; color: var(--accent); }
+.hero .lede { color: var(--muted); font-size: 1.125rem; max-width: 52ch; }
+.search { margin-top: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 14px; display: grid; gap: 12px; }
+.mode { display: inline-flex; background: var(--sand); border-radius: 999px; padding: 3px; justify-self: start; }
+.mode button { border: 0; background: transparent; padding: 7px 18px; border-radius: 999px; font-weight: 700; font-size: .9375rem; cursor: pointer; color: var(--muted); }
+.mode button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 860px) { .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.fld { display: grid; gap: 5px; min-width: 0; }
+.fld label { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.fld select { width: 100%; min-width: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 32px 10px 11px; font-size: .9688rem; appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 17px) 52%, calc(100% - 12px) 52%; background-size: 5px 5px; background-repeat: no-repeat; }
+.fld select:focus { outline: none; border-color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 6px 12px; font-size: .875rem; font-weight: 600; cursor: pointer; }
+.chip input { accent-color: var(--accent); }
+
+/* Results */
+.results { padding-block: 26px 64px; }
+.res-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px 20px; margin-bottom: 18px; }
+.res-head h2 { font-size: 1.5rem; }
+.res-head .count { color: var(--muted); font-family: var(--f-body); font-size: .9375rem; font-weight: 500; margin-left: 6px; }
+.sort { display: flex; align-items: center; gap: 8px; font-size: .875rem; color: var(--muted); }
+.sort select { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: .875rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 22px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; padding: 0; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; min-width: 0; }
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.card .pic { position: relative; aspect-ratio: 16 / 10; max-width: 100%; overflow: hidden; }
+.card .pic svg { width: 100%; height: 100%; display: block; }
+.badges { position: absolute; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { background: rgba(255,255,255,.92); color: #14222C; font-size: .6875rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; }
+.badge.hot { background: var(--accent); color: var(--on-accent); }
+.card .body { padding: 14px 16px 16px; display: grid; gap: 6px; }
+.card .price { font-family: var(--f-display); font-size: 1.625rem; font-weight: 600; line-height: 1; }
+.card .price small { font-family: var(--f-body); font-size: .8125rem; color: var(--muted); font-weight: 500; }
+.card h3 { font-family: var(--f-body); font-size: 1rem; font-weight: 700; line-height: 1.3; }
+.card .where { font-size: .875rem; color: var(--muted); }
+.specs { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .8438rem; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.specs b { color: var(--ink); font-weight: 700; }
+.empty { border: 1px dashed var(--line); border-radius: 12px; padding: 32px; text-align: center; color: var(--muted); display: grid; gap: 12px; justify-items: center; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; border-radius: 999px; padding: 12px 20px; border: 1.5px solid var(--ink); background: transparent; cursor: pointer; }
+.btn.fill { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* Why us */
+.why { background: var(--surface); border-block: 1px solid var(--line); padding-block: clamp(40px, 6vw, 72px); }
+.why-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 22px; }
+@media (max-width: 760px) { .why-grid { grid-template-columns: 1fr; } }
+.why-grid div { display: grid; gap: 6px; align-content: start; }
+.why-grid strong { font-size: 1.0625rem; }
+.why-grid span { color: var(--muted); }
+.why h2 { font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem); }
+
+footer { padding-block: 28px; font-size: .875rem; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+footer a { color: var(--ink); font-weight: 600; }
+
+/* Detail sheet */
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 50; }
+.sheet { position: fixed; z-index: 60; inset: auto 0 0 0; max-height: 92vh; overflow-y: auto; background: var(--surface); border-radius: 18px 18px 0 0; box-shadow: var(--shadow); padding-bottom: env(safe-area-inset-bottom, 0px); }
+@media (min-width: 860px) { .sheet { inset: 4vh auto 4vh 50%; transform: translateX(-50%); width: min(880px, 92vw); max-height: none; border-radius: 16px; } }
+.sheet .pic { position: relative; aspect-ratio: 16 / 8; max-width: 100%; }
+.sheet .pic svg { width: 100%; height: 100%; display: block; }
+.close { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.95); color: #14222C; font-size: 1.25rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.sheet .in { padding: clamp(18px, 3vw, 28px); display: grid; gap: 18px; }
+.sheet .top-line { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
+.sheet h2 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.125rem); }
+.sheet .price { font-family: var(--f-display); font-size: 2rem; font-weight: 600; line-height: 1; }
+.sheet .where { color: var(--muted); }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 10px; }
+@media (max-width: 560px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.facts div { padding: 12px 14px; border-left: 1px solid var(--line); display: grid; gap: 2px; min-width: 0; }
+.facts div:first-child { border-left: 0; }
+@media (max-width: 560px) { .facts div:nth-child(3) { border-left: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); } }
+.facts span { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.facts b { font-size: 1.0625rem; font-variant-numeric: tabular-nums; }
+.feat { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.feat li { background: var(--sand); border-radius: 999px; padding: 5px 12px; font-size: .875rem; font-weight: 600; }
+.deed { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: .9375rem; }
+.deed b { display: block; }
+.deed span { color: var(--muted); font-size: .875rem; }
+.desc { color: var(--muted); max-width: 65ch; }
+.view { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 16px; }
+.view h3 { font-family: var(--f-body); font-size: 1rem; font-weight: 700; }
+.days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.day { flex: none; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 8px 12px; text-align: center; cursor: pointer; min-width: 64px; }
+.day b { display: block; font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+.day span { font-size: .75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+.day[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.day[aria-pressed="true"] span { color: var(--bg); }
+.acts { display: flex; flex-wrap: wrap; gap: 10px; }
+.ref { font-size: .8125rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="demo-bar"><span data-i18n="demo">Demo website for a sample estate agent</span> · <a href="../">Sifon Imaikop</a></div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Harbourstone Property">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="var(--ink)"/><path d="M8 24 L8 15 L17 9 L26 15 L26 24" fill="none" stroke="var(--bg)" stroke-width="2.4" stroke-linejoin="round"/><path d="M6 26 Q11 23 17 26 T28 26" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <div><b>Harbourstone</b><span data-i18n="tag">Property · Kyrenia</span></div>
+    </a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-set-lang="tr" aria-pressed="false">TR</button>
+      <button type="button" data-set-lang="ru" aria-pressed="false">RU</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <p class="label" data-i18n="eyebrow">Homes for sale and rent · Kyrenia region</p>
+      <h1><span data-i18n="h1a">Find your place by the</span> <em data-i18n="h1b">Kyrenia coast.</em></h1>
+      <p class="lede" data-i18n="lede">Apartments, villas and bungalows from Kyrenia town to Esentepe. Every listing shows its title deed type, and you can book a viewing on WhatsApp in one tap.</p>
+      <form class="search" id="search" novalidate>
+        <div class="mode" role="group" aria-label="Buy or rent">
+          <button type="button" data-mode="sale" aria-pressed="true" data-i18n="buy">Buy</button>
+          <button type="button" data-mode="rent" aria-pressed="false" data-i18n="rent">Rent</button>
+        </div>
+        <div class="fields">
+          <div class="fld"><label for="f-area" data-i18n="area">Area</label><select id="f-area"></select></div>
+          <div class="fld"><label for="f-type" data-i18n="type">Type</label><select id="f-type"></select></div>
+          <div class="fld"><label for="f-beds" data-i18n="beds">Bedrooms</label><select id="f-beds"></select></div>
+          <div class="fld"><label for="f-max" data-i18n="max">Max price</label><select id="f-max"></select></div>
+        </div>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" id="f-sea"> <span data-i18n="seaView">Sea view</span></label>
+          <label class="chip"><input type="checkbox" id="f-pool"> <span data-i18n="pool">Pool</span></label>
+          <label class="chip"><input type="checkbox" id="f-title"> <span data-i18n="tdOnly">Title deed ready</span></label>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <section class="results">
+    <div class="wrap">
+      <div class="res-head">
+        <h2><span data-i18n="resTitle">Properties</span><span class="count num" id="count"></span></h2>
+        <label class="sort"><span data-i18n="sortBy">Sort by</span>
+          <select id="f-sort"></select>
+        </label>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty" hidden>
+        <p data-i18n="none">No properties match these filters.</p>
+        <button class="btn" type="button" id="reset" data-i18n="reset">Clear filters</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="wrap">
+      <h2 data-i18n="whyTitle">Buying in North Cyprus, explained</h2>
+      <div class="why-grid">
+        <div><strong data-i18n="w1t">Title deeds made clear</strong><span data-i18n="w1p">Every listing says whether it has a Turkish title, exchange title or is off-plan, so you know what you are buying before a viewing.</span></div>
+        <div><strong data-i18n="w2t">Viewings on your schedule</strong><span data-i18n="w2p">Pick a day and send the request on WhatsApp. We confirm a time and can do video viewings if you are abroad.</span></div>
+        <div><strong data-i18n="w3t">From offer to keys</strong><span data-i18n="w3p">We work with local lawyers on contracts, the purchase permit and residency, in English, Turkish and Russian.</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span data-i18n="foot">Harbourstone Property is a sample business. Listings, prices and photos are examples.</span>
+    <a href="../" data-i18n="footLink">Website by Sifon Imaikop</a>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden></div>
+
+<script>
+/* ============================================================
+   AGENCY SETTINGS: edit here.
+   ============================================================ */
+const AGENCY = { name: "Harbourstone Property", whatsapp: "905330000000", currency: "£" };
+
+const AREAS = ["Kyrenia Centre", "Alsancak", "Lapta", "Karaoğlanoğlu", "Zeytinlik", "Çatalköy", "Bellapais", "Esentepe"];
+/* Example listings. Title: "tr" Turkish title, "ex" exchange title, "op" off-plan. */
+const LISTINGS = [
+  { ref: "HS-1042", mode: "sale", type: "apt", area: "Kyrenia Centre", beds: 2, baths: 2, m2: 95, price: 128000, sea: true, pool: true, title: "tr", vat: true, sky: 0, col: "#E8E1D3", new: true,
+    t: { en: "2-bed apartment with harbour view", tr: "Liman manzaralı 2+1 daire", ru: "Квартира 2+1 с видом на гавань" },
+    d: { en: "Third-floor apartment five minutes' walk from the old harbour, with a sea-facing balcony, communal pool and allocated parking. VAT and transformer fee already paid.", tr: "Eski limana beş dakika yürüme mesafesinde, deniz manzaralı balkonlu, ortak havuzlu ve kapalı otoparklı 3. kat daire. KDV ve trafo ödenmiş.", ru: "Квартира на третьем этаже в пяти минутах ходьбы от старой гавани: балкон с видом на море, общий бассейн, парковка. НДС и плата за трансформатор оплачены." } },
+  { ref: "HS-1038", mode: "sale", type: "villa", area: "Bellapais", beds: 4, baths: 3, m2: 260, price: 545000, sea: true, pool: true, title: "tr", vat: true, sky: 1, col: "#F1EADB",
+    t: { en: "4-bed stone villa below the abbey", tr: "Manastır eteklerinde 4+1 taş villa", ru: "Каменная вилла 4+1 у аббатства" },
+    d: { en: "Detached villa on a 900 m² plot with a private pool, mature lemon and olive trees, and open views over Kyrenia to the sea.", tr: "900 m² arsa üzerinde özel havuzlu, limon ve zeytin ağaçlı, Girne ve deniz manzaralı müstakil villa.", ru: "Отдельная вилла на участке 900 м² с бассейном, лимонными и оливковыми деревьями и видом на Кирению и море." } },
+  { ref: "HS-1035", mode: "sale", type: "bungalow", area: "Alsancak", beds: 2, baths: 1, m2: 88, price: 149000, sea: false, pool: true, title: "ex", vat: false, sky: 2, col: "#E6D7C3",
+    t: { en: "2-bed bungalow on a quiet complex", tr: "Sakin sitede 2+1 bungalov", ru: "Бунгало 2+1 в тихом комплексе" },
+    d: { en: "Single-level home with a covered terrace and garden, 600 m from Alsancak beach. Shared pool and mountain views.", tr: "Alsancak sahiline 600 m mesafede, kapalı teraslı ve bahçeli tek katlı ev. Ortak havuz ve dağ manzarası.", ru: "Одноэтажный дом с крытой террасой и садом в 600 м от пляжа Алсанджак. Общий бассейн, вид на горы." } },
+  { ref: "HS-1031", mode: "sale", type: "pent", area: "Esentepe", beds: 3, baths: 2, m2: 140, price: 215000, sea: true, pool: true, title: "op", vat: false, sky: 3, col: "#EFE6D6", new: true,
+    t: { en: "3-bed penthouse with roof terrace", tr: "Çatı teraslı 3+1 penthouse", ru: "Пентхаус 3+1 с террасой на крыше" },
+    d: { en: "Off-plan penthouse near the Korineum golf course with a 60 m² roof terrace. Handover December 2027, staged payment plan available.", tr: "Korineum golf sahası yakınında, 60 m² çatı teraslı, projeden penthouse. Teslim Aralık 2027, taksit seçeneği mevcut.", ru: "Пентхаус на этапе строительства у гольф-клуба Korineum, терраса 60 м². Сдача в декабре 2027, рассрочка." } },
+  { ref: "HS-1027", mode: "sale", type: "apt", area: "Karaoğlanoğlu", beds: 1, baths: 1, m2: 62, price: 96000, sea: true, pool: true, title: "tr", vat: true, sky: 0, col: "#DCE3E6",
+    t: { en: "1-bed apartment by the sea", tr: "Denize yakın 1+1 daire", ru: "Квартира 1+1 у моря" },
+    d: { en: "Furnished apartment across the road from the coastline, with a pool and gym on site. Popular with holiday rentals.", tr: "Sahil yolunun karşısında, havuzlu ve spor salonlu sitede eşyalı daire. Tatil kiralamasına uygun.", ru: "Меблированная квартира через дорогу от побережья, бассейн и спортзал. Подходит для сдачи в аренду." } },
+  { ref: "HS-1024", mode: "sale", type: "villa", area: "Çatalköy", beds: 3, baths: 3, m2: 195, price: 365000, sea: true, pool: true, title: "tr", vat: true, sky: 1, col: "#EADFCF",
+    t: { en: "3-bed modern villa with pool", tr: "Havuzlu 3+1 modern villa", ru: "Современная вилла 3+1 с бассейном" },
+    d: { en: "Newly built villa with open-plan living, underfloor heating and a private pool, ten minutes from Kyrenia centre.", tr: "Açık plan salonlu, yerden ısıtmalı, özel havuzlu yeni villa. Girne merkeze on dakika.", ru: "Новая вилла с открытой планировкой, тёплым полом и бассейном, в десяти минутах от центра Кирении." } },
+  { ref: "HS-1019", mode: "sale", type: "apt", area: "Zeytinlik", beds: 2, baths: 1, m2: 85, price: 112000, sea: false, pool: false, title: "ex", vat: true, sky: 2, col: "#E4DCCD",
+    t: { en: "2-bed garden apartment", tr: "Bahçe katı 2+1 daire", ru: "Квартира 2+1 с садом" },
+    d: { en: "Ground-floor apartment with a private garden, in a small block near schools and the ring road.", tr: "Okullara ve çevre yoluna yakın, özel bahçeli zemin kat daire.", ru: "Квартира на первом этаже с собственным садом, рядом школы и объездная дорога." } },
+  { ref: "HS-1015", mode: "sale", type: "bungalow", area: "Lapta", beds: 3, baths: 2, m2: 130, price: 238000, sea: true, pool: true, title: "tr", vat: true, sky: 3, col: "#EFE3CF",
+    t: { en: "3-bed bungalow with private pool", tr: "Özel havuzlu 3+1 bungalov", ru: "Бунгало 3+1 с бассейном" },
+    d: { en: "Detached bungalow with a private pool and wide sea views, close to Lapta's restaurants and the coast road.", tr: "Özel havuzlu, geniş deniz manzaralı, Lapta restoranlarına ve sahil yoluna yakın müstakil bungalov.", ru: "Отдельное бунгало с бассейном и видом на море, рядом рестораны Лапты и прибрежная дорога." } },
+  { ref: "HR-2011", mode: "rent", type: "apt", area: "Kyrenia Centre", beds: 2, baths: 1, m2: 80, price: 650, sea: false, pool: false, title: "tr", vat: false, sky: 0, col: "#E3DDD2", new: true,
+    t: { en: "2-bed flat near the university", tr: "Üniversiteye yakın 2+1 daire", ru: "Квартира 2+1 рядом с университетом" },
+    d: { en: "Furnished flat with air conditioning in every room, ten minutes' walk to the centre and the University of Kyrenia bus stop.", tr: "Her odada klimalı, eşyalı daire. Merkeze ve Girne Üniversitesi otobüs durağına on dakika yürüme.", ru: "Меблированная квартира с кондиционерами в каждой комнате, десять минут пешком до центра и автобуса в университет." } },
+  { ref: "HR-2008", mode: "rent", type: "villa", area: "Alsancak", beds: 3, baths: 2, m2: 170, price: 1400, sea: true, pool: true, title: "tr", vat: false, sky: 1, col: "#EDE4D5",
+    t: { en: "3-bed villa for long-term rent", tr: "Uzun dönem kiralık 3+1 villa", ru: "Вилла 3+1 в долгосрочную аренду" },
+    d: { en: "Furnished villa with a private pool and garden. Minimum 12-month lease, pets considered.", tr: "Özel havuzlu ve bahçeli eşyalı villa. En az 12 ay kira, evcil hayvan görüşülür.", ru: "Меблированная вилла с бассейном и садом. Аренда от 12 месяцев, возможно с животными." } },
+  { ref: "HR-2005", mode: "rent", type: "apt", area: "Karaoğlanoğlu", beds: 1, baths: 1, m2: 55, price: 550, sea: true, pool: true, title: "tr", vat: false, sky: 2, col: "#DDE4E7",
+    t: { en: "1-bed sea-view studio flat", tr: "Deniz manzaralı 1+1 daire", ru: "Квартира 1+1 с видом на море" },
+    d: { en: "Bright flat on a complex with a pool and 24-hour security. Bills not included.", tr: "Havuzlu ve 24 saat güvenlikli sitede aydınlık daire. Faturalar hariç.", ru: "Светлая квартира в комплексе с бассейном и охраной 24/7. Коммунальные услуги отдельно." } },
+  { ref: "HR-2002", mode: "rent", type: "pent", area: "Kyrenia Centre", beds: 3, baths: 2, m2: 150, price: 1100, sea: true, pool: true, title: "tr", vat: false, sky: 3, col: "#ECE2D2",
+    t: { en: "3-bed penthouse in the town centre", tr: "Merkezde 3+1 penthouse", ru: "Пентхаус 3+1 в центре" },
+    d: { en: "Top-floor penthouse with a large terrace overlooking the harbour and castle. Lift, parking and shared pool.", tr: "Liman ve kale manzaralı geniş teraslı en üst kat penthouse. Asansör, otopark ve ortak havuz.", ru: "Пентхаус на верхнем этаже с большой террасой и видом на гавань и крепость. Лифт, парковка, бассейн." } }
+];
+
+const T = {
+  en: {
+    demo: "Demo website for a sample estate agent", tag: "Property · Kyrenia", eyebrow: "Homes for sale and rent · Kyrenia region",
+    h1a: "Find your place by the", h1b: "Kyrenia coast.",
+    lede: "Apartments, villas and bungalows from Kyrenia town to Esentepe. Every listing shows its title deed type, and you can book a viewing on WhatsApp in one tap.",
+    buy: "Buy", rent: "Rent", area: "Area", type: "Type", beds: "Bedrooms", max: "Max price", seaView: "Sea view", pool: "Pool", tdOnly: "Title deed ready",
+    resTitle: "Properties", sortBy: "Sort by", none: "No properties match these filters.", reset: "Clear filters",
+    whyTitle: "Buying in North Cyprus, explained",
+    w1t: "Title deeds made clear", w1p: "Every listing says whether it has a Turkish title, exchange title or is off-plan, so you know what you are buying before a viewing.",
+    w2t: "Viewings on your schedule", w2p: "Pick a day and send the request on WhatsApp. We confirm a time and can do video viewings if you are abroad.",
+    w3t: "From offer to keys", w3p: "We work with local lawyers on contracts, the purchase permit and residency, in English, Turkish and Russian.",
+    foot: "Harbourstone Property is a sample business. Listings, prices and photos are examples.", footLink: "Website by Sifon Imaikop",
+    any: "Any", anyArea: "All areas", types: { apt: "Apartment", villa: "Villa", bungalow: "Bungalow", pent: "Penthouse" },
+    bedsN: n => `${n}+ bedrooms`, sort: { new: "Newest", lo: "Price: low to high", hi: "Price: high to low" },
+    perMonth: "/ month", bedS: "bed", bathS: "bath", m2: "m²", newB: "New", seaB: "Sea view", count: n => `${n} found`,
+    facts: { beds: "Bedrooms", baths: "Bathrooms", size: "Size", ref: "Ref" },
+    feats: { sea: "Sea view", pool: "Pool", vat: "VAT paid" },
+    deedT: { tr: "Turkish title deed", ex: "Exchange title deed", op: "Off-plan" },
+    deedP: { tr: "Pre-1974 Turkish title, the most sought-after type.", ex: "Exchange title issued after 1974, widely bought by locals and foreigners.", op: "Under construction; the title deed is issued after completion." },
+    viewT: "Book a viewing", ask: "Ask about this property", sendView: "Request viewing on WhatsApp", pickDay: "Pick a day",
+    msgAsk: (p, url) => `Hello ${AGENCY.name}, I'm interested in ${p.ref}: ${p.t.en} in ${p.area}. Is it still available?`,
+    msgView: (p, day) => `Hello ${AGENCY.name}, I'd like to view ${p.ref}: ${p.t.en} in ${p.area} on ${day}. What times are available?`,
+    close: "Close"
+  },
+  tr: {
+    demo: "Örnek bir emlak ofisi için demo web sitesi", tag: "Emlak · Girne", eyebrow: "Satılık ve kiralık · Girne bölgesi",
+    h1a: "Girne sahilinde", h1b: "yeni evinizi bulun.",
+    lede: "Girne merkezden Esentepe'ye daireler, villalar ve bungalovlar. Her ilanda tapu türü yazılı, görüntülemeyi WhatsApp'tan tek dokunuşla ayarlayın.",
+    buy: "Satılık", rent: "Kiralık", area: "Bölge", type: "Tip", beds: "Yatak odası", max: "En yüksek fiyat", seaView: "Deniz manzarası", pool: "Havuz", tdOnly: "Tapusu hazır",
+    resTitle: "İlanlar", sortBy: "Sırala", none: "Bu filtrelere uyan ilan yok.", reset: "Filtreleri temizle",
+    whyTitle: "Kuzey Kıbrıs'ta ev almak",
+    w1t: "Tapu türü açıkça yazılı", w1p: "Her ilanda Türk koçanı, eşdeğer koçan veya projeden olduğu belirtilir; görüntülemeden önce ne aldığınızı bilirsiniz.",
+    w2t: "Size uygun görüntüleme", w2p: "Bir gün seçin ve WhatsApp'tan gönderin. Saati onaylarız, yurt dışındaysanız görüntülü arama ile gösteririz.",
+    w3t: "Tekliften anahtara", w3p: "Sözleşme, alım izni ve oturum için yerel avukatlarla çalışırız; Türkçe, İngilizce ve Rusça.",
+    foot: "Harbourstone Property örnek bir işletmedir. İlanlar, fiyatlar ve görseller örnektir.", footLink: "Web sitesi: Sifon Imaikop",
+    any: "Hepsi", anyArea: "Tüm bölgeler", types: { apt: "Daire", villa: "Villa", bungalow: "Bungalov", pent: "Penthouse" },
+    bedsN: n => `${n}+ yatak odası`, sort: { new: "En yeni", lo: "Fiyat: artan", hi: "Fiyat: azalan" },
+    perMonth: "/ ay", bedS: "oda", bathS: "banyo", m2: "m²", newB: "Yeni", seaB: "Deniz manzarası", count: n => `${n} ilan`,
+    facts: { beds: "Yatak odası", baths: "Banyo", size: "Alan", ref: "İlan no" },
+    feats: { sea: "Deniz manzarası", pool: "Havuz", vat: "KDV ödenmiş" },
+    deedT: { tr: "Türk koçanı", ex: "Eşdeğer koçan", op: "Projeden" },
+    deedP: { tr: "1974 öncesi Türk tapusu, en çok tercih edilen tür.", ex: "1974 sonrası verilen eşdeğer tapu, yerli ve yabancılar tarafından yaygın olarak alınır.", op: "İnşaat aşamasında; tapu tamamlandıktan sonra verilir." },
+    viewT: "Görüntüleme ayarla", ask: "Bu ilanı sor", sendView: "WhatsApp'tan görüntüleme iste", pickDay: "Gün seçin",
+    msgAsk: p => `Merhaba ${AGENCY.name}, ${p.ref} numaralı ilanla ilgileniyorum: ${p.t.tr}, ${p.area}. Hâlâ müsait mi?`,
+    msgView: (p, day) => `Merhaba ${AGENCY.name}, ${p.ref} numaralı ilanı (${p.t.tr}, ${p.area}) ${day} günü görmek istiyorum. Hangi saatler uygun?`,
+    close: "Kapat"
+  },
+  ru: {
+    demo: "Демо-сайт для примерного агентства недвижимости", tag: "Недвижимость · Кирения", eyebrow: "Продажа и аренда · район Кирении",
+    h1a: "Найдите свой дом на", h1b: "побережье Кирении.",
+    lede: "Квартиры, виллы и бунгало от Кирении до Эсентепе. В каждом объявлении указан тип титула, а просмотр можно заказать в WhatsApp в одно касание.",
+    buy: "Купить", rent: "Аренда", area: "Район", type: "Тип", beds: "Спальни", max: "Макс. цена", seaView: "Вид на море", pool: "Бассейн", tdOnly: "Титул готов",
+    resTitle: "Объекты", sortBy: "Сортировка", none: "Нет объектов по этим фильтрам.", reset: "Сбросить фильтры",
+    whyTitle: "Покупка на Северном Кипре: просто о главном",
+    w1t: "Понятные титулы", w1p: "В каждом объявлении указано: турецкий титул, эквивалентный титул или строящийся объект. Вы знаете, что покупаете, ещё до просмотра.",
+    w2t: "Просмотры в удобное время", w2p: "Выберите день и отправьте запрос в WhatsApp. Мы подтвердим время, а если вы за границей, проведём видеопросмотр.",
+    w3t: "От предложения до ключей", w3p: "Работаем с местными юристами: договор, разрешение на покупку и ВНЖ. На английском, турецком и русском.",
+    foot: "Harbourstone Property — примерная компания. Объявления, цены и изображения условные.", footLink: "Сайт: Sifon Imaikop",
+    any: "Любые", anyArea: "Все районы", types: { apt: "Квартира", villa: "Вилла", bungalow: "Бунгало", pent: "Пентхаус" },
+    bedsN: n => `${n}+ спальни`, sort: { new: "Новые", lo: "Цена: по возрастанию", hi: "Цена: по убыванию" },
+    perMonth: "/ мес.", bedS: "сп.", bathS: "ван.", m2: "м²", newB: "Новое", seaB: "Вид на море", count: n => `найдено: ${n}`,
+    facts: { beds: "Спальни", baths: "Ванные", size: "Площадь", ref: "Номер" },
+    feats: { sea: "Вид на море", pool: "Бассейн", vat: "НДС оплачен" },
+    deedT: { tr: "Турецкий титул", ex: "Эквивалентный титул", op: "Строящийся объект" },
+    deedP: { tr: "Турецкий титул до 1974 года, самый востребованный тип.", ex: "Титул, выданный после 1974 года; его покупают и местные, и иностранцы.", op: "Объект строится; титул выдаётся после завершения." },
+    viewT: "Записаться на просмотр", ask: "Спросить об объекте", sendView: "Запросить просмотр в WhatsApp", pickDay: "Выберите день",
+    msgAsk: p => `Здравствуйте, ${AGENCY.name}! Меня интересует объект ${p.ref}: ${p.t.ru}, ${p.area}. Он ещё доступен?`,
+    msgView: (p, day) => `Здравствуйте, ${AGENCY.name}! Хочу посмотреть объект ${p.ref} (${p.t.ru}, ${p.area}) ${day}. Какое время свободно?`,
+    close: "Закрыть"
+  }
+};
+const LOCALE = { en: "en-GB", tr: "tr-TR", ru: "ru-RU" };
+
+/* Illustrated photo placeholders: sky, mountains, sea, building by type. */
+const SKIES = [["#9FC9E4", "#E8F2F7"], ["#F2C89A", "#F7E6D2"], ["#B9D7E8", "#F3F1EA"], ["#C7B6DF", "#F4E4DC"]];
+function scene(p, uid) {
+  const [s1, s2] = SKIES[p.sky];
+  const wall = p.col, roof = "#B35A3C", glass = "#5D7F94", line = "rgba(20,34,44,.35)";
+  const b = {
+    apt: `<rect x="120" y="70" width="160" height="150" fill="${wall}" stroke="${line}"/>${[0,1,2,3].map(r => [0,1,2].map(c => `<rect x="${138 + c * 48}" y="${84 + r * 34}" width="28" height="20" fill="${glass}"/>`).join("")).join("")}${[0,1,2,3].map(r => `<rect x="130" y="${106 + r * 34}" width="140" height="3" fill="${line}"/>`).join("")}`,
+    villa: `<rect x="95" y="130" width="210" height="90" fill="${wall}" stroke="${line}"/><path d="M85 132 L200 82 L315 132 Z" fill="${roof}"/><rect x="120" y="155" width="40" height="44" fill="${glass}"/><rect x="180" y="160" width="40" height="60" fill="#7A5A44"/><rect x="240" y="155" width="40" height="44" fill="${glass}"/><rect x="60" y="214" width="120" height="10" rx="2" fill="#5DB3D6"/>`,
+    bungalow: `<rect x="110" y="150" width="180" height="70" fill="${wall}" stroke="${line}"/><path d="M98 152 L200 112 L302 152 Z" fill="${roof}"/><rect x="132" y="168" width="34" height="30" fill="${glass}"/><rect x="183" y="170" width="34" height="50" fill="#7A5A44"/><rect x="234" y="168" width="34" height="30" fill="${glass}"/>`,
+    pent: `<rect x="110" y="60" width="180" height="160" fill="${wall}" stroke="${line}"/><rect x="104" y="56" width="192" height="6" fill="${line}"/><rect x="150" y="40" width="100" height="18" fill="${wall}" stroke="${line}"/>${[0,1,2,3].map(r => `<rect x="124" y="${78 + r * 36}" width="152" height="22" fill="${glass}"/><rect x="116" y="${104 + r * 36}" width="168" height="3" fill="${line}"/>`).join("")}`
+  }[p.type];
+  const sea = p.sea ? `<rect x="0" y="196" width="400" height="54" fill="#3F86A8"/><path d="M0 204 Q50 200 100 204 T200 204 T300 204 T400 204" stroke="rgba(255,255,255,.5)" stroke-width="2" fill="none"/>` : `<rect x="0" y="196" width="400" height="54" fill="#8FA36C"/>`;
+  return `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(p.t.en)}">
+    <defs><linearGradient id="g${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s1}"/><stop offset="1" stop-color="${s2}"/></linearGradient></defs>
+    <rect width="400" height="250" fill="url(#g${uid})"/>
+    <path d="M0 150 L40 120 L70 132 L110 96 L140 112 L170 86 L200 104 L240 80 L280 110 L320 92 L360 118 L400 104 L400 200 L0 200 Z" fill="#8A9AA2" opacity=".55"/>
+    ${sea}${b}
+    <rect x="0" y="220" width="400" height="30" fill="#D9CDB6"/>
+    <circle cx="70" cy="214" r="16" fill="#5E7D4A"/><circle cx="335" cy="210" r="20" fill="#6B8B52"/><rect x="333" y="210" width="4" height="14" fill="#6B4E36"/>
+  </svg>`;
+}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const wa = text => `https://wa.me/${AGENCY.whatsapp}?text=${encodeURIComponent(text)}`;
+let lang = "en";
+try { const s = localStorage.getItem("hs-lang"); if (T[s]) lang = s; } catch {}
+let mode = "sale";
+const money = (n, m) => AGENCY.currency + n.toLocaleString("en-GB") + (m === "rent" ? " " + T[lang].perMonth : "");
+const PRICE_STEPS = { sale: [100000, 150000, 250000, 400000, 600000], rent: [600, 800, 1200, 1500] };
+
+function fillSelects() {
+  const t = T[lang];
+  const keep = id => $(id).value;
+  const a = keep("#f-area"), ty = keep("#f-type"), be = keep("#f-beds"), mx = keep("#f-max"), so = keep("#f-sort");
+  $("#f-area").innerHTML = `<option value="">${t.anyArea}</option>` + AREAS.map(x => `<option>${x}</option>`).join("");
+  $("#f-type").innerHTML = `<option value="">${t.any}</option>` + Object.entries(t.types).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+  $("#f-beds").innerHTML = `<option value="">${t.any}</option>` + [1, 2, 3, 4].map(n => `<option value="${n}">${t.bedsN(n)}</option>`).join("");
+  $("#f-max").innerHTML = `<option value="">${t.any}</option>` + PRICE_STEPS[mode].map(n => `<option value="${n}">${money(n, mode)}</option>`).join("");
+  $("#f-sort").innerHTML = Object.entries(t.sort).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+  $("#f-area").value = a; $("#f-type").value = ty; $("#f-beds").value = be; $("#f-sort").value = so || "new";
+  $("#f-max").value = PRICE_STEPS[mode].includes(+mx) ? mx : "";
+}
+function renderText() {
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { const v = t[el.dataset.i18n]; if (typeof v === "string") el.textContent = v; });
+  document.querySelectorAll("[data-set-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.setLang === lang)));
+  document.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+}
+function filtered() {
+  const area = $("#f-area").value, type = $("#f-type").value, beds = +$("#f-beds").value || 0, max = +$("#f-max").value || Infinity;
+  const sea = $("#f-sea").checked, pool = $("#f-pool").checked, td = $("#f-title").checked;
+  let list = LISTINGS.filter(p => p.mode === mode && (!area || p.area === area) && (!type || p.type === type) && p.beds >= beds && p.price <= max && (!sea || p.sea) && (!pool || p.pool) && (!td || p.title !== "op"));
+  const s = $("#f-sort").value;
+  if (s === "lo") list = [...list].sort((a, b) => a.price - b.price);
+  if (s === "hi") list = [...list].sort((a, b) => b.price - a.price);
+  return list;
+}
+function renderGrid() {
+  const t = T[lang], list = filtered();
+  $("#count").textContent = " · " + t.count(list.length);
+  $("#empty").hidden = list.length > 0;
+  $("#grid").innerHTML = list.map(p => `
+    <button type="button" class="card" data-ref="${p.ref}" aria-label="${esc(p.t[lang])}, ${esc(money(p.price, p.mode))}">
+      <div class="pic">${scene(p, "c" + p.ref)}<div class="badges">${p.new ? `<span class="badge hot">${t.newB}</span>` : ""}${p.sea ? `<span class="badge">${t.seaB}</span>` : ""}</div></div>
+      <div class="body">
+        <p class="price num">${money(p.price, p.mode)}</p>
+        <h3>${esc(p.t[lang])}</h3>
+        <p class="where">${p.area} · ${t.types[p.type]}</p>
+        <p class="specs"><span><b>${p.beds}</b> ${t.bedS}</span><span><b>${p.baths}</b> ${t.bathS}</span><span><b>${p.m2}</b> ${t.m2}</span><span>${t.deedT[p.title]}</span></p>
+      </div>
+    </button>`).join("");
+}
+
+/* Detail sheet */
+let current = null, chosenDay = null, lastFocus = null;
+function nextDays() {
+  const out = [], d = new Date();
+  for (let i = 1; out.length < 7; i++) { const x = new Date(d); x.setDate(d.getDate() + i); if (x.getDay() !== 0) out.push(x); }
+  return out;
+}
+function renderSheet() {
+  const p = current, t = T[lang], loc = LOCALE[lang];
+  const days = nextDays();
+  if (!chosenDay) chosenDay = days[0].toDateString();
+  const dayLabel = new Date(chosenDay).toLocaleDateString(loc, { weekday: "long", day: "numeric", month: "long" });
+  $("#sheet").innerHTML = `
+    <div class="pic">${scene(p, "d")}<button class="close" type="button" id="close" aria-label="${t.close}">×</button></div>
+    <div class="in">
+      <div class="top-line"><div><h2 id="d-title">${esc(p.t[lang])}</h2><p class="where">${p.area} · ${t.types[p.type]}</p></div><p class="price num">${money(p.price, p.mode)}</p></div>
+      <div class="facts"><div><span>${t.facts.beds}</span><b>${p.beds}</b></div><div><span>${t.facts.baths}</span><b>${p.baths}</b></div><div><span>${t.facts.size}</span><b>${p.m2} ${t.m2}</b></div><div><span>${t.facts.ref}</span><b>${p.ref}</b></div></div>
+      <ul class="feat">${p.sea ? `<li>${t.feats.sea}</li>` : ""}${p.pool ? `<li>${t.feats.pool}</li>` : ""}${p.vat ? `<li>${t.feats.vat}</li>` : ""}</ul>
+      ${p.mode === "sale" ? `<div class="deed"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h7M9 16h7" stroke="currentColor" stroke-width="1.8"/></svg><div><b>${t.deedT[p.title]}</b><span>${t.deedP[p.title]}</span></div></div>` : ""}
+      <p class="desc">${esc(p.d[lang])}</p>
+      <div class="view">
+        <h3>${t.viewT} · <span style="font-weight:500;color:var(--muted)">${t.pickDay}</span></h3>
+        <div class="days" role="group" aria-label="${t.pickDay}">${days.map(x => `<button type="button" class="day" data-day="${x.toDateString()}" aria-pressed="${x.toDateString() === chosenDay}"><span>${x.toLocaleDateString(loc, { weekday: "short" })}</span><b>${x.getDate()}</b></button>`).join("")}</div>
+        <div class="acts">
+          <a class="btn fill" target="_blank" rel="noopener" href="${wa(t.msgView(p, dayLabel))}">${t.sendView}</a>
+          <a class="btn" target="_blank" rel="noopener" href="${wa(t.msgAsk(p))}">${t.ask}</a>
+        </div>
+      </div>
+    </div>`;
+}
+function openSheet(ref) {
+  current = LISTINGS.find(x => x.ref === ref); chosenDay = null; lastFocus = document.activeElement;
+  renderSheet(); $("#scrim").hidden = $("#sheet").hidden = false; document.body.style.overflow = "hidden"; $("#close").focus();
+}
+function closeSheet() { $("#scrim").hidden = $("#sheet").hidden = true; document.body.style.overflow = ""; current = null; lastFocus?.focus?.(); }
+
+function renderAll() { renderText(); fillSelects(); renderGrid(); if (current) renderSheet(); }
+
+document.addEventListener("click", e => {
+  const l = e.target.closest("[data-set-lang]");
+  if (l) { lang = l.dataset.setLang; try { localStorage.setItem("hs-lang", lang); } catch {} renderAll(); return; }
+  const m = e.target.closest("[data-mode]");
+  if (m) { mode = m.dataset.mode; renderText(); fillSelects(); renderGrid(); return; }
+  const c = e.target.closest(".card");
+  if (c) { openSheet(c.dataset.ref); return; }
+  const d = e.target.closest("[data-day]");
+  if (d) { chosenDay = d.dataset.day; renderSheet(); document.querySelector(`[data-day="${chosenDay}"]`)?.focus(); return; }
+  if (e.target.closest("#close") || e.target.id === "scrim") { closeSheet(); return; }
+  if (e.target.closest("#reset")) { ["#f-area", "#f-type", "#f-beds", "#f-max"].forEach(s => $(s).value = ""); ["#f-sea", "#f-pool", "#f-title"].forEach(s => $(s).checked = false); renderGrid(); }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && current) closeSheet(); });
+$("#search").addEventListener("input", renderGrid);
+$("#search").addEventListener("submit", e => e.preventDefault());
+$("#f-sort").addEventListener("input", renderGrid);
+
+renderAll();
+</script>
+</body>
+</html>

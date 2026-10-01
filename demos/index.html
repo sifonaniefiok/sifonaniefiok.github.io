@@ -70,6 +70,9 @@ section { padding-block: clamp(40px, 6vw, 72px); border-top: 1px solid var(--lin
 .demo .shot b { font-family: var(--f-display); font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem); line-height: 1.05; }
 .demo .shot b em { font-style: normal; color: #F2B705; }
 .demo .shot .fake-card { background: #fff; color: #0E2A33; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700; font-size: .9375rem; max-width: 320px; }
+.demo .shot.shot-prop { background: #14222C; }
+.demo .shot.shot-prop b em { font-style: italic; color: #E9799F; }
+.demo .shot.shot-prop .fake-card span { background: #A82D5F; color: #fff; }
 .demo .shot .fake-card span { background: #F2B705; color: #1B1A10; border-radius: 8px; padding: 6px 10px; font-size: .8125rem; }
 .demo .info { padding: clamp(20px, 3vw, 30px); display: grid; gap: 14px; align-content: start; }
 .demo h3 { font-size: 1.5rem; font-weight: 750; }
@@ -127,7 +130,7 @@ footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--mu
     <div class="wrap">
       <div class="sec-head">
         <h2>Try a demo</h2>
-        <p>A sample car rental site. Pick a car and dates, see the price, and send a booking to WhatsApp in one tap.</p>
+        <p>Two sample sites for real kinds of local business. Open one on your phone and try it like a customer would.</p>
       </div>
       <article class="demo">
         <div class="shot" aria-hidden="true">
@@ -144,6 +147,23 @@ footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--mu
             <li>Works on any phone, light and dark mode</li>
           </ul>
           <div><a class="btn fill" href="car-hire/">Open the demo</a></div>
+        </div>
+      </article>
+      <article class="demo" style="margin-top:18px">
+        <div class="shot shot-prop" aria-hidden="true">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <b>Find your place by the<br><em>Kyrenia coast.</em></b>
+          <div class="fake-card">£128,000 · 2 bed <span>Book a viewing</span></div>
+        </div>
+        <div class="info">
+          <h3>Harbourstone Property</h3>
+          <ul>
+            <li>Search homes to buy or rent by area, type, bedrooms and budget</li>
+            <li>Every listing shows its title deed type</li>
+            <li>Viewing requests arrive in WhatsApp with the reference number</li>
+            <li>English, Turkish and Russian</li>
+          </ul>
+          <div><a class="btn fill" href="property/">Open the demo</a></div>
         </div>
       </article>
     </div>
