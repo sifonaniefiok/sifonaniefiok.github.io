@@ -137,7 +137,16 @@ def main():
         for f in ("sitemap.xml", "feed.xml"):
             xml.dom.minidom.parse(str(site / f))
         sm = (site / "sitemap.xml").read_text()
-        check("sitemap lists home + every post", sm.count("<url>") == len(FIXTURE) + 1)
+        check("sitemap lists home + archive + every post", sm.count("<url>") == len(FIXTURE) + 2
+              and "<loc>https://sifonaniefiok.github.io/posts/</loc>" in sm)
+        archive = (site / "posts" / "index.html").read_text(encoding="utf-8")
+        b = Balance(); b.feed(archive)
+        check("archive page is well-formed HTML", not b.errors and not b.stack, (b.errors[:3], b.stack[-3:]))
+        check("archive links to every post", all(f'href="/posts/{s}/"' in archive for s in slugs))
+        check("archive escapes titles/excerpts", "<script>alert" not in archive)
+        check("archive structured data valid", json.loads(re.search(
+            r'<script type="application/ld\+json">(.*?)</script>', archive, re.S).group(1))["@type"] == "CollectionPage")
+        check("post pages link to the archive", 'href="/posts/"' in h and "See all writing" in h)
         manifest = json.loads((site / "posts" / "index.json").read_text())
         check("manifest maps every id to a link", {p["id"] for p in manifest["posts"]} == {p["id"] for p in FIXTURE})
 
