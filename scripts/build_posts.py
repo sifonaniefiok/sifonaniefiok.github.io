@@ -7,6 +7,7 @@ For each post published through the site's admin panel this writes:
   posts/<slug>/card.png     1200x630 preview image shown when the link is shared
 It also writes:
   posts/index.json          id -> link map the main site uses for its share buttons
+  posts/index.html          "All writing" page linking every post (lets Google crawl to them)
   sitemap.xml               every page, so Google can find each post
   feed.xml                  RSS feed
   og-default.png            preview image for the homepage
@@ -302,6 +303,8 @@ EXTRA_CSS = """
 .more-item .card-tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
 .more-item .t{font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1.25;margin:6px 0;}
 .more-item .x{font-size:15px;color:var(--ink-soft);line-height:1.6;}
+.see-all{display:inline-block;margin:28px 0 0;text-decoration:none;}
+.archive-intro{font-size:17px;color:var(--ink-soft);margin:-28px 0 40px;}
 @media(max-width:700px){.more-writing{padding:0 24px 72px}}
 """
 
@@ -455,7 +458,7 @@ def page_html(p: dict, others: list[dict], css: str) -> str:
   <ul class="nav-links post-nav-links" id="navLinks">
     <li><a href="/">Home</a></li>
     <li><a href="/?page=about">About</a></li>
-    <li><a href="/?page=blog" class="active">Blog</a></li>
+    <li><a href="/posts/" class="active">Blog</a></li>
     <li><a href="/?page=projects">Projects</a></li>
     <li><a href="/?page=contact">Contact</a></li>
   </ul>
@@ -463,7 +466,7 @@ def page_html(p: dict, others: list[dict], css: str) -> str:
 </nav>
 <main class="post-page active{' poem-post' if is_poem else ''}">
   <article class="post-container">
-    <a class="post-back" href="/?page=blog" style="text-decoration:none">← All writing</a>
+    <a class="post-back" href="/posts/" style="text-decoration:none">← All writing</a>
     <div class="post-tag">{esc(kicker)}</div>
     <h1 class="post-title">{esc(title)}</h1>
     <div class="post-meta">{esc(p.get("date"))} · by {AUTHOR}</div>
@@ -472,7 +475,7 @@ def page_html(p: dict, others: list[dict], css: str) -> str:
     {share_bar(url, title, desc)}
   </article>
 </main>
-{f'<section class="more-writing"><h2>More <em>writing</em></h2><div class="more-list">{more}</div></section>' if more else ''}
+{f'<section class="more-writing"><h2>More <em>writing</em></h2><div class="more-list">{more}</div><a class="post-back see-all" href="/posts/">See all writing →</a></section>' if more else ''}
 <section class="newsletter-banner">
   <h2>Join the <em>newsletter</em></h2>
   <p>Essays, poems, and ideas — delivered to your inbox. No noise, no spam. Just writing worth reading.</p>
@@ -485,6 +488,7 @@ def page_html(p: dict, others: list[dict], css: str) -> str:
 <footer>
   <div class="footer-logo">S<span>.</span>I</div>
   <div class="footer-links">
+    <a href="/posts/">All writing</a>
     <a href="/?page=privacy">Privacy Policy</a>
     <a href="{COFFEE}" target="_blank" rel="noopener">Support ☕</a>
     <a href="/?page=contact">Contact</a>
@@ -492,6 +496,88 @@ def page_html(p: dict, others: list[dict], css: str) -> str:
   <p>© {datetime.now(timezone.utc).year} {AUTHOR}</p>
 </footer>
 <script>{SHARE_JS}</script>
+</body>
+</html>
+"""
+
+
+def archive_html(posts: list[dict], css: str) -> str:
+    """/posts/ — a plain list of every post with real links, so search engines can
+    crawl from the homepage to every article (the homepage itself opens posts with JS)."""
+    url = f"{SITE_URL}/posts/"
+    items = "".join(
+        f'<a class="more-item" href="/posts/{p["slug"]}/"><div class="card-tag">{esc(p.get("type"))} · '
+        f'{esc(read_time(p))} · {esc(p.get("date"))}</div><div class="t">{esc(clean_title(p["title"]))}</div>'
+        f'<div class="x">{esc(p.get("excerpt"))}</div></a>'
+        for p in posts
+    )
+    ld = json.dumps({
+        "@context": "https://schema.org", "@type": "CollectionPage", "name": f"All writing — {AUTHOR}", "url": url,
+        "hasPart": [{"@type": "BlogPosting", "headline": clean_title(p["title"])[:110],
+                     "url": f"{SITE_URL}/posts/{p['slug']}/"} for p in posts],
+    }, ensure_ascii=False).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+    desc = f"Every essay, poem and idea by {AUTHOR_FULL} — {len(posts)} pieces on technology, security, faith and attention."
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-adsense-account" content="{ADSENSE}">
+<title>All writing — {AUTHOR}</title>
+<meta name="description" content="{esc(desc)}">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="{url}">
+<link rel="alternate" type="application/rss+xml" title="{AUTHOR}" href="{SITE_URL}/feed.xml">
+<meta property="og:site_name" content="{esc(SITE_NAME)}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="All writing — {AUTHOR}">
+<meta property="og:description" content="{esc(desc)}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="{SITE_URL}/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="{TWITTER}">
+<meta name="twitter:image" content="{SITE_URL}/og-default.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<script type="application/ld+json">{ld}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>
+<style>
+{css}
+{EXTRA_CSS}
+</style>
+</head>
+<body>
+<nav id="mainNav">
+  <a class="nav-logo" href="/" style="text-decoration:none">S<span>.</span>I</a>
+  <ul class="nav-links post-nav-links" id="navLinks">
+    <li><a href="/">Home</a></li>
+    <li><a href="/?page=about">About</a></li>
+    <li><a href="/posts/" class="active">Blog</a></li>
+    <li><a href="/?page=projects">Projects</a></li>
+    <li><a href="/?page=contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+<main class="post-page active">
+  <div class="post-container">
+    <div class="post-tag">Writing · {len(posts)} pieces</div>
+    <h1 class="post-title">All <em>writing</em></h1>
+    <div class="post-meta">Essays, poems and ideas by {AUTHOR}</div>
+    <div class="more-list">{items}</div>
+  </div>
+</main>
+<footer>
+  <div class="footer-logo">S<span>.</span>I</div>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/?page=privacy">Privacy Policy</a>
+    <a href="{COFFEE}" target="_blank" rel="noopener">Support ☕</a>
+  </div>
+  <p>© {datetime.now(timezone.utc).year} {AUTHOR}</p>
+</footer>
+<script>function toggleMenu(){{document.getElementById('navLinks').classList.toggle('open');}}</script>
 </body>
 </html>
 """
@@ -508,7 +594,9 @@ def redirect_html(target: str) -> str:
 def sitemap(posts: list[dict]) -> str:
     newest = max((iso(p.get("updated_at")) or iso(p.get("created_at")) or "" for p in posts), default="")
     rows = [f"  <url><loc>{SITE_URL}/</loc>{f'<lastmod>{newest[:10]}</lastmod>' if newest else ''}"
-            f"<changefreq>weekly</changefreq><priority>1.0</priority></url>"]
+            f"<changefreq>weekly</changefreq><priority>1.0</priority></url>",
+            f"  <url><loc>{SITE_URL}/posts/</loc>{f'<lastmod>{newest[:10]}</lastmod>' if newest else ''}"
+            f"<changefreq>weekly</changefreq><priority>0.9</priority></url>"]
     for p in posts:
         lm = (iso(p.get("updated_at")) or iso(p.get("created_at")) or "")[:10]
         rows.append(f"  <url><loc>{SITE_URL}/posts/{p['slug']}/</loc>{f'<lastmod>{lm}</lastmod>' if lm else ''}"
@@ -605,6 +693,7 @@ def main() -> int:
         "id": p["id"], "slug": p["slug"], "aliases": p["aliases"], "title": clean_title(p["title"]),
         "type": p.get("type"), "url": f"{SITE_URL}/posts/{p['slug']}/",
     } for p in posts]}
+    (POSTS_DIR / "index.html").write_text(archive_html(posts, css), encoding="utf-8")
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (ROOT / "sitemap.xml").write_text(sitemap(posts), encoding="utf-8")
     (ROOT / "feed.xml").write_text(feed(posts), encoding="utf-8")
