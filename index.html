@@ -205,6 +205,9 @@ nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.06);}
 .project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;}
 .project-card{background:var(--card-bg);border:1px solid var(--border);padding:36px;transition:transform .3s,box-shadow .3s;cursor:pointer;}
 .project-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.08);}
+a.project-card{display:block;color:inherit;text-decoration:none;}
+.project-link{margin-top:20px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.06em;color:var(--accent);}
+a.project-card:hover .project-link,a.project-card:focus-visible .project-link{text-decoration:underline;}
 .project-icon{width:48px;height:48px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;}
 .project-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;margin-bottom:12px;}
 .project-desc{font-size:15px;color:var(--ink-soft);line-height:1.7;margin-bottom:20px;}
@@ -325,7 +328,7 @@ footer{padding:48px;border-top:1px solid var(--border);display:flex;align-items:
 footer p{font-size:14px;color:var(--ink-muted);font-family:'DM Mono',monospace;}
 .footer-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--ink);}
 .footer-logo span{color:var(--accent);}
-.footer-links{display:flex;gap:24px;}
+.footer-links{display:flex;flex-wrap:wrap;gap:12px 24px;}
 .footer-links a{font-size:13px;color:var(--ink-muted);text-decoration:none;font-family:'DM Mono',monospace;cursor:pointer;letter-spacing:.04em;}
 .footer-links a:hover{color:var(--accent);}
 
@@ -869,12 +872,12 @@ let posts=[];
 let poems=[];
 
 const projects=[
-  {id:201,icon:'🔐',title:'SecureVault CLI',description:'A command-line password manager built in Rust with AES-256 encryption and zero-knowledge architecture. Designed for developers who live in the terminal.',stack:['Rust','AES-256','CLI','Security'],featured:true},
-  {id:202,icon:'📡',title:'NetWatch',description:'A real-time network traffic analyser that detects anomalies using lightweight statistical models. Visualises packet flow in the terminal.',stack:['Python','Scapy','Pandas','Curses'],featured:true},
-  {id:203,icon:'📝',title:'This Website',description:'A personal website built as a single HTML file — no frameworks, no build steps, no dependencies. Just clean HTML, CSS, and vanilla JavaScript.',stack:['HTML','CSS','JavaScript'],featured:true},
-  {id:204,icon:'🧠',title:'Memento',description:'A spaced-repetition flashcard app for terminal users. Cards are stored in plain Markdown files so they\'re readable without the app.',stack:['Python','Markdown','SQLite','CLI'],featured:false},
-  {id:205,icon:'🌐',title:'PortMap',description:'A fast port scanner and service fingerprinter written in Go. Designed for educational use in understanding network reconnaissance.',stack:['Go','Networking','Security'],featured:false},
-  {id:206,icon:'✍️',title:'Drafts',description:'A minimal writing environment for the terminal. Distraction-free, plain-text, version-controlled. Because sometimes less is the only thing that works.',stack:['Python','Rich','Git','CLI'],featured:false},
+  {id:201,icon:'🔐',title:'SecureVault CLI',description:'A command-line password manager built in Rust. The vault is encrypted with AES-256-GCM under an Argon2id-derived key, so the file is useless without your master password. Designed for developers who live in the terminal.',stack:['Rust','AES-256-GCM','Argon2id','CLI'],featured:true,repo:'https://github.com/sifonaniefiok/securevault'},
+  {id:202,icon:'📡',title:'NetWatch',description:'A real-time network traffic analyser that detects anomalies using lightweight statistical models. Visualises packet flow in the terminal.',stack:['Python','Scapy','Pandas','Curses'],featured:true,repo:'https://github.com/sifonaniefiok/netwatch'},
+  {id:203,icon:'📝',title:'This Website',description:'A personal website built as a single HTML file — no frameworks, no build steps, no dependencies. Just clean HTML, CSS, and vanilla JavaScript.',stack:['HTML','CSS','JavaScript'],featured:true,repo:'https://github.com/sifonaniefiok/sifonaniefiok.github.io'},
+  {id:204,icon:'🧠',title:'Memento',description:'A spaced-repetition flashcard app for terminal users. Cards are stored in plain Markdown files so they\'re readable without the app.',stack:['Python','Markdown','SQLite','CLI'],featured:false,repo:'https://github.com/sifonaniefiok/memento'},
+  {id:205,icon:'🌐',title:'PortMap',description:'A fast port scanner and service fingerprinter written in Go. Designed for educational use in understanding network reconnaissance.',stack:['Go','Networking','Security'],featured:false,repo:'https://github.com/sifonaniefiok/portmap'},
+  {id:206,icon:'✍️',title:'Drafts',description:'A minimal writing environment for the terminal. Distraction-free, plain-text, version-controlled. Because sometimes less is the only thing that works.',stack:['Python','Rich','Git','CLI'],featured:false,repo:'https://github.com/sifonaniefiok/drafts'},
 ];
 
 // ─── API CONFIG ──────────────────────────────────────────────────────────────
@@ -1429,8 +1432,9 @@ function renderAllProjects(){
 }
 
 function mkProject(p){
-  const c=document.createElement('div');c.className='project-card';
-  c.innerHTML=`<div class="project-icon">${p.icon}</div><div class="project-title">${p.title}</div><div class="project-desc">${p.description}</div><div class="project-stack">${p.stack.map(s=>`<span class="tag">${s}</span>`).join('')}</div>`;
+  const c=document.createElement(p.repo?'a':'div');c.className='project-card';
+  if(p.repo){c.href=p.repo;c.target='_blank';c.rel='noopener';c.setAttribute('aria-label',`${p.title}: view the source code on GitHub`);}
+  c.innerHTML=`<div class="project-icon">${p.icon}</div><div class="project-title">${p.title}</div><div class="project-desc">${p.description}</div><div class="project-stack">${p.stack.map(s=>`<span class="tag">${s}</span>`).join('')}</div>${p.repo?'<div class="project-link">View code on GitHub →</div>':''}`;
   return c;
 }
 
