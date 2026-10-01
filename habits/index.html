@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Weekly tracker for nine security-practice habits.">
+<meta name="theme-color" content="#1d6b58">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nine Habits">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Nine Habits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow column, phone first — week header, summary strip, 7 day rows, habit grid, setup, rules */
+:root {
+  --bg: #eef1ef;
+  --surface: #ffffff;
+  --line: #d4dcd8;
+  --fg: #16211d;
+  --muted: #5b6b64;
+  --accent: #1d6b58;
+  --accent-soft: #d9ece5;
+  --on-accent: #ffffff;
+  --warn: #9a6512;
+  --warn-soft: #f6ead3;
+  --miss: #a8402f;
+  --miss-soft: #f5dfda;
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1412; --surface: #16201c; --line: #2a3632; --fg: #e2eae6; --muted: #93a39c;
+    --accent: #5cc4a3; --accent-soft: #1d3a31; --on-accent: #06140f;
+    --warn: #e0b05e; --warn-soft: #3a2e17; --miss: #ef8a78; --miss-soft: #3d201b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1412; --surface: #16201c; --line: #2a3632; --fg: #e2eae6; --muted: #93a39c;
+  --accent: #5cc4a3; --accent-soft: #1d3a31; --on-accent: #06140f;
+  --warn: #e0b05e; --warn-soft: #3a2e17; --miss: #ef8a78; --miss-soft: #3d201b;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  padding-inline: 16px; padding-block: calc(20px + env(safe-area-inset-top, 0px)) calc(40px + env(safe-area-inset-bottom, 0px));
+  margin: 0; -webkit-tap-highlight-color: transparent;
+}
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; letter-spacing: 0.005em; }
+h1 { font-size: 30px; line-height: 1.05; }
+h2 { font-size: 19px; }
+.label { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+button { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* header */
+header { display: flex; flex-direction: column; gap: 14px; }
+.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.sync { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.sync::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.sync[data-state="ok"]::before { background: var(--accent); }
+.sync[data-state="local"]::before { background: var(--warn); }
+.installbtn { height: 34px; padding: 0 12px; border-radius: 8px; border: 0; background: var(--accent); color: var(--on-accent); font-weight: 600; cursor: pointer; font-size: 13px; }
+.backup { display: flex; flex-direction: column; gap: 10px; }
+.backup .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.backup button { height: 40px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: 14px; }
+.backup textarea { width: 100%; min-height: 90px; font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); padding: 10px; resize: vertical; }
+.backup .msg { font-size: 13px; color: var(--muted); min-height: 1.2em; }
+.weeknav { display: flex; align-items: center; gap: 8px; }
+.weeknav .wk { flex: 1; min-width: 0; }
+.wk strong { display: block; font-family: var(--font-display); font-size: 18px; }
+.wk span { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.navbtn {
+  width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); cursor: pointer; font-size: 18px; line-height: 1;
+}
+.navbtn:disabled { opacity: 0.35; cursor: default; }
+.todaybtn { height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: 13px; }
+
+/* summary */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.stat { padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stat + .stat { border-left: 1px solid var(--line); }
+.stat b { font-family: var(--font-display); font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat b small { font-size: 15px; color: var(--muted); font-weight: 600; }
+.alert { padding: 10px 14px; border-radius: 8px; font-size: 14px; }
+.alert.warn { background: var(--warn-soft); color: var(--warn); }
+.alert.miss { background: var(--miss-soft); color: var(--miss); }
+.alert.info { background: var(--accent-soft); color: var(--accent); }
+
+/* days */
+.days { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.day {
+  display: grid; grid-template-columns: 44px minmax(0, 1fr) 40px; gap: 12px; align-items: start;
+  padding: 14px; border: 0; border-left: 3px solid transparent; background: none; text-align: left; cursor: pointer; width: 100%;
+}
+.day + .day { border-top: 1px solid var(--line); }
+.day[data-s="today"] { border-left-color: var(--accent); background: color-mix(in srgb, var(--accent-soft) 45%, transparent); }
+.day[data-s="missed"] { border-left-color: var(--miss); }
+.dow { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding-top: 2px; display: flex; flex-direction: column; font-variant-numeric: tabular-nums; }
+.dow b { font-size: 17px; color: var(--fg); font-weight: 500; letter-spacing: 0; }
+.task { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.task .t { font-weight: 600; font-size: 15.5px; }
+.task .d { color: var(--muted); font-size: 13.5px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.tag { font-family: var(--font-mono); font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--bg); color: var(--muted); }
+.tag.state-missed { background: var(--miss-soft); color: var(--miss); }
+.tag.state-today { background: var(--accent-soft); color: var(--accent); }
+.tag.state-optional { background: var(--warn-soft); color: var(--warn); }
+.box {
+  width: 30px; height: 30px; border-radius: 7px; border: 2px solid var(--line); justify-self: end;
+  display: grid; place-items: center; transition: background 120ms, border-color 120ms;
+}
+.day[data-done="1"] .box { background: var(--accent); border-color: var(--accent); }
+.box svg { width: 18px; height: 18px; stroke: var(--on-accent); fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.day[data-done="1"] .box svg { opacity: 1; }
+.day[data-done="1"] .task .t { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+
+/* habits grid */
+.section { display: flex; flex-direction: column; gap: 12px; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.habits { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.habit { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: var(--surface); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.habit .n { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.habit .h { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.habit[data-hit="1"] { background: var(--accent-soft); border-color: transparent; }
+.habit[data-hit="1"] .n { color: var(--accent); }
+
+/* setup + rules */
+.list { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.item { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; padding: 12px 14px; align-items: start; border: 0; background: none; text-align: left; width: 100%; cursor: pointer; }
+.item + .item { border-top: 1px solid var(--line); }
+.item .box { width: 24px; height: 24px; border-radius: 6px; justify-self: start; }
+.item .box svg { width: 14px; height: 14px; }
+.item[data-done="1"] .box { background: var(--accent); border-color: var(--accent); }
+.item[data-done="1"] .box svg { opacity: 1; }
+.item .t { font-weight: 600; }
+.item .d { color: var(--muted); font-size: 13.5px; }
+.template { font-family: var(--font-mono); font-size: 13px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.template span { color: var(--muted); }
+.rules { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--fg); }
+.rules li::marker { color: var(--accent); }
+
+@media (max-width: 380px) {
+  .habits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat b { font-size: 22px; }
+}
+@media (prefers-reduced-motion: reduce) { .box { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="top">
+      <div>
+        <div class="label">Security practice</div>
+        <h1>Nine Habits</h1>
+      </div>
+      <button class="installbtn" id="install" hidden>Install app</button>
+    </div>
+    <div class="weeknav">
+      <button class="navbtn" id="prev" aria-label="Previous week">‹</button>
+      <div class="wk" id="wk"><strong>Week 1</strong><span>Sep 28 – Oct 4</span></div>
+      <button class="todaybtn" id="thisweek" hidden>This week</button>
+      <button class="navbtn" id="next" aria-label="Next week">›</button>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+  <div id="alert"></div>
+
+  <div class="days" id="days" role="list"></div>
+
+  <section class="section">
+    <div class="section-head"><h2>Habits covered this week</h2><span class="label" id="habitcount"></span></div>
+    <div class="habits" id="habits"></div>
+  </section>
+
+  <section class="section" id="setupSection">
+    <div class="section-head"><h2>One-time setup</h2><span class="label" id="setupcount"></span></div>
+    <div class="list" id="setup"></div>
+  </section>
+
+  <section class="section">
+    <h2>Note template</h2>
+    <div class="template">
+      <div># &lt;lab / report / finding&gt;</div>
+      <div>## What happened <span>— the bug, in plain words</span></div>
+      <div>## Why it matters <span>— who is affected</span></div>
+      <div>## Risk <span>— realistic impact, not worst case</span></div>
+      <div>## Fix <span>— code or config change</span></div>
+    </div>
+  </section>
+
+  <section class="section backup">
+    <div class="section-head"><h2>Backup</h2><span class="label">Saved on this phone</span></div>
+    <p class="d" style="margin:0;color:var(--muted);font-size:13.5px">Your ticks live on this device. Copy a backup now and then, and paste it here to restore on a new phone.</p>
+    <div class="row"><button id="copyBackup">Copy backup</button><button id="restoreBackup">Restore from text below</button></div>
+    <textarea id="backupText" aria-label="Backup text" placeholder="Paste a backup here to restore"></textarea>
+    <div class="msg" id="backupMsg" role="status"></div>
+  </section>
+
+  <section class="section">
+    <h2>Rules</h2>
+    <ul class="rules">
+      <li>30 minutes of your own digging before any walkthrough.</li>
+      <li>Missing a day is fine. Never miss two in a row.</li>
+      <li>Every lab and report gets a note in the template.</li>
+      <li>Depth lane: web app and API security.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var START = "2026-09-28"; // Monday of week 1
+  var DAYS = [
+    { k: "mon", name: "Mon", title: "Security+ study", detail: "For each topic, write one line on what happens underneath.", habits: [1] },
+    { k: "tue", name: "Tue", title: "Read code", detail: "One login, upload or search function from an open-source project. Mark every place user input is trusted.", habits: [3] },
+    { k: "wed", name: "Wed", title: "Study a real bug", detail: "One disclosed HackerOne report or CVE writeup. Summarise it in your template.", habits: [2] },
+    { k: "thu", name: "Thu", title: "PortSwigger lab", detail: "Own digging for 30 minutes before any walkthrough.", habits: [5, 7] },
+    { k: "fri", name: "Fri", title: "Build and break your own", detail: "Map or attack your Railway backend: routes, auth, database, deploy. Fix what you find.", habits: [4, 8] },
+    { k: "sat", name: "Sat", title: "Write it up", detail: "Turn the week's best note into a writeup for your site and a thread for Ark.", habits: [6, 9] },
+    { k: "sun", name: "Sun", title: "Weekly review", detail: "10 minutes: what you did, what you skipped, next week's focus.", habits: [] }
+  ];
+  // Week 1 is a starter week: only Thu + Sat (plus setup) count.
+  var STARTER_ONLY = { thu: 1, sat: 1, sun: 1 };
+  var HABITS = [
+    "Understand what's underneath", "Work on real problems", "Read code",
+    "Learn how systems are built", "Research before walkthroughs", "Explain security clearly",
+    "Go deep in one area", "Build and break your own", "Document everything"
+  ];
+  var SETUP = [
+    { k: "repo", title: "Create the security-notes repo", detail: "On GitHub, with the note template as its first file." },
+    { k: "lane", title: "Open PortSwigger Web Security Academy", detail: "Free account. This is your depth lane." },
+    { k: "rule", title: "Write the 30-minute rule in the repo", detail: "At the top of the README." }
+  ];
+  var CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  var LS_KEY = "nine-habits-v1";
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function key(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function parseKey(k) { var p = k.split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+  function addDays(d, n) { var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() + n); return x; }
+  function mondayOf(d) { var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
+  function today() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function fmt(d) { return MONTHS[d.getMonth()] + " " + d.getDate(); }
+  var startDate = parseKey(START);
+
+  var state = { weeks: {}, setup: {} };
+  var view = mondayOf(today());
+  if (view < startDate) view = startDate;
+
+  // ---------- storage ----------
+  function loadLocal() {
+    try { var raw = localStorage.getItem(LS_KEY); if (raw) { var s = JSON.parse(raw); state.weeks = s.weeks || {}; state.setup = s.setup || {}; } } catch (e) {}
+  }
+  function saveLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+
+  function enqueue() { saveLocal(); }
+  function weekBody(id) { return { done: Object.assign({}, (state.weeks[id] && state.weeks[id].done) || {}), updated: new Date().toISOString() }; }
+
+  // ---------- logic ----------
+  function isDone(date) {
+    var w = state.weeks[key(mondayOf(date))];
+    return !!(w && w.done && w.done[DAYS[(date.getDay() + 6) % 7].k]);
+  }
+  function statusOf(date) {
+    var t = today();
+    if (isDone(date)) return "done";
+    if (date > t) return "upcoming";
+    if (date < startDate) return "optional";
+    var k = DAYS[(date.getDay() + 6) % 7].k;
+    if (key(mondayOf(date)) === START && !STARTER_ONLY[k]) return "optional";
+    if (+date === +t) return "today";
+    return "missed";
+  }
+  function streak() {
+    var t = today(), n = 0, d = isDone(t) ? t : addDays(t, -1);
+    while (d >= startDate) {
+      var s = statusOf(d);
+      if (s === "done") n++;
+      else if (s === "missed") break;
+      d = addDays(d, -1);
+    }
+    return n;
+  }
+
+  // ---------- render ----------
+  function render() {
+    var t = today(), weekId = key(view), weekNo = Math.round((view - startDate) / 604800000) + 1;
+    var isThisWeek = +view === +mondayOf(t);
+    document.getElementById("wk").innerHTML =
+      "<strong>Week " + weekNo + (weekId === START ? " · starter week" : "") + "</strong><span>" + fmt(view) + " – " + fmt(addDays(view, 6)) + "</span>";
+    document.getElementById("prev").disabled = +view <= +startDate;
+    document.getElementById("thisweek").hidden = isThisWeek;
+
+    var doneCount = 0, counted = 0, hit = {};
+    var rows = DAYS.map(function (d, i) {
+      var date = addDays(view, i), s = statusOf(date), done = s === "done";
+      if (done) { doneCount++; d.habits.forEach(function (h) { hit[h] = 1; }); }
+      if (s !== "optional" || done) counted++;
+      var tags = d.habits.map(function (h) { return '<span class="tag">#' + h + "</span>"; }).join("");
+      var st = { missed: "Missed", today: "Today", optional: weekId === START && date >= startDate ? "Starts next week" : "Optional" }[s];
+      if (st) tags += '<span class="tag state-' + s + '">' + st + "</span>";
+      return '<button class="day" role="listitem" data-k="' + d.k + '" data-s="' + s + '" data-done="' + (done ? 1 : 0) +
+        '" aria-pressed="' + done + '"><span class="dow">' + d.name + "<b>" + date.getDate() + "</b></span>" +
+        '<span class="task"><span class="t">' + d.title + '</span><span class="d">' + d.detail + '</span><span class="meta">' + tags + "</span></span>" +
+        '<span class="box">' + CHECK + "</span></button>";
+    });
+    document.getElementById("days").innerHTML = rows.join("");
+
+    var hits = Object.keys(hit).length;
+    document.getElementById("stats").innerHTML =
+      '<div class="stat"><span class="label">Streak</span><b>' + streak() + " <small>days</small></b></div>" +
+      '<div class="stat"><span class="label">This week</span><b>' + doneCount + " <small>/ " + counted + "</small></b></div>" +
+      '<div class="stat"><span class="label">Habits</span><b>' + hits + " <small>/ 9</small></b></div>";
+
+    document.getElementById("habits").innerHTML = HABITS.map(function (h, i) {
+      return '<div class="habit" data-hit="' + (hit[i + 1] ? 1 : 0) + '"><span class="n">#' + (i + 1) + (hit[i + 1] ? " ✓" : "") + '</span><span class="h">' + h + "</span></div>";
+    }).join("");
+    document.getElementById("habitcount").textContent = hits + " of 9";
+
+    // alert (only about the real current week)
+    var y = addDays(t, -1), y2 = addDays(t, -2), msg = "";
+    if (statusOf(y) === "missed" && statusOf(y2) === "missed" && !isDone(t)) msg = '<div class="alert miss">Two days missed in a row. Do today\'s task to restart.</div>';
+    else if (statusOf(y) === "missed" && !isDone(t)) msg = '<div class="alert warn">You missed yesterday. Do today\'s task so it doesn\'t become two.</div>';
+    else if (weekId === START && isThisWeek) msg = '<div class="alert info">Starter week: set up the repo, do the Thursday lab, write it up on Saturday.</div>';
+    var al = document.getElementById("alert"); al.innerHTML = isThisWeek ? msg : ""; al.hidden = !al.innerHTML;
+
+    var setupDone = SETUP.filter(function (s) { return state.setup[s.k]; }).length;
+    document.getElementById("setupcount").textContent = setupDone + " of " + SETUP.length;
+    document.getElementById("setup").innerHTML = SETUP.map(function (s) {
+      var d = !!state.setup[s.k];
+      return '<button class="item" data-setup="' + s.k + '" data-done="' + (d ? 1 : 0) + '" aria-pressed="' + d + '"><span class="box">' + CHECK +
+        '</span><span><span class="t">' + s.title + '</span><br><span class="d">' + s.detail + "</span></span></button>";
+    }).join("");
+  }
+
+  // ---------- events ----------
+  document.getElementById("days").addEventListener("click", function (e) {
+    var b = e.target.closest(".day"); if (!b) return;
+    var id = key(view), k = b.dataset.k;
+    var w = state.weeks[id] = { done: Object.assign({}, (state.weeks[id] && state.weeks[id].done) || {}) };
+    if (w.done[k]) delete w.done[k]; else w.done[k] = true;
+    render();
+    enqueue("weeks/" + id, weekBody(id));
+  });
+  document.getElementById("setup").addEventListener("click", function (e) {
+    var b = e.target.closest(".item"); if (!b) return;
+    var s = Object.assign({}, state.setup); s[b.dataset.setup] = !s[b.dataset.setup];
+    state.setup = s; render();
+    enqueue("meta/setup", Object.assign({}, s));
+  });
+  document.getElementById("prev").addEventListener("click", function () { var p = addDays(view, -7); if (p >= startDate) { view = p; render(); } });
+  document.getElementById("next").addEventListener("click", function () { view = addDays(view, 7); render(); });
+  document.getElementById("thisweek").addEventListener("click", function () { view = mondayOf(today()); render(); });
+
+  // ---------- boot ----------
+  var lastDay = key(today());
+  loadLocal();
+  render();
+
+  // Keep in step if the app is open in two tabs.
+  window.addEventListener("storage", function (e) { if (e.key === LS_KEY) { loadLocal(); render(); } });
+
+  // Backup / restore
+  var msg = document.getElementById("backupMsg"), ta = document.getElementById("backupText");
+  document.getElementById("copyBackup").addEventListener("click", function () {
+    var text = JSON.stringify({ app: "nine-habits", v: 1, weeks: state.weeks, setup: state.setup });
+    ta.value = text;
+    var done = function () { msg.textContent = "Backup copied. Paste it somewhere safe, like a note to yourself."; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { ta.select(); msg.textContent = "Couldn't copy automatically. The backup is selected below; copy it by hand."; });
+    } else { ta.select(); msg.textContent = "The backup is selected below; copy it by hand."; }
+  });
+  document.getElementById("restoreBackup").addEventListener("click", function () {
+    try {
+      var s = JSON.parse(ta.value.trim());
+      if (!s || s.app !== "nine-habits" || typeof s.weeks !== "object") throw new Error();
+      state.weeks = s.weeks || {}; state.setup = s.setup || {};
+      saveLocal(); render(); ta.value = "";
+      msg.textContent = "Restored.";
+    } catch (e) { msg.textContent = "That isn't a Nine Habits backup. Paste the full text from Copy backup."; }
+  });
+
+  // Install prompt (Android Chrome)
+  var deferred = null, ib = document.getElementById("install");
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; ib.hidden = false; });
+  ib.addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; ib.hidden = true; }); });
+  window.addEventListener("appinstalled", function () { ib.hidden = true; });
+
+  // Offline support
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+  }
+
+  // Re-render when the app comes back to the foreground on a new day.
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) { var k = key(today()); if (k !== lastDay) { lastDay = k; } render(); } });
+
+  // Roll over at midnight if left open.
+  setInterval(function () { var k = key(today()); if (k !== lastDay) { lastDay = k; render(); } }, 60000);
+})();
+</script>
+</body>
+</html>
