@@ -114,6 +114,10 @@ def main():
               and "javascript:" not in body)
         check("safe links kept", 'href="https://example.com"' in body)
         check("no raw <script> from data anywhere", "<script>alert" not in x)
+        archive = (site / "posts" / "index.html").read_text()
+        check("post and archive pages load the shared analytics script (with opt-out)",
+              all(pg.count('<script src="/analytics.js"></script>') == 1 and "googletagmanager" not in pg
+                  for pg in (x, archive)))
 
         m = page(site, "a-members-only-essay-about-very-long-titles-that-should-wrap-neatly")
         check("members post shows only first paragraph", "SECRET" not in m and "Public opening paragraph" in m)

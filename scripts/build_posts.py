@@ -47,7 +47,6 @@ SITE_NAME = "Sifon Imahjnr — Writer & Engineer"
 SITE_DESC = "Essays, poems, and ideas from a software engineering and cybersecurity student."
 NEWSLETTER = "https://sifons-newsletter-f3fd43.beehiiv.com"
 COFFEE = "https://buymeacoffee.com/Sifon"
-GA_ID = "G-2Y1MTQWW3W"
 ADSENSE = "ca-pub-3988501910661269"
 
 POSTS_DIR = ROOT / "posts"
@@ -445,8 +444,7 @@ def page_html(p: dict, others: list[dict], css: str) -> str:
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE}" crossorigin="anonymous"></script>
-<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>
+<script src="/analytics.js"></script>
 <style>
 {css}
 {EXTRA_CSS}
@@ -541,8 +539,7 @@ def archive_html(posts: list[dict], css: str) -> str:
 <script type="application/ld+json">{ld}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
-<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>
+<script src="/analytics.js"></script>
 <style>
 {css}
 {EXTRA_CSS}

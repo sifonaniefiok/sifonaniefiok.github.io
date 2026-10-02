@@ -35,14 +35,8 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3988501910661269"
      crossorigin="anonymous"></script>
   
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2Y1MTQWW3W"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-2Y1MTQWW3W');
-</script>
+<!-- Google Analytics (with ?track=off opt-out for the owner's devices) -->
+<script src="/analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -981,8 +975,15 @@ async function deletePost(id){
 }
 
 // ─── NAV ─────────────────────────────────────────────────────────────────────
+// Each section gets its own address (/?page=about) and tab title. Analytics
+// counts a page view whenever the address changes, so this records which
+// sections people visit, once per visit, without sending events by hand.
+const SITE_TITLE=document.title;
+const PAGE_TITLES={about:'About',blog:'Blog',projects:'Projects',contact:'Contact',privacy:'Privacy Policy'};
 function navigate(page){
-  if(location.pathname!=='/'||location.search) history.replaceState(null,'','/');
+  document.title=PAGE_TITLES[page]?`${PAGE_TITLES[page]} — Sifon Imahjnr`:SITE_TITLE;
+  const target=page==='home'?'/':`/?page=${page}`;
+  if(location.pathname+location.search!==target) history.replaceState(null,'',target);
   document.querySelectorAll('.page,.post-page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
@@ -1024,6 +1025,7 @@ function shareBarHTML(post){
 // Show the post's own link in the address bar, so copying it from there works too.
 function setPostAddress(post){
   const url=postLinks[post.id];
+  document.title=`${post.title} — Sifon Imahjnr`;
   try{ history.replaceState(null,'',url?new URL(url).pathname:`/?post=${post.id}`); }catch(e){}
 }
 document.addEventListener('click',e=>{
@@ -1117,7 +1119,6 @@ async function openPost(id){
 }
 
 function closePost(){
-  if(location.pathname!=='/'||location.search) history.replaceState(null,'','/');
   document.getElementById('post-page').classList.remove('active','poem-post');
   navigate('blog');
 }
@@ -1525,7 +1526,7 @@ function openFromLink(){
   const q=new URLSearchParams(location.search);
   const id=parseInt(q.get('post'),10), pg=q.get('page');
   if(id && [...posts,...poems].some(p=>p.id===id)){ postLinksReady.then(()=>openPost(id)); }
-  else if(pg && /^[a-z]+$/.test(pg) && document.getElementById('page-'+pg)){ navigate(pg); history.replaceState(null,'','/'); }
+  else if(pg && /^[a-z]+$/.test(pg) && document.getElementById('page-'+pg)){ navigate(pg); }
 }
 loadPostsFromAPI().then(()=>{
   renderHomeCarousels();
