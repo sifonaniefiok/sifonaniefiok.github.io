@@ -588,6 +588,30 @@ def redirect_html(target: str) -> str:
 
 
 # ── Sitemap & feed ────────────────────────────────────────────────────────────
+NOINDEX = re.compile(r'<meta\s+name=["\']robots["\'][^>]*noindex', re.I)
+SKIP_DIRS = {"posts", "tests", "scripts", "node_modules"}
+
+
+def standalone_pages(root: Path = None) -> list[str]:
+    """Hand-made pages outside /posts/ (demos, tools, decks) that search engines may index.
+
+    Any .html file counts unless it opts out with <meta name="robots" content="noindex">,
+    so a new page lands in the sitemap without editing this script. The home page,
+    generated post pages and Google's verification files are handled elsewhere.
+    """
+    root = root or ROOT
+    urls = []
+    for f in sorted(root.rglob("*.html")):
+        rel = f.relative_to(root)
+        if len(rel.parts) == 1 or rel.parts[0] in SKIP_DIRS or any(x.startswith(".") for x in rel.parts):
+            continue  # top-level files: index.html and google*.html verification files
+        if NOINDEX.search(f.read_text(encoding="utf-8", errors="ignore")[:20000]):
+            continue
+        path = rel.as_posix()
+        urls.append(f"{SITE_URL}/{path[:-len('index.html')] if f.name == 'index.html' else path}")
+    return urls
+
+
 def sitemap(posts: list[dict]) -> str:
     newest = max((iso(p.get("updated_at")) or iso(p.get("created_at")) or "" for p in posts), default="")
     rows = [f"  <url><loc>{SITE_URL}/</loc>{f'<lastmod>{newest[:10]}</lastmod>' if newest else ''}"
@@ -598,6 +622,10 @@ def sitemap(posts: list[dict]) -> str:
         lm = (iso(p.get("updated_at")) or iso(p.get("created_at")) or "")[:10]
         rows.append(f"  <url><loc>{SITE_URL}/posts/{p['slug']}/</loc>{f'<lastmod>{lm}</lastmod>' if lm else ''}"
                     f"<changefreq>monthly</changefreq><priority>0.8</priority></url>")
+    # No <lastmod> here: CI checks out without history, so there's no reliable date,
+    # and a wrong one is worse than none.
+    for url in standalone_pages():
+        rows.append(f"  <url><loc>{url}</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>")
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(rows) + "\n</urlset>\n")
 

@@ -141,8 +141,16 @@ def main():
         for f in ("sitemap.xml", "feed.xml"):
             xml.dom.minidom.parse(str(site / f))
         sm = (site / "sitemap.xml").read_text()
-        check("sitemap lists home + archive + every post", sm.count("<url>") == len(FIXTURE) + 2
-              and "<loc>https://sifonaniefiok.github.io/posts/</loc>" in sm)
+        extra = [u for u in re.findall(r"<loc>([^<]+)</loc>", sm)
+                 if "/posts/" not in u and u != "https://sifonaniefiok.github.io/"]
+        check("sitemap lists home + archive + every post + standalone pages",
+              sm.count("<url>") == len(FIXTURE) + 2 + len(extra)
+              and "<loc>https://sifonaniefiok.github.io/posts/</loc>" in sm, extra)
+        check("standalone pages included (demos, space-mining)",
+              "https://sifonaniefiok.github.io/demos/" in extra
+              and "https://sifonaniefiok.github.io/space-mining/calculator.html" in extra, extra)
+        check("noindex pages and verification files left out of the sitemap",
+              "/habits/" not in sm and "terri-berri" not in sm and "google" not in sm.lower(), extra)
         archive = (site / "posts" / "index.html").read_text(encoding="utf-8")
         b = Balance(); b.feed(archive)
         check("archive page is well-formed HTML", not b.errors and not b.stack, (b.errors[:3], b.stack[-3:]))
