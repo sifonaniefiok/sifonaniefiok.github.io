@@ -48,7 +48,8 @@ function ident(){ var id=null, sec=null; try{ id=localStorage.getItem('japa-id')
   if(!sec||sec.length<32){ var a=new Uint8Array(24); crypto.getRandomValues(a); sec=[].map.call(a,function(b){ return ('0'+b.toString(16)).slice(-2); }).join(''); try{ localStorage.setItem('japa-secret',sec); }catch(e){} }
   return {id:id,secret:sec}; }
 function startSupabase(){
-  var me=ident(); NET.me=me.id; NET.secret=me.secret; NET.mode='supabase';
+  var me=ident(); NET.playerId=me.id; NET.secret=me.secret; NET.mode='supabase';
+  me={id:uuid()}; NET.me=me.id; // each open tab is its own presence in the world; the leaderboard id is per browser
   var sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseKey,{auth:{persistSession:false,autoRefreshToken:false},realtime:{params:{eventsPerSecond:8}}});
   NET.sb=sb; NET.coarse={}; NET.posMap={};
   var lobby=sb.channel('japa-lobby',{config:{presence:{key:me.id},broadcast:{self:true}}});
@@ -74,7 +75,7 @@ function sbTick(){
   if(NET.venue&&NET.venueReady){ var p=posState(); var pk=JSON.stringify(p); var now=Date.now();
     if((pk!==NET.lastPos&&now-NET.lastPosAt>280)||now-NET.lastPosAt>4000){ NET.lastPos=pk; NET.lastPosAt=now; NET.venue.send({type:'broadcast',event:'pos',payload:Object.assign({id:NET.me},p)}).catch(function(){}); } }
   // leaderboard once a minute
-  if(Date.now()-NET.lastBoard>60000){ NET.lastBoard=Date.now(); NET.sb.rpc('japa_submit',{p_id:NET.me,p_secret:NET.secret,p_name:S.name,p_nw:E.netWorth(),p_job:S.career?D.CAREERS[S.career.id].titles[S.career.level-1]:'Unemployed',p_city:S.city,p_day:S.day+1,p_lottery:S.lottery}).then(function(){},function(){}); }
+  if(Date.now()-NET.lastBoard>60000){ NET.lastBoard=Date.now(); NET.sb.rpc('japa_submit',{p_id:NET.playerId,p_secret:NET.secret,p_name:S.name,p_nw:E.netWorth(),p_job:S.career?D.CAREERS[S.career.id].titles[S.career.level-1]:'Unemployed',p_city:S.city,p_day:S.day+1,p_lottery:S.lottery}).then(function(){},function(){}); }
 }
 function rebuildPeers(){ if(NET.mode!=='supabase') return; var lk=locKey();
   NET.peers=Object.keys(NET.coarse).map(function(id){ var c=NET.coarse[id]; var pr=Object.assign({},c); if(c.l&&c.l===lk&&NET.posMap[id]){ Object.assign(pr,NET.posMap[id]); pr.l=c.l; } else if(c.l===lk){ pr.hidden=true; }
@@ -96,7 +97,7 @@ function startArtifact(cl){
 // ---------- pick a transport ----------
 if(CFG&&CFG.supabaseUrl&&window.supabase&&window.supabase.createClient){ try{ startSupabase(); }catch(e){ NET.mode='solo'; } }
 else if(window.claude&&window.claude.use) startArtifact(window.claude);
-NET.boardId=function(){ return NET.mode==='supabase'?NET.me:NET.uid; };
+NET.boardId=function(){ return NET.mode==='supabase'?NET.playerId:NET.uid; };
 NET.onNewGame=function(){ NET.lastBoard=0; NET.lastCoarse=''; };
 
 function others(){ return NET.peers.filter(function(p){ return !p.isMe&&p.kind==='viewer'&&p.presence&&p.presence.n&&!NET.muted[p.peer]; }); }
