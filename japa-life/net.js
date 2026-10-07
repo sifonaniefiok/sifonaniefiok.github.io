@@ -36,7 +36,7 @@ function emit(topic,data){ if(NET.mode==='supabase') return NET.sbLobby.send({ty
 // ---------- what each player shares ----------
 function locKey(){ var S=E.S; if(!S) return null; if(S.loc==='home') return 'h:'+(NET.me||'x'); if(S.loc.indexOf('visit:')===0) return 'h:'+S.loc.slice(6); if(S.loc==='travel'||S.loc==='hotel') return null; return 'v:'+S.loc; }
 function homeCompact(){ var S=E.S; var h=S.homes[S.city]; if(!h) return null; return {t:h.tier,c:S.city,i:h.items.slice(0,70).map(function(it){ return [it.id,it.x,it.y,it.r||0]; })}; }
-function coarse(){ var S=E.S; return {n:S.name.split(' ')[0],c:S.city,l:locKey(),k:[S.look.skin,S.look.hair,S.look.hairCol,S.look.shirt,S.look.pants,S.look.pattern?1:0],
+function coarse(){ var S=E.S; return {u:NET.playerId?String(NET.playerId).slice(0,8):null,n:S.name.split(' ')[0],c:S.city,l:locKey(),k:[S.look.skin,S.look.hair,S.look.hairCol,S.look.shirt,S.look.pants,S.look.pattern?1:0],
   a:S.atWork?1:0,nw:Math.round(E.netWorth()/1000),job:S.career?D.CAREERS[S.career.id].titles[S.career.level-1]:null,ho:S.loc==='home'?homeCompact():null}; }
 function posState(){ var S=E.S, c=E.rt.cur; return {x:Math.round(S.sim.x*10)/10,y:Math.round(S.sim.y*10)/10,d:S.sim.dir||1,p:c&&c.phase==='act'?c.pose:'stand',w:c&&c.phase==='walk'&&c.path&&c.path.length?1:0,b:c&&c.phase==='act'?(c.bubble||null):null,em:NET.emoteUntil>Date.now()?NET.emote:null}; }
 

@@ -108,7 +108,7 @@ var sb=window.supabase.createClient(URL_,KEY,{auth:{persistSession:false,autoRef
 // live presence: listen only (this page never counts itself as a player)
 var lobby=sb.channel('japa-lobby',{config:{presence:{key:'stats-'+Math.random().toString(36).slice(2)}}});
 lobby.on('presence',{event:'sync'},function(){ renderOnline(lobby.presenceState()); }).subscribe(function(st){ if(st==='SUBSCRIBED') $('tOnlineS').textContent='Live'; else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT') $('tOnlineS').textContent='Live count unavailable'; });
-function renderOnline(state){ var ppl=[]; Object.keys(state).forEach(function(k){ var a=state[k]; var m=a&&a[a.length-1]; if(m&&m.n) ppl.push(m); });
+function renderOnline(state){ var ppl=[], seen={}; Object.keys(state).forEach(function(k){ var a=state[k]; var m=a&&a[a.length-1]; if(!m||!m.n) return; var key=m.u?'u:'+m.u:'k:'+k; if(seen[key]) return; seen[key]=1; ppl.push(m); }); // one person with several tabs counts once
   $('tOnline').textContent=n(ppl.length);
   var byCity={}; ppl.forEach(function(p){ var c=CITY[p.c]||'Elsewhere'; byCity[c]=(byCity[c]||0)+1; });
   $('onlineSub').textContent=ppl.length?Object.keys(byCity).map(function(c){ return byCity[c]+' in '+c; }).join(' · '):'Players with the game open';
