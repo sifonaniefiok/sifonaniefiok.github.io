@@ -75,6 +75,36 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .tracker .t-time { grid-row: 1 / span 3; grid-column: 2; align-self: center; font-family: var(--display); font-size: 18px; font-variant-numeric: tabular-nums; }
 .tracker button { grid-column: 1 / -1; justify-self: start; margin-top: 4px; background: none; border: 0; padding: 2px 0; color: var(--muted); font-size: 12px; text-decoration: underline; }
 
+/* Sideways phones: a slim shift bar between the money and the clock, and smaller controls, so the middle of the screen stays clear */
+@media (max-height: 500px) {
+  .hud { padding-top: calc(env(safe-area-inset-top, 0px) + 8px); padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
+  .chip { padding: 5px 9px; border-radius: 10px; gap: 3px; }
+  .money { font-size: 15px; }
+  .bar { width: 64px; height: 5px; }
+  .meter { font-size: 9px; }
+  .clock b { font-size: 14px; }
+  .clock span { font-size: 9px; }
+  .tracker { top: calc(env(safe-area-inset-top, 0px) + 8px); width: min(420px, calc(100% - 360px)); min-width: 220px; padding: 5px 6px 5px 10px; border-left-width: 3px; border-radius: 10px; grid-template-columns: minmax(0, 1fr) auto auto; gap: 0 8px; align-items: center; }
+  .tracker .t-job { display: none; }
+  .tracker .t-goal { font-size: 13px; grid-row: 1; }
+  .tracker .t-meta { font-size: 11px; grid-row: 2; grid-column: 1; }
+  .tracker .t-time { grid-row: 1 / span 2; grid-column: 2; font-size: 14px; }
+  .tracker button { grid-row: 1 / span 2; grid-column: 3; margin: 0; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); text-decoration: none; font-size: 0; display: grid; place-items: center; }
+  .tracker button::before { content: '×'; font-size: 18px; line-height: 1; color: var(--text); }
+  .tracker button[data-armed] { background: var(--coral); border-color: var(--coral); }
+  .tracker button[data-armed]::before { color: #1d0a04; }
+  .ticker { width: min(400px, calc(100% - 330px)); padding: 5px 12px; font-size: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); }
+  .ticker b { font-size: 10px; }
+  .controls { right: max(10px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); gap: 8px; }
+  .row-btns { gap: 8px; }
+  .btn-round { width: 46px; height: 46px; }
+  .btn-round svg { width: 20px; height: 20px; }
+  .btn-act { height: 44px; font-size: 14px; padding: 0 16px; }
+  .joy { width: 108px; height: 108px; left: max(14px, env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); }
+  .joy i { width: 46px; height: 46px; margin: -23px 0 0 -23px; }
+  .toasts { bottom: calc(env(safe-area-inset-bottom, 0px) + 64px); }
+}
+@media (max-height: 500px) and (max-width: 700px) { .ticker { display: none; } }
 .ticker { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); width: min(460px, calc(100% - 260px)); min-width: 0; background: rgba(15, 18, 24, .82); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font-size: 13px; display: flex; gap: 8px; align-items: center; overflow: hidden; pointer-events: auto; }
 .ticker b { font-family: var(--display); font-weight: 400; font-size: 11px; color: var(--danfo-ink); background: var(--danfo); padding: 2px 7px; border-radius: 4px; flex: none; letter-spacing: .04em; }
 .ticker span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
@@ -252,7 +282,7 @@ html, body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; text-siz
     <div class="t-goal" id="tGoal">Next stop</div>
     <div class="t-meta" id="tMeta"></div>
     <div class="t-time" id="tTime">15:00</div>
-    <button type="button" id="tQuit">Quit shift</button>
+    <button type="button" id="tQuit" aria-label="Quit shift">Quit shift</button>
   </div>
   <div class="ticker" id="ticker"><b>VEYRA DAILY</b><span id="tickerText">Welcome to Port Veyra.</span></div>
   <div class="joy" id="joy" hidden><i id="joyKnob"></i></div>
@@ -1902,7 +1932,7 @@ $('#walletChip').onclick = () => Phone.open('bank');
 $('#walletChip').onkeydown = e => { if (e.key === 'Enter') Phone.open('bank'); };
 $('#rideBtn').onclick = () => Game.cycleRide();
 $('#actBtn').onclick = () => { if (Game.nearPlace) Places.open(Game.nearPlace); };
-$('#tQuit').onclick = () => { const b = $('#tQuit'); if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Quit shift'; Shifts.quit(); } else { b.dataset.armed = 1; b.textContent = 'Tap again to quit without pay'; setTimeout(() => { delete b.dataset.armed; b.textContent = 'Quit shift'; }, 3000); } };
+$('#tQuit').onclick = () => { const b = $('#tQuit'); if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Quit shift'; Shifts.quit(); } else { b.dataset.armed = 1; b.textContent = 'Tap again to quit without pay'; toast('Tap × again to quit. Unfinished shifts are not paid.'); setTimeout(() => { delete b.dataset.armed; b.textContent = 'Quit shift'; }, 3000); } };
 $('#chatSend').onclick = () => sendChat();
 function setWaypoint(id) { const p = placeById[id]; Game.target = { x: p.x, z: p.z, name: p.name }; toast('Waypoint set: ' + p.name + '. Follow the yellow beacon.'); }
 async function sendChat() {
