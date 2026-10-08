@@ -1,3 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0f1218">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VIBE">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta property="og:title" content="VIBE: The Republic">
+<meta property="og:description" content="A multiplayer 3D life sim set in Port Veyra. Work, eat, rent, run a buka, vote and run for mayor.">
+<meta property="og:image" content="https://sifonaniefiok.github.io/vibe/icons/icon-512.png">
+</head>
+<body>
 <title>VIBE: The Republic</title>
 <meta name="description" content="A multiplayer 3D life sim set in Port Veyra. Work, eat, rent, run a buka, vote and run for mayor.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,11 +96,12 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .toast.ok { border-color: var(--leaf); }
 .toast.money { border-color: var(--danfo); }
 @keyframes pop { from { transform: translateY(6px); opacity: 0; } }
-.offline-band { position: fixed; left: 0; right: 0; top: 0; padding: calc(env(safe-area-inset-top, 0px) + 4px) 12px 4px; background: var(--coral); color: #1d0a04; font-size: 12px; line-height: 1.3; text-align: center; font-weight: 700; z-index: 14; }
-.is-offline .hud { padding-top: calc(env(safe-area-inset-top, 0px) + 44px); }
-.is-offline .tracker { top: calc(env(safe-area-inset-top, 0px) + 100px); }
-.is-offline .brand { top: calc(env(safe-area-inset-top, 0px) + 48px); }
-.offline-band a { color: inherit; }
+html, body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+@media (pointer: coarse) { input, textarea, select { font-size: 16px !important; } }
+.install-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--danfo); color: var(--danfo-ink); border: 0; border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 14px; margin-bottom: 14px; }
+.install-pill svg { width: 18px; height: 18px; }
+.steps { margin: 6px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; line-height: 1.45; }
+.steps b { color: var(--text); }
 
 /* ── Sheets (place menus, shift screens) ── */
 .sheet-wrap { position: fixed; inset: 0; display: flex; align-items: flex-end; justify-content: center; background: rgba(5, 7, 10, .45); z-index: 20; }
@@ -239,6 +260,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     <button type="button" class="btn-act" id="actBtn" hidden>Enter</button>
     <div class="row-btns">
       <button type="button" class="btn-round" id="rideBtn" aria-label="Change how you travel" title="Ride (R)"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="17" r="3.2"/><circle cx="18" cy="17" r="3.2"/><path d="M6 17l4-8h5l3 8M10 9l-1.5-3H6M15 9l1-3h2"/></svg><small id="rideLabel">Walk</small></span></button>
+      <button type="button" class="btn-round" id="fsBtn" aria-label="Play full screen" title="Full screen" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       <button type="button" class="btn-round" id="phoneBtn" aria-label="Open your phone" title="Phone (P)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3" stroke-linecap="round"/></svg></button>
     </div>
   </div>
@@ -1840,7 +1862,9 @@ const Phone = {
       ${Object.keys(JOBS).map(k => `<dt>${JOBS[k].title}</dt><dd>Level ${level(xp[k])} · ${xp[k] || 0} XP</dd>`).join('')}</dl>
       <div class="section-title">Recovery code</div><p class="note">This code is your account. Use it to play on another device. Anyone who has it can play as you, so keep it private.</p>
       <div class="code" id="codeBox">${esc(Game.token)}</div><div class="row-btns" style="margin-top:8px"><button class="btn ghost" id="copyCode">Copy code</button></div>
-      <div class="section-title">Settings</div><div class="stack"><button class="btn ghost wide" id="qGo">Graphics: ${Quality.high ? 'High' : 'Low'} (tap to switch, reloads)</button>
+      <div class="section-title">Settings</div><div class="stack">${AppShell.canInstall() ? '<button class="btn wide" id="instGo">Install VIBE as an app</button>' : ''}
+      ${AppShell.canFull() || store.get('vibe-fs') === 'off' ? `<button class="btn ghost wide" id="fsGo">Full screen on first tap: ${store.get('vibe-fs') === 'off' ? 'Off' : 'On'}</button>` : ''}
+      <button class="btn ghost wide" id="qGo">Graphics: ${Quality.high ? 'High' : 'Low'} (tap to switch, reloads)</button>
       <button class="btn ghost wide" id="outGo">Sign out on this device</button></div>
       ${Api.mode === 'offline' ? `<p class="note" style="margin-top:12px">You are playing the offline preview. Play online with everyone at <a href="${PLAY_URL}" target="_blank" rel="noopener" style="color:var(--danfo)">${PLAY_URL}</a></p>` : ''}`;
   },
@@ -1848,6 +1872,8 @@ const Phone = {
     $('#lookGo').onclick = () => { this.close(); Onboard.creator(true); };
     $('#copyCode').onclick = async () => { try { await navigator.clipboard.writeText(Game.token); toast('Code copied.', 'ok'); } catch (e) { const r = document.createRange(); r.selectNodeContents($('#codeBox')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Code selected. Copy it now.'); } };
     $('#qGo').onclick = () => { store.set('vibe-quality', Quality.high ? 'low' : 'high'); location.reload(); };
+    const ig = $('#instGo'); if (ig) ig.onclick = () => { this.close(); AppShell.install(); };
+    const fg = $('#fsGo'); if (fg) fg.onclick = () => { if (store.get('vibe-fs') === 'off') { store.del('vibe-fs'); AppShell.enterFull(); } else { store.set('vibe-fs', 'off'); if (AppShell.isFull() && document.exitFullscreen) document.exitFullscreen().catch(() => { }); } this.refresh(true); };
     confirmTap($('#outGo'), 'Saved your code? Tap again', () => signOut(false));
   },
   bindMap() {
@@ -1968,7 +1994,8 @@ const Onboard = {
       <div class="field"><label>Hairstyle</label><div class="styles">${this.styles().map((n, i) => `<button aria-pressed="${this.look.style === i}" data-k="style" data-i="${i}">${esc(n)}</button>`).join('')}</div></div>
       <div class="c-grid">${sw('skin')}${sw('hair')}${sw('top')}${sw('bottom')}</div>
       ${editing ? `<button class="btn wide" id="obSave">Save look</button><button class="link" id="obCancel">Cancel</button>` :
-        `<div class="field"><label for="obName">Your name in Veyra</label><input id="obName" maxlength="16" placeholder="3 to 16 letters or numbers" autocomplete="nickname"></div>
+        `<button type="button" class="install-pill" id="installPill" ${AppShell.canInstall() ? '' : 'hidden'}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Install VIBE as an app</button>
+         <div class="field"><label for="obName">Your name in Veyra</label><input id="obName" maxlength="16" placeholder="3 to 16 letters or numbers" autocomplete="nickname"></div>
          <div class="stack" style="margin-top:12px"><button class="btn wide" id="obGo">Arrive in Port Veyra</button>
          <p class="note">You start with ${fmt(30000)} from the Republic. ₣V is game money only: it can't be bought, sold or cashed out.</p>
          <button class="link" id="obCode">I have a recovery code</button></div>`}`;
@@ -1982,6 +2009,7 @@ const Onboard = {
         Game.token = r.token; store.set(tokenKey(), r.token); this.hide(); enterWorld(r.state, true);
       });
       $('#obCode').onclick = () => this.codeForm();
+      $('#installPill').onclick = () => AppShell.install();
     }
   },
   codeForm() {
@@ -2034,6 +2062,62 @@ function updateSky(t) {
   if (World.water) World.water.material.emissiveIntensity = .2 + Math.sin(t * .8) * .06;
 }
 
+/* ═══════════════════════════ APP SHELL: install + full screen ═══════════════════════════ */
+const AppShell = {
+  deferred: null, touch: matchMedia('(pointer: coarse)').matches,
+  standalone() { return matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches || navigator.standalone === true; },
+  isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement); },
+  canFull() { return !!(document.fullscreenEnabled || document.webkitFullscreenEnabled) && !this.standalone(); },
+  // Which install path this device has: 'installed' | 'prompt' | 'ios' | 'android' | 'none'
+  plan(ua = navigator.userAgent, standalone = this.standalone(), hasPrompt = !!this.deferred) {
+    if (standalone) return 'installed';
+    if (hasPrompt) return 'prompt';
+    if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
+    if (/Android/i.test(ua)) return 'android';
+    return 'none';
+  },
+  canInstall() { const p = this.plan(); return p === 'prompt' || p === 'ios' || p === 'android'; },
+  async enterFull() {
+    const el = document.documentElement;
+    try { if (el.requestFullscreen) await el.requestFullscreen({ navigationUI: 'hide' }); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); } catch (e) { }
+    this.sync();
+  },
+  sync() { const b = $('#fsBtn'); if (b) b.hidden = !this.canFull() || this.isFull(); },
+  async install() {
+    const p = this.plan();
+    if (p === 'prompt') {
+      const d = this.deferred; this.deferred = null;
+      try { d.prompt(); const c = await d.userChoice; if (c && c.outcome === 'accepted') toast('VIBE is installing. Open it from your home screen.', 'ok'); } catch (e) { }
+      this.refreshUI(); return;
+    }
+    const icon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 002 2h10a2 2 0 002-2v-6"/></svg>';
+    const steps = p === 'ios'
+      ? `<ol class="steps"><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button ${icon} at the bottom of the screen.</li><li>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</li><li>Open <b>VIBE</b> from your home screen. It runs full screen, with no browser bar.</li></ol>`
+      : `<ol class="steps"><li>If you opened this link from another app (WhatsApp, X, Claude), tap the <b>⋮</b> menu at the top and choose <b>Open in Chrome</b>.</li><li>In Chrome, tap <b>⋮</b> then <b>Install app</b> (or <b>Add to Home screen</b>).</li><li>Open <b>VIBE</b> from your home screen. It runs full screen, with no browser bar.</li></ol>`;
+    Sheet.open(head('Install', 'Play VIBE as an app', 'Your progress stays with your citizen, so nothing is lost when you switch.') + steps +
+      `<div class="stack" style="margin-top:16px"><button class="btn ghost wide" id="copyLink">Copy game link</button><button class="btn wide" data-close>Got it</button></div>`,
+      () => { $('#copyLink').onclick = async () => { try { await navigator.clipboard.writeText(PLAY_URL); toast('Link copied.', 'ok'); } catch (e) { toast(PLAY_URL); } }; });
+  },
+  refreshUI() {
+    this.sync();
+    if (!$('#onboard').hidden && $('#creator').querySelector('#obGo')) { const pill = $('#installPill'); if (pill) pill.hidden = !this.canInstall(); }
+    if (!$('#phone').hidden && Phone.view === 'me') Phone.refresh(true);
+  },
+  init() {
+    addEventListener('beforeinstallprompt', e => { e.preventDefault(); this.deferred = e; this.refreshUI(); });
+    addEventListener('appinstalled', () => { this.deferred = null; this.refreshUI(); });
+    ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => { this.sync(); setTimeout(resize, 60); }));
+    // Phones and tablets go full screen on the first tap, which hides the browser bar where the browser allows it.
+    const first = () => { if (this.touch && this.canFull() && !this.isFull() && store.get('vibe-fs') !== 'off') this.enterFull(); };
+    document.addEventListener('pointerdown', first, { once: true, capture: true });
+    $('#fsBtn').onclick = () => { store.del('vibe-fs'); this.enterFull(); };
+    this.sync();
+    // The installable build ships a manifest and service worker; previews don't.
+    if ('serviceWorker' in navigator && document.querySelector('link[rel="manifest"]')) navigator.serviceWorker.register('sw.js').catch(() => { });
+  }
+};
+AppShell.init();
+
 /* ═══════════════════════════ BOOT & LOOP ═══════════════════════════ */
 const clock = new THREE.Clock(); let hudT = 0, feedT = 0, meT = 0, mapT = 0;
 function loop() {
@@ -2073,9 +2157,7 @@ async function boot() {
     msg.textContent = 'Connecting to the Port Veyra server…';
     const mode = await Api.init(); bar.style.width = '95%';
     if (mode === 'offline') {
-      const band = document.createElement('div'); band.className = 'offline-band';
-      band.innerHTML = `Offline preview: progress stays on this device. <a href="${PLAY_URL}" target="_blank" rel="noopener">Play online with everyone</a>`;
-      document.body.appendChild(band); document.body.classList.add('is-offline'); $('#hudOnline').textContent = 'Offline'; $('#netDot').classList.add('off');
+      $('#hudOnline').textContent = 'Offline'; $('#netDot').classList.add('off');
     }
     requestAnimationFrame(loop);
     const tok = store.get(tokenKey());
@@ -2090,3 +2172,6 @@ async function boot() {
 }
 boot();
 </script>
+
+</body>
+</html>
