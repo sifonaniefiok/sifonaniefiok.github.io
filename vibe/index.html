@@ -1,0 +1,2074 @@
+<title>VIBE: The Republic</title>
+<meta name="description" content="A multiplayer 3D life sim set in Port Veyra. Work, eat, rent, run a buka, vote and run for mayor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bowlby+One+SC&display=swap">
+<style>
+/* Layout: full-bleed 3D city; HUD pinned to the safe-area corners; the phone slides over from the right. */
+:root {
+  --ink: #0f1218;
+  --panel: #161b23;
+  --panel-2: #1f2631;
+  --line: #2d3644;
+  --text: #f3efe4;
+  --muted: #9ea7b4;
+  --danfo: #f5c518;
+  --danfo-ink: #1a1400;
+  --leaf: #22a06b;
+  --coral: #ff6b4a;
+  --sky: #5cc8e0;
+  --display: 'Bowlby One SC', 'Arial Black', Impact, sans-serif;
+  --body: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --r: 14px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; background: var(--ink); color: var(--text); font-family: var(--body); font-size: 15px; overflow: hidden; }
+body { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+input, textarea { -webkit-user-select: text; user-select: text; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--danfo); outline-offset: 2px; }
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* ── HUD ── */
+.hud { position: fixed; inset: 0; pointer-events: none; padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 12px); }
+.hud > * { pointer-events: auto; }
+.hud-top { pointer-events: none !important; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.hud-top > * { pointer-events: auto; }
+.chip { background: rgba(15, 18, 24, .82); border: 1px solid var(--line); border-radius: 12px; padding: 7px 11px; display: flex; flex-direction: column; gap: 4px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.money { font-family: var(--display); font-size: 19px; letter-spacing: .02em; color: var(--danfo); font-variant-numeric: tabular-nums; line-height: 1; }
+.meter { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.bar { width: 92px; height: 6px; border-radius: 3px; background: #2a313c; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--leaf); border-radius: 3px; transition: width .4s; }
+.bar.low > i { background: var(--coral); }
+.clock { text-align: right; font-variant-numeric: tabular-nums; }
+.clock b { font-family: var(--display); font-size: 17px; font-weight: 400; display: block; line-height: 1; }
+.clock span { font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--leaf); margin-right: 4px; vertical-align: 1px; }
+.dot.off { background: var(--coral); }
+
+.tracker { position: fixed; left: 50%; transform: translateX(-50%); top: calc(env(safe-area-inset-top, 0px) + 66px); width: min(360px, calc(100% - 24px)); background: rgba(15, 18, 24, .9); border: 1px solid var(--line); border-left: 4px solid var(--danfo); border-radius: 12px; padding: 9px 12px; pointer-events: auto; display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; }
+.tracker .t-job { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--danfo); }
+.tracker .t-goal { font-weight: 700; font-size: 15px; grid-column: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tracker .t-meta { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.tracker .t-time { grid-row: 1 / span 3; grid-column: 2; align-self: center; font-family: var(--display); font-size: 18px; font-variant-numeric: tabular-nums; }
+.tracker button { grid-column: 1 / -1; justify-self: start; margin-top: 4px; background: none; border: 0; padding: 2px 0; color: var(--muted); font-size: 12px; text-decoration: underline; }
+
+.ticker { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); width: min(460px, calc(100% - 260px)); min-width: 0; background: rgba(15, 18, 24, .82); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font-size: 13px; display: flex; gap: 8px; align-items: center; overflow: hidden; pointer-events: auto; }
+.ticker b { font-family: var(--display); font-weight: 400; font-size: 11px; color: var(--danfo-ink); background: var(--danfo); padding: 2px 7px; border-radius: 4px; flex: none; letter-spacing: .04em; }
+.ticker span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
+.controls { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.btn-round { width: 54px; height: 54px; border-radius: 50%; border: 1px solid var(--line); background: rgba(15, 18, 24, .86); display: grid; place-items: center; }
+.btn-round svg { width: 24px; height: 24px; }
+.btn-round small { display: block; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: -2px; }
+.btn-act { min-width: 54px; max-width: 220px; height: 54px; border-radius: 27px; border: 0; background: var(--danfo); color: var(--danfo-ink); font-weight: 700; font-size: 15px; padding: 0 20px; box-shadow: 0 4px 0 #b38f00; }
+.btn-act:active { transform: translateY(2px); box-shadow: 0 2px 0 #b38f00; }
+.row-btns { display: flex; gap: 10px; }
+
+.joy { position: fixed; left: 18px; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); width: 128px; height: 128px; border-radius: 50%; background: rgba(15, 18, 24, .45); border: 1px solid rgba(255, 255, 255, .14); touch-action: none; }
+.joy i { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: rgba(243, 239, 228, .82); }
+
+.toasts { position: fixed; z-index: 50; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 150px); display: flex; flex-direction: column; gap: 6px; align-items: center; pointer-events: none; width: min(420px, calc(100% - 24px)); }
+.toast { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; font-size: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); animation: pop .25s ease-out; max-width: 100%; }
+.toast.err { border-color: var(--coral); }
+.toast.ok { border-color: var(--leaf); }
+.toast.money { border-color: var(--danfo); }
+@keyframes pop { from { transform: translateY(6px); opacity: 0; } }
+.offline-band { position: fixed; left: 0; right: 0; top: 0; padding: calc(env(safe-area-inset-top, 0px) + 4px) 12px 4px; background: var(--coral); color: #1d0a04; font-size: 12px; line-height: 1.3; text-align: center; font-weight: 700; z-index: 14; }
+.is-offline .hud { padding-top: calc(env(safe-area-inset-top, 0px) + 44px); }
+.is-offline .tracker { top: calc(env(safe-area-inset-top, 0px) + 100px); }
+.is-offline .brand { top: calc(env(safe-area-inset-top, 0px) + 48px); }
+.offline-band a { color: inherit; }
+
+/* ── Sheets (place menus, shift screens) ── */
+.sheet-wrap { position: fixed; inset: 0; display: flex; align-items: flex-end; justify-content: center; background: rgba(5, 7, 10, .45); z-index: 20; }
+.sheet { width: min(480px, 100%); max-height: 88%; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 20px 20px 0 0; padding: 18px 18px calc(env(safe-area-inset-bottom, 0px) + 18px); animation: rise .22s ease-out; touch-action: pan-y; }
+@media (min-width: 720px) { .sheet-wrap { align-items: center; } .sheet { border-radius: 20px; } }
+@keyframes rise { from { transform: translateY(24px); opacity: 0; } }
+.sheet h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; line-height: 1.1; text-wrap: balance; }
+.sheet .kicker { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--danfo); margin-bottom: 4px; }
+.sheet p { color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+.sheet-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+.x { background: var(--panel-2); border: 1px solid var(--line); border-radius: 50%; width: 36px; height: 36px; flex: none; font-size: 18px; line-height: 1; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+.card { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; display: flex; gap: 12px; align-items: center; }
+.card > div { flex: 1; min-width: 0; }
+.card h3 { margin: 0; font-size: 16px; }
+.card p { margin: 2px 0 0; font-size: 13px; }
+.price { font-family: var(--display); color: var(--danfo); font-size: 16px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.btn { border: 0; border-radius: 11px; padding: 10px 15px; font-weight: 700; background: var(--danfo); color: var(--danfo-ink); white-space: nowrap; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+.btn.green { background: var(--leaf); color: #04140c; }
+.btn.red { background: var(--coral); color: #1d0a04; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.wide { width: 100%; padding: 13px; font-size: 16px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 12px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.field input, .field textarea, .field select { background: var(--ink); border: 1px solid var(--line); border-radius: 10px; color: var(--text); padding: 11px 12px; font: inherit; width: 100%; }
+.field textarea { resize: none; min-height: 70px; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-variant-numeric: tabular-nums; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; text-align: right; font-weight: 700; }
+.kv .total { border-top: 1px solid var(--line); padding-top: 6px; color: var(--text); font-size: 17px; }
+.pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); }
+.pill.good { color: var(--leaf); border-color: var(--leaf); }
+.pill.bad { color: var(--coral); border-color: var(--coral); }
+
+/* Permit card (clerk job) */
+.permit { background: #f4ecd8; color: #23211c; border-radius: 12px; padding: 16px; font-family: var(--body); box-shadow: inset 0 0 0 2px #d9cba8; }
+.permit .ph { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #6b6150; }
+.permit h3 { font-family: var(--display); font-weight: 400; margin: 6px 0 10px; font-size: 22px; }
+.permit dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 0; }
+.permit dt { color: #6b6150; }
+.permit dd { margin: 0; font-weight: 700; }
+.rules { font-size: 12px; color: var(--muted); background: var(--ink); border-radius: 10px; padding: 10px 12px; line-height: 1.5; }
+.rules b { color: var(--text); }
+
+/* ── Phone ── */
+.phone { position: fixed; z-index: 15; right: 12px; top: calc(env(safe-area-inset-top, 0px) + 12px); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); width: min(380px, calc(100% - 24px)); background: var(--panel); border: 1px solid var(--line); border-radius: 26px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); animation: slide .22s ease-out; }
+@keyframes slide { from { transform: translateX(30px); opacity: 0; } }
+@media (max-width: 520px) { .phone { right: 0; left: 0; top: 0; bottom: 0; width: 100%; border-radius: 0; border: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); } }
+.ph-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--line); gap: 10px; }
+.ph-bar h2 { font-family: var(--display); font-weight: 400; font-size: 18px; margin: 0; flex: 1; min-width: 0; }
+.ph-bar button { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; font-size: 13px; }
+.ph-body { flex: 1; overflow: auto; padding: 14px; touch-action: pan-y; min-height: 0; }
+.apps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 8px; }
+.app { background: none; border: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; color: var(--text); }
+.app i { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; }
+.app i svg { width: 28px; height: 28px; }
+.wallet { background: var(--danfo); color: var(--danfo-ink); border-radius: 18px; padding: 16px; margin-bottom: 18px; }
+.wallet small { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+.wallet b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; margin: 4px 0; font-variant-numeric: tabular-nums; }
+.wallet span { font-size: 12px; }
+.list { display: flex; flex-direction: column; }
+.li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.li .a { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.li .b { color: var(--muted); font-size: 12px; min-width: 0; overflow-wrap: anywhere; }
+.li .v { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-variant-numeric: tabular-nums; font-weight: 700; }
+.li .v.in { color: var(--leaf); }
+.news-item { padding: 11px 0; border-bottom: 1px solid var(--line); }
+.news-item .k { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.news-item.story .k { color: var(--danfo); }
+.news-item .h { font-weight: 700; margin-top: 3px; line-height: 1.35; overflow-wrap: anywhere; }
+.chat-log { display: flex; flex-direction: column; gap: 8px; }
+.msg { background: var(--panel-2); border-radius: 12px; padding: 7px 11px; max-width: 86%; align-self: flex-start; overflow-wrap: anywhere; }
+.msg.me { align-self: flex-end; background: #2a3a2f; }
+.msg b { font-size: 12px; color: var(--danfo); display: block; }
+.chat-input { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); }
+.chat-input input { flex: 1; min-width: 0; background: var(--ink); border: 1px solid var(--line); border-radius: 10px; color: var(--text); padding: 10px 12px; font: inherit; }
+.section-title { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; }
+.cand { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; }
+.cand .votes { font-family: var(--display); font-size: 18px; color: var(--danfo); }
+.cand .sl { color: var(--muted); font-size: 13px; grid-column: 1; overflow-wrap: anywhere; }
+.cand .bar { width: 100%; grid-column: 1 / -1; height: 5px; }
+.mapwrap { position: relative; width: 100%; aspect-ratio: 1; border-radius: 14px; overflow: hidden; background: #1a2a22; max-width: 100%; }
+.mapwrap canvas { width: 100%; height: 100%; display: block; }
+.code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px; overflow-wrap: anywhere; -webkit-user-select: all; user-select: all; }
+.range-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
+.range-row input { grid-column: 1 / -1; width: 100%; accent-color: var(--danfo); }
+
+/* ── Onboarding / creator ── */
+.screen { position: fixed; inset: 0; z-index: 25; display: flex; flex-direction: column; justify-content: flex-end; pointer-events: none; }
+.screen > * { pointer-events: auto; }
+.brand { position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + 18px); text-align: center; pointer-events: none; padding: 0 16px; }
+.brand h1 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 8vw, 58px); margin: 0; line-height: .95; letter-spacing: .01em; color: var(--danfo); text-shadow: 0 3px 0 #1a1400, 0 0 30px rgba(0, 0, 0, .4); }
+.brand h1 span { display: block; font-size: .42em; color: var(--text); letter-spacing: .3em; margin-top: 6px; text-shadow: 0 2px 0 #000; }
+.brand p { margin: 10px auto 0; color: var(--text); font-size: 14px; max-width: 38ch; text-shadow: 0 1px 4px #000; }
+.creator { background: var(--panel); border-top: 1px solid var(--line); border-radius: 22px 22px 0 0; padding: 16px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); width: min(560px, 100%); margin: 0 auto; max-height: 62%; overflow: auto; touch-action: pan-y; }
+.swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+.sw { width: 34px; height: 34px; border-radius: 50%; border: 2px solid transparent; box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .25); }
+.sw[aria-pressed="true"] { border-color: var(--text); outline: 2px solid var(--danfo); outline-offset: 1px; }
+.styles { display: flex; gap: 6px; flex-wrap: wrap; }
+.styles button { background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; }
+.styles button[aria-pressed="true"] { background: var(--danfo); color: var(--danfo-ink); border-color: var(--danfo); font-weight: 700; }
+.c-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; margin: 12px 0 14px; }
+@media (max-width: 520px) { .c-grid { grid-template-columns: 1fr; } }
+.c-grid .field label { margin-bottom: 2px; }
+@media (min-width: 900px) {
+  .screen { flex-direction: row; justify-content: flex-end; }
+  .creator { width: 440px; max-height: none; margin: 0; border-radius: 22px 0 0 22px; border-top: 0; border-left: 1px solid var(--line); padding-top: calc(env(safe-area-inset-top, 0px) + 24px); }
+  .brand { right: 440px; }
+  .c-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 899px) { .creator { max-height: 56%; } }
+@media (max-height: 720px) and (max-width: 899px) { .brand p { display: none; } }
+.link { background: none; border: 0; color: var(--muted); text-decoration: underline; padding: 8px 0; font-size: 13px; }
+.loading { position: fixed; inset: 0; z-index: 40; background: var(--ink); display: grid; place-items: center; text-align: center; padding: 16px; }
+.loading h1 { font-family: var(--display); font-weight: 400; color: var(--danfo); font-size: clamp(30px, 9vw, 54px); margin: 0; line-height: .95; }
+.loading p { color: var(--muted); margin-top: 14px; }
+.loading .bar { width: 180px; margin: 16px auto 0; }
+.photo-hint { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); transform: translateX(-50%); background: rgba(15, 18, 24, .7); padding: 6px 12px; border-radius: 999px; font-size: 12px; z-index: 12; }
+@media (max-width: 640px) { .ticker { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<canvas id="scene" aria-label="Port Veyra, a 3D city"></canvas>
+
+<div id="loading" class="loading">
+  <div>
+    <h1>VIBE<br>The Republic</h1>
+    <p id="loadMsg">Building Port Veyra…</p>
+    <div class="bar"><i id="loadBar" style="width:10%"></i></div>
+  </div>
+</div>
+
+<div id="hud" class="hud" hidden>
+  <div class="hud-top">
+    <div class="chip" id="walletChip" role="button" tabindex="0" aria-label="Open Veyra Bank">
+      <div class="money" id="hudMoney">₣0</div>
+      <div class="meter"><span>Food</span><div class="bar" id="hungerBar"><i style="width:80%"></i></div></div>
+    </div>
+    <div class="chip clock">
+      <b id="hudClock">12:00</b>
+      <span><i class="dot" id="netDot"></i><span id="hudOnline">1 online</span></span>
+    </div>
+  </div>
+  <div class="tracker" id="tracker" hidden>
+    <div class="t-job" id="tJob">Shift</div>
+    <div class="t-goal" id="tGoal">Next stop</div>
+    <div class="t-meta" id="tMeta"></div>
+    <div class="t-time" id="tTime">15:00</div>
+    <button type="button" id="tQuit">Quit shift</button>
+  </div>
+  <div class="ticker" id="ticker"><b>VEYRA DAILY</b><span id="tickerText">Welcome to Port Veyra.</span></div>
+  <div class="joy" id="joy" hidden><i id="joyKnob"></i></div>
+  <div class="controls">
+    <button type="button" class="btn-act" id="actBtn" hidden>Enter</button>
+    <div class="row-btns">
+      <button type="button" class="btn-round" id="rideBtn" aria-label="Change how you travel" title="Ride (R)"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="17" r="3.2"/><circle cx="18" cy="17" r="3.2"/><path d="M6 17l4-8h5l3 8M10 9l-1.5-3H6M15 9l1-3h2"/></svg><small id="rideLabel">Walk</small></span></button>
+      <button type="button" class="btn-round" id="phoneBtn" aria-label="Open your phone" title="Phone (P)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<div id="phone" class="phone" hidden role="dialog" aria-label="Phone">
+  <div class="ph-bar"><button type="button" id="phBack" hidden>Back</button><h2 id="phTitle">Phone</h2><button type="button" id="phClose">Close</button></div>
+  <div class="ph-body" id="phBody"></div>
+  <div class="chat-input" id="chatBar" hidden><input id="chatInput" maxlength="160" placeholder="Talk to Port Veyra" autocomplete="off" aria-label="Chat message"><button type="button" class="btn" id="chatSend">Send</button></div>
+</div>
+
+<div id="sheetWrap" class="sheet-wrap" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+
+<div id="onboard" class="screen" hidden>
+  <div class="brand"><h1>VIBE<span>The Republic</span></h1><p>Your life in Port Veyra starts at Central Bus Park. Work, eat, rent a room, open a buka and run for mayor.</p></div>
+  <div class="creator" id="creator"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/SkeletonUtils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script>
+'use strict';
+/* ═══════════════════════════ CONFIG ═══════════════════════════ */
+const SUPABASE_URL = 'https://rlldaxyknqmiqhirlmri.supabase.co';
+// Public "anon" key: safe to ship. It can only call the vibe_* game functions.
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbGRheHlrbnFtaXFoaXJsbXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4OTU0NDMsImV4cCI6MjA4OTQ3MTQ0M30._8AtsZ29zKEadL4pycUglTXjqhAJorqL_4zVwSgwuek';
+const PLAY_URL = 'https://sifonaniefiok.github.io/vibe/';
+const CHANNEL = 'vibe-port-veyra';
+
+/* ═══════════════════════════ UTILITIES ═══════════════════════════ */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => '₣' + Math.round(Number(n) || 0).toLocaleString('en-US');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const store = {
+  mem: {},
+  get(k) { try { const v = localStorage.getItem(k); return v === null ? (this.mem[k] ?? null) : v; } catch (e) { return this.mem[k] ?? null; } },
+  set(k, v) { this.mem[k] = v; try { localStorage.setItem(k, v); } catch (e) { } },
+  del(k) { delete this.mem[k]; try { localStorage.removeItem(k); } catch (e) { } }
+};
+class GameError extends Error { constructor(code, message) { super(message); this.code = code; } }
+function parseErr(raw) {
+  const m = String(raw || '');
+  const i = m.indexOf(': ');
+  if (i > 0 && /^[A-Z_]+$/.test(m.slice(0, i))) return new GameError(m.slice(0, i), m.slice(i + 2));
+  return new GameError('NETWORK', 'Could not reach Veyra. Check your connection and try again.');
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]); }
+function ago(iso) {
+  const s = Math.max(0, (Date.now() - Date.parse(iso)) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s / 60) + ' min ago';
+  if (s < 86400) return Math.floor(s / 3600) + ' h ago';
+  return Math.floor(s / 86400) + ' d ago';
+}
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hex(n) { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a, b => b.toString(16).padStart(2, '0')).join(''); }
+function uuid() { return crypto.randomUUID ? crypto.randomUUID() : hex(16).replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5'); }
+
+/* ═══════════════════════════ GAME DATA ═══════════════════════════ */
+// Must match vibe.places in the database.
+const PLACES = [
+  { id: 'park', name: 'Central Bus Park', x: 40, z: 40, tag: 'Danfo driver shifts' },
+  { id: 'market', name: 'Oja Market', x: -120, z: 40, tag: 'Food and bukas' },
+  { id: 'bank', name: 'Veyra Bank', x: 120, z: 70, tag: 'Your account' },
+  { id: 'cityhall', name: 'City Hall', x: 40, z: -90, tag: 'Permit clerk shifts, elections' },
+  { id: 'police', name: 'VPD Station', x: 200, z: -90, tag: 'Police patrol shifts' },
+  { id: 'newsroom', name: 'Veyra Daily', x: -120, z: -90, tag: 'Journalist shifts' },
+  { id: 'estate', name: 'Palm Estate', x: -200, z: -170, tag: 'Rent or buy a home' },
+  { id: 'dealer', name: 'Motor Mart', x: 200, z: 90, tag: 'Bicycles, okadas, cars' },
+  { id: 'stadium', name: 'Unity Stadium', x: -200, z: 170, tag: 'Photo spot' },
+  { id: 'beach', name: 'Lighthouse Beach', x: 40, z: 262, tag: 'Photo spot' }
+];
+const placeById = Object.fromEntries(PLACES.map(p => [p.id, p]));
+const JOBS = {
+  driver: { title: 'Danfo driver', place: 'park', pay: 18000, blurb: 'Drive the yellow danfo to three stops across the city.' },
+  police: { title: 'Police officer', place: 'police', pay: 16000, blurb: 'Answer three incident calls in a VPD patrol car.' },
+  clerk: { title: 'Permit clerk', place: 'cityhall', pay: 18000, blurb: 'Rule on six business permits. ₣3,000 per right call, minus ₣2,000 per wrong one.' },
+  journalist: { title: 'Journalist', place: 'newsroom', pay: 12000, blurb: 'Pick a story and write the headline. It runs on the city news feed.' }
+};
+const RIDES = {
+  foot: { label: 'Walk', speed: 6 },
+  bicycle: { label: 'Bicycle', speed: 11, price: 60000 },
+  okada: { label: 'Okada', speed: 16, price: 350000 },
+  car: { label: 'Car', speed: 21, price: 1800000 },
+  danfo: { label: 'Danfo', speed: 18 },
+  patrol: { label: 'Patrol', speed: 20 }
+};
+const HOMES = {
+  room: { label: 'Room in a shared flat', rent: 4000, blurb: 'A bed, a fan and three flatmates.' },
+  flat: { label: 'Mini flat', rent: 12000, blurb: 'Your own kitchen and front door.' },
+  duplex: { label: 'Duplex', price: 2500000, blurb: 'Yours for good. No more rent.' }
+};
+const LOOK = {
+  skin: ['#3b2219', '#4e2c1f', '#5f3725', '#7a4a32', '#8d5a3b', '#a8714c', '#c68d64', '#e0b48d'],
+  hair: ['#141010', '#2b1d14', '#4a2f1d', '#7a5230', '#b08d57', '#c9c3b8', '#8a2f2f', '#2c4a7a'],
+  top: ['#f5c518', '#22a06b', '#ff6b4a', '#2f6fdb', '#f3efe4', '#1d1f24', '#c2185b', '#7e57c2'],
+  bottom: ['#23303f', '#1d1f24', '#5d4037', '#2e7d32', '#455a64', '#b0a089', '#283593', '#6d4c41'],
+  style: ['Low cut', 'Afro', 'Braids', 'Bald', 'Cap', 'Gele', 'Locs', 'High top'],
+  body: ['Man', 'Woman']
+};
+const ZONE_RULES = { Buka: ['Residential', 'Market', 'Industrial'], Pharmacy: ['Residential', 'Market', 'Industrial'], Salon: ['Residential', 'Market'], Nightclub: ['Market', 'Industrial'], Workshop: ['Industrial'] };
+const level = xp => Math.min(10, Math.floor(Math.sqrt(Math.max(0, xp || 0) / 100)));
+
+/* ═══════════════════════════ OFFLINE BACKEND ═══════════════════════════
+   Mirrors the database rules so the game plays where the server can't be
+   reached (for example inside a sandboxed preview). Progress stays on this
+   device only. Function names and arguments match the public.vibe_* RPCs. */
+const Offline = (() => {
+  const KEY = 'vibe-offline-v1';
+  let db;
+  const now = () => Date.now();
+  const iso = t => new Date(t).toISOString();
+  const err = (c, m) => { throw new GameError(c, m); };
+  function seed() {
+    const npc = n => ({ id: uuid(), token: null, name: n, look: { skin: Math.floor(Math.random() * 8), hair: 0, top: Math.floor(Math.random() * 8), bottom: 0, style: Math.floor(Math.random() * 8) }, created_at: now() - 864e5 * 9, hunger: 80, hunger_at: now(), home: 'flat', rent_paid_until: null, vehicles: [], shifts: 12, xp: {}, last_chat_at: 0, last_story_at: 0, npc: true });
+    const a = npc('Iya Basira'), b = npc('Chief Bello'), c = npc('Amaka Obi'), d = npc('Suya Musa');
+    const t = now();
+    db = {
+      players: [a, b, c, d], bal: { mint: 0, treasury: 0, sink: 0 }, ledger: [], shifts: [],
+      city: { income_tax: 0.10, sales_tax: 0.05, starter_grant: 20000, mayor_id: b.id, mayor_since: iso(t - 864e5 * 2) },
+      election: { id: 1, closes_at: t + 864e5 * 3 }, candidates: [{ player_id: b.id, slogan: 'Fix every pothole on Ring Road', votes: 14, joined_at: t - 9e6 }, { player_id: c.id, slogan: 'Free danfo rides on market day', votes: 11, joined_at: t - 8e6 }], votes: [],
+      businesses: [{ id: uuid(), owner_id: a.id, name: "Iya Basira's Kitchen", price: 3000, last_collect: t, plates_sold: 412, created_at: t - 5e8 }, { id: uuid(), owner_id: d.id, name: 'Musa Suya Spot', price: 4500, last_collect: t, plates_sold: 230, created_at: t - 4e8 }],
+      news: [], chat: [], seq: 1
+    };
+    move('mint', 'treasury', 180000, 'seed');
+    news('city', null, 'Chief Bello and Amaka Obi are on the ballot for mayor of Port Veyra.');
+    news('story', c.id, 'Oja Market traders want a covered car park before rainy season');
+    news('city', null, 'Iya Basira\'s Kitchen sells its 400th plate of the month.');
+    db.chat.push({ id: db.seq++, at: iso(t - 6e5), player_id: d.id, text: 'Fresh suya at Oja Market tonight' });
+    db.chat.push({ id: db.seq++, at: iso(t - 3e5), player_id: c.id, text: 'Vote for free danfo rides on market day!' });
+  }
+  function load() { try { const s = JSON.parse(store.get(KEY) || 'null'); if (s && s.players) { db = s; return; } } catch (e) { } seed(); save(); }
+  function save() { store.set(KEY, JSON.stringify(db)); }
+  const bal = a => db.bal[a] || 0;
+  function move(from, to, amt, reason, memo = null) {
+    amt = Math.round(amt); if (!(amt > 0)) return;
+    if ((from.startsWith('p:') || from === 'treasury') && bal(from) < amt) {
+      if (from === 'treasury') err('TREASURY_EMPTY', 'The city treasury only has ' + fmt(bal(from)) + '.');
+      err('NOT_ENOUGH_MONEY', 'You need ' + fmt(amt - bal(from)) + ' more.');
+    }
+    db.bal[from] = bal(from) - amt; db.bal[to] = bal(to) + amt;
+    db.ledger.push({ id: db.seq++, at: iso(now()), from, to, amount: amt, reason, memo });
+  }
+  function news(kind, author, headline) { db.news.push({ id: db.seq++, at: iso(now()), kind, author_id: author, headline }); }
+  const clean = (t, max) => String(t || '').replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max).replace(/\b(fuck\w*|shit\w*|bitch\w*|cunt\w*|asshole\w*|bastard\w*|whore\w*|slut\w*|dick|pussy)\b/gi, '***');
+  const hunger = p => clamp(p.hunger - (now() - p.hunger_at) / 36e5 * 12, 0, 100);
+  const byId = id => db.players.find(p => p.id === id);
+  const dist = (a, b) => Math.hypot(placeById[a].x - placeById[b].x, placeById[a].z - placeById[b].z);
+  const base = j => ({ driver: 'park', police: 'police', clerk: 'cityhall', journalist: 'newsroom' }[j]);
+  const zoneOk = (t, z) => ZONE_RULES[t].includes(z);
+  function settleRent(p) {
+    if (!['room', 'flat'].includes(p.home) || !p.rent_paid_until || p.rent_paid_until > now()) return;
+    const rate = p.home === 'room' ? 4000 : 12000;
+    const days = Math.ceil((now() - p.rent_paid_until) / 864e5);
+    if (days > 3 || bal('p:' + p.id) < rate * days) { p.home = null; p.rent_paid_until = null; news('city', null, p.name + ' was evicted from Palm Estate for unpaid rent.'); return; }
+    move('p:' + p.id, 'sink', rate * days, 'rent', p.home[0].toUpperCase() + p.home.slice(1) + ' rent, ' + days + ' day' + (days > 1 ? 's' : ''));
+    p.rent_paid_until += days * 864e5;
+  }
+  function auth(token) {
+    if (!/^[0-9a-f]{64}$/.test(token || '')) err('AUTH', 'Your session is not valid. Enter your recovery code or start a new citizen.');
+    const p = db.players.find(x => x.token === token);
+    if (!p) err('AUTH', 'No citizen matches that code. Check it or start a new citizen.');
+    settleRent(p); return p;
+  }
+  function tick() {
+    const e = db.election;
+    if (e.closes_at > now()) return;
+    const w = [...db.candidates].sort((a, b) => b.votes - a.votes || a.joined_at - b.joined_at)[0];
+    if (w) { db.city.mayor_id = w.player_id; db.city.mayor_since = iso(now()); const n = byId(w.player_id); news('city', null, n.name + ' wins the mayoral election with ' + w.votes + ' vote' + (w.votes === 1 ? '' : 's') + '.'); }
+    else news('city', null, 'The mayoral election closed with no candidates. The current mayor stays in office.');
+    db.election = { id: e.id + 1, closes_at: now() + 3 * 864e5 }; db.candidates = []; db.votes = [];
+    news('city', null, 'Nominations are open for mayor of Port Veyra. Voting closes in 3 days.');
+  }
+  function shiftView(s) {
+    const pl = id => ({ id, name: placeById[id].name, x: placeById[id].x, z: placeById[id].z });
+    return { id: s.id, job: s.job, base: pl(base(s.job)), route: (s.route || []).map(pl), cards: (s.cards || []).map(({ ok, ...c }) => c), events: s.events || [], progress: s.progress, started_at: iso(s.started_at), expires_at: iso(s.started_at + 9e5) };
+  }
+  function state(p) {
+    tick();
+    const b = db.businesses.find(x => x.owner_id === p.id);
+    const s = db.shifts.find(x => x.player_id === p.id && x.status === 'open');
+    const mv = db.votes.find(v => v.voter_id === p.id);
+    const mayor = byId(db.city.mayor_id);
+    return {
+      me: { id: p.id, name: p.name, look: p.look, balance: bal('p:' + p.id), hunger: Math.round(hunger(p) * 10) / 10, home: p.home, rent_paid_until: p.rent_paid_until ? iso(p.rent_paid_until) : null, vehicles: p.vehicles, shifts: p.shifts, xp: p.xp, created_at: iso(p.created_at), can_vote: p.shifts >= 3, can_run: p.shifts >= 5, can_transfer: p.shifts >= 3 && p.created_at < now() - 36e5, story_ready_at: p.last_story_at ? iso(p.last_story_at + 6e5) : null },
+      city: { income_tax: db.city.income_tax, sales_tax: db.city.sales_tax, starter_grant: db.city.starter_grant, treasury: bal('treasury'), mayor: mayor ? { id: mayor.id, name: mayor.name } : null, mayor_since: db.city.mayor_since, election: { id: db.election.id, closes_at: iso(db.election.closes_at), my_vote: mv ? mv.candidate_id : null, candidates: [...db.candidates].sort((a, b) => b.votes - a.votes || a.joined_at - b.joined_at).map(c => ({ id: c.player_id, name: byId(c.player_id).name, slogan: c.slogan, votes: c.votes })) } },
+      business: b ? { id: b.id, name: b.name, price: b.price, last_collect: iso(b.last_collect), plates_sold: b.plates_sold } : null,
+      shift: s ? shiftView(s) : null,
+      server_time: iso(now())
+    };
+  }
+  const look = l => Object.fromEntries(['body', 'skin', 'hair', 'top', 'bottom', 'style'].map(k => [k, /^[0-7]$/.test(String(l && l[k])) ? +l[k] : 0]));
+  const api = {
+    vibe_register({ p_name, p_look }) {
+      const name = String(p_name || '').replace(/\s+/g, ' ').trim();
+      if (!/^[A-Za-z0-9_ ]{3,16}$/.test(name)) err('BAD_NAME', 'Names are 3 to 16 letters, numbers, spaces or underscores.');
+      if (clean(name, 16) !== name || ['mayor', 'admin', 'police', 'veyra', 'city hall', 'system'].includes(name.toLowerCase())) err('BAD_NAME', 'Pick a different name.');
+      if (db.players.some(p => p.name.toLowerCase() === name.toLowerCase())) err('NAME_TAKEN', 'Someone in Veyra already has that name.');
+      const p = { id: uuid(), token: hex(32), name, look: look(p_look), created_at: now(), hunger: 80, hunger_at: now(), home: null, rent_paid_until: null, vehicles: [], shifts: 0, xp: {}, last_chat_at: 0, last_story_at: 0 };
+      db.players.push(p);
+      move('mint', 'p:' + p.id, 30000, 'welcome grant', 'Republic welcome grant');
+      if (db.city.starter_grant > 0 && bal('treasury') >= db.city.starter_grant) move('treasury', 'p:' + p.id, db.city.starter_grant, 'city grant', 'Port Veyra starter grant');
+      news('city', null, name + ' just arrived at Central Bus Park.');
+      return { token: p.token, state: state(p) };
+    },
+    vibe_me({ p_token }) { return state(auth(p_token)); },
+    vibe_save_look({ p_token, p_look }) { const p = auth(p_token); p.look = look(p_look); return state(p); },
+    vibe_start_shift({ p_token, p_job }) {
+      const p = auth(p_token);
+      if (!JOBS[p_job]) err('BAD_JOB', 'That job does not exist.');
+      db.shifts.forEach(s => { if (s.player_id === p.id && s.status === 'open' && s.started_at < now() - 9e5) s.status = 'expired'; });
+      const open = db.shifts.find(s => s.player_id === p.id && s.status === 'open');
+      if (open) { if (open.job === p_job) return state(p); err('SHIFT_OPEN', 'Finish or quit your current shift first.'); }
+      const s = { id: uuid(), player_id: p.id, job: p_job, route: null, cards: null, events: null, progress: 0, started_at: now(), last_at: now(), status: 'open' };
+      const pick = (excl) => PLACES.map(x => x.id).filter(id => id !== excl).sort(() => Math.random() - .5).slice(0, 3);
+      if (p_job === 'driver') s.route = pick('park');
+      else if (p_job === 'police') s.route = pick('police');
+      else if (p_job === 'clerk') {
+        const T = Object.keys(ZONE_RULES), Z = ['Residential', 'Market', 'Industrial'], N = ['Chidi', 'Amaka', 'Tunde', 'Ngozi', 'Emeka', 'Funmi', 'Yusuf', 'Aisha', 'Kelechi', 'Bisi', 'Ibrahim', 'Zainab', 'Segun', 'Ada', 'Musa', 'Efe'];
+        const r = a => a[Math.floor(Math.random() * a.length)];
+        s.cards = Array.from({ length: 6 }, () => { const t = r(T), z = r(Z), f = Math.random() < .8, x = Math.random() < .75; return { applicant: r(N), business: t, zone: z, fee_paid: f, tax_cleared: x, ok: f && x && zoneOk(t, z) }; });
+      } else {
+        if (p.last_story_at && p.last_story_at > now() - 6e5) err('COOLDOWN', 'The editor wants one story at a time. Come back in ' + Math.ceil((p.last_story_at + 6e5 - now()) / 6e4) + ' min.');
+        let ev = db.news.filter(n => n.kind === 'city' && Date.parse(n.at) > now() - 1728e5).slice(-3).reverse().map(n => ({ id: n.id, headline: n.headline }));
+        ev = ev.concat([{ id: 0, headline: 'Danfo fares are up again on the Bus Park routes.' }, { id: 0, headline: 'Oja Market traders say the evening rush is the best time to sell.' }, { id: 0, headline: 'Lighthouse Beach is packed every weekend.' }]).slice(0, 3);
+        s.events = ev;
+      }
+      db.shifts.push(s); return state(p);
+    },
+    vibe_checkpoint({ p_token, p_shift, p_index }) {
+      const p = auth(p_token); const s = db.shifts.find(x => x.id === p_shift && x.player_id === p.id);
+      if (!s || s.status !== 'open') err('NO_SHIFT', 'That shift is over.');
+      if (s.started_at < now() - 9e5) { s.status = 'expired'; err('SHIFT_EXPIRED', 'You ran out of time. Start a new shift.'); }
+      if (!['driver', 'police'].includes(s.job) || p_index !== s.progress || s.progress >= s.route.length) err('BAD_STOP', 'That is not your next stop.');
+      const prev = s.progress === 0 ? base(s.job) : s.route[s.progress - 1];
+      if ((now() - s.last_at) / 1000 < dist(prev, s.route[s.progress]) / 30) err('TOO_FAST', 'Nobody gets there that fast. Drive the route.');
+      s.progress++; s.last_at = now(); return state(p);
+    },
+    vibe_finish_shift({ p_token, p_shift, p_answers }) {
+      const p = auth(p_token); const s = db.shifts.find(x => x.id === p_shift && x.player_id === p.id);
+      if (!s || s.status !== 'open') err('NO_SHIFT', 'That shift is over.');
+      if (s.started_at < now() - 9e5) { s.status = 'expired'; err('SHIFT_EXPIRED', 'You ran out of time. Start a new shift.'); }
+      const el = (now() - s.started_at) / 1000; let baseP = 0, xp = 25, correct = 0, wrong = 0;
+      if (s.job === 'driver' || s.job === 'police') { if (s.progress < s.route.length) err('NOT_DONE', 'You still have stops left.'); baseP = s.job === 'driver' ? 18000 : 16000; }
+      else if (s.job === 'clerk') {
+        if (el < 12) err('TOO_FAST', 'Read the applications before you stamp them.');
+        if (!Array.isArray(p_answers) || p_answers.length !== s.cards.length) err('BAD_ANSWERS', 'Decide every application.');
+        s.cards.forEach((c, i) => { if (typeof p_answers[i] === 'boolean' && p_answers[i] === c.ok) correct++; else wrong++; });
+        baseP = Math.max(0, correct * 3000 - wrong * 2000); xp = correct * 5;
+      } else {
+        if (el < 15) err('TOO_FAST', 'Take a moment to write it.');
+        const h = clean(p_answers && p_answers.headline, 90); const ev = p_answers && /^[0-2]$/.test(String(p_answers.event)) ? +p_answers.event : null;
+        if (ev === null) err('BAD_ANSWERS', 'Pick the event you are covering.');
+        if (h.length < 10) err('BAD_ANSWERS', 'Headlines need at least 10 characters.');
+        news('story', p.id, h); p.last_story_at = now(); baseP = 12000;
+      }
+      let mult = 1; if (hunger(p) < 25) mult *= 0.6; if (p.home) mult *= 1.1;
+      const lv = level(p.xp[s.job] || 0); mult *= 1 + 0.05 * lv;
+      const gross = Math.round(baseP * mult), tax = Math.round(gross * db.city.income_tax);
+      move('mint', 'p:' + p.id, gross, 'wages', s.job[0].toUpperCase() + s.job.slice(1) + ' shift');
+      move('p:' + p.id, 'treasury', tax, 'income tax', Math.round(db.city.income_tax * 100) + '% of ' + fmt(gross));
+      s.status = 'done'; p.shifts++; p.xp[s.job] = (p.xp[s.job] || 0) + xp;
+      if (level(p.xp[s.job]) > lv) news('city', null, p.name + ' was promoted to level ' + level(p.xp[s.job]) + ' ' + JOBS[s.job].title.toLowerCase() + '.');
+      return { gross, tax, net: gross - tax, correct, wrong, state: state(p) };
+    },
+    vibe_quit_shift({ p_token }) { const p = auth(p_token); db.shifts.forEach(s => { if (s.player_id === p.id && s.status === 'open') s.status = 'cancelled'; }); return state(p); },
+    vibe_buy({ p_token, p_item, p_business }) {
+      const p = auth(p_token); const c = db.city;
+      if (p_item === 'plate') {
+        if (!p_business) { const tax = Math.round(3500 * c.sales_tax); move('p:' + p.id, 'sink', 3500 - tax, 'food', 'Plate at Mama Put'); move('p:' + p.id, 'treasury', tax, 'sales tax', 'Plate at Mama Put'); }
+        else {
+          const b = db.businesses.find(x => x.id === p_business); if (!b) err('NO_BUKA', 'That buka has closed.');
+          if (b.owner_id === p.id) err('OWN_BUKA', 'You cannot buy from your own buka.');
+          move('p:' + p.id, 'p:' + b.owner_id, b.price, 'food', 'Plate at ' + b.name); move('p:' + b.owner_id, 'treasury', Math.round(b.price * c.sales_tax), 'sales tax', 'Plate sold to ' + p.name); b.plates_sold++;
+        }
+        p.hunger = Math.min(100, hunger(p) + 45); p.hunger_at = now();
+      } else if (p_item === 'home_room' || p_item === 'home_flat') {
+        const h = p_item.slice(5);
+        if (p.home === 'duplex') err('HAS_HOME', 'You already own a duplex.'); if (p.home === h) err('HAS_HOME', 'You already rent this home.');
+        move('p:' + p.id, 'sink', h === 'room' ? 4000 : 12000, 'rent', h[0].toUpperCase() + h.slice(1) + ' rent, first day'); p.home = h; p.rent_paid_until = now() + 864e5;
+      } else if (p_item === 'home_duplex') {
+        if (p.home === 'duplex') err('HAS_HOME', 'You already own a duplex.');
+        move('p:' + p.id, 'sink', 2500000, 'property', 'Duplex at Palm Estate'); p.home = 'duplex'; p.rent_paid_until = null; news('city', null, p.name + ' just bought a duplex at Palm Estate.');
+      } else if (['bicycle', 'okada', 'car'].includes(p_item)) {
+        if (p.vehicles.includes(p_item)) err('OWNED', 'You already own one.');
+        move('p:' + p.id, 'sink', RIDES[p_item].price, 'vehicle', RIDES[p_item].label + ' from Motor Mart'); p.vehicles.push(p_item);
+        if (p_item === 'car') news('city', null, p.name + ' just drove a new car out of Motor Mart.');
+      } else err('BAD_ITEM', 'That is not for sale.');
+      return state(p);
+    },
+    vibe_market() { return { npc: { name: 'Mama Put', price: 3500 }, bukas: [...db.businesses].sort((a, b) => a.price - b.price).map(b => ({ id: b.id, name: b.name, owner: byId(b.owner_id).name, owner_id: b.owner_id, price: b.price })) }; },
+    vibe_open_buka({ p_token, p_name, p_price }) {
+      const p = auth(p_token);
+      if (db.businesses.some(b => b.owner_id === p.id)) err('HAS_BUKA', 'You already run a buka.');
+      const n = clean(p_name, 24); if (n.length < 3) err('BAD_NAME', 'Give your buka a name of at least 3 characters.');
+      if (!(p_price >= 1000 && p_price <= 20000)) err('BAD_PRICE', 'Set a plate price between ₣1,000 and ₣20,000.');
+      move('p:' + p.id, 'treasury', 250000, 'licence', 'Buka trading licence');
+      db.businesses.push({ id: uuid(), owner_id: p.id, name: n, price: Math.round(p_price), last_collect: now(), plates_sold: 0, created_at: now() });
+      news('city', null, p.name + ' opened ' + n + ' at Oja Market. Plates from ' + fmt(p_price) + '.'); return state(p);
+    },
+    vibe_set_price({ p_token, p_price }) {
+      const p = auth(p_token); if (!(p_price >= 1000 && p_price <= 20000)) err('BAD_PRICE', 'Set a plate price between ₣1,000 and ₣20,000.');
+      const b = db.businesses.find(x => x.owner_id === p.id); if (!b) err('NO_BUKA', 'You do not run a buka yet.'); b.price = Math.round(p_price); return state(p);
+    },
+    vibe_collect({ p_token }) {
+      const p = auth(p_token); const b = db.businesses.find(x => x.owner_id === p.id); if (!b) err('NO_BUKA', 'You do not run a buka yet.');
+      const hours = Math.min(12, (now() - b.last_collect) / 36e5); const plates = Math.floor(hours * 8 * clamp(3500 / b.price, 0.25, 2)); let rev = 0, tax = 0;
+      if (plates > 0) { rev = plates * b.price; tax = Math.round(rev * db.city.sales_tax); move('mint', 'p:' + p.id, rev, 'buka sales', plates + ' plates to customers at ' + b.name); move('p:' + p.id, 'treasury', tax, 'sales tax', b.name + ' takings'); b.last_collect = now(); b.plates_sold += plates; }
+      return { plates, revenue: rev, tax, state: state(p) };
+    },
+    vibe_transfer({ p_token, p_to, p_amount, p_memo }) {
+      const p = auth(p_token);
+      if (p.shifts < 3 || p.created_at > now() - 36e5) err('LOCKED', 'Transfers unlock after 3 shifts and your first hour in Veyra.');
+      if (!(p_amount >= 100 && p_amount <= 500000)) err('BAD_AMOUNT', 'Send between ₣100 and ₣500,000.');
+      const r = db.players.find(x => x.name.toLowerCase() === String(p_to || '').trim().toLowerCase()); if (!r) err('NO_PLAYER', 'No citizen has that name.');
+      if (r.id === p.id) err('BAD_TRANSFER', 'You cannot send money to yourself.');
+      const sent = db.ledger.filter(l => l.from === 'p:' + p.id && l.reason === 'transfer' && Date.parse(l.at) > now() - 864e5).reduce((a, l) => a + l.amount, 0);
+      if (sent + p_amount > 500000) err('DAILY_LIMIT', 'You can send ' + fmt(Math.max(0, 500000 - sent)) + ' more today.');
+      move('p:' + p.id, 'p:' + r.id, Math.round(p_amount), 'transfer', clean(p_memo, 60) || null); return state(p);
+    },
+    vibe_history({ p_token }) {
+      const p = auth(p_token); const a = 'p:' + p.id;
+      return db.ledger.filter(l => l.from === a || l.to === a).slice(-40).reverse().map(l => { const o = l.to === a ? l.from : l.to; return { at: l.at, amount: l.to === a ? l.amount : -l.amount, reason: l.reason, memo: l.memo, other: o.startsWith('p:') ? (byId(o.slice(2)) || {}).name : o === 'mint' ? 'Veyra economy' : o === 'treasury' ? 'City treasury' : 'Shops and landlords' }; });
+    },
+    vibe_feed({ p_after_news, p_after_chat }) {
+      return {
+        news: db.news.filter(n => n.id > (p_after_news || 0)).slice(-40).map(n => ({ id: n.id, at: n.at, kind: n.kind, headline: n.headline, author: n.author_id ? (byId(n.author_id) || {}).name : null })),
+        chat: db.chat.filter(m => m.id > (p_after_chat || 0)).slice(-40).map(m => ({ id: m.id, at: m.at, name: (byId(m.player_id) || {}).name, player_id: m.player_id, text: m.text }))
+      };
+    },
+    vibe_chat({ p_token, p_text }) {
+      const p = auth(p_token); if (p.last_chat_at > now() - 3000) err('SLOW_DOWN', 'Wait a moment before sending another message.');
+      const t = clean(p_text, 160); if (!t) err('EMPTY', 'Type a message first.');
+      const m = { id: db.seq++, at: iso(now()), player_id: p.id, text: t }; db.chat.push(m); p.last_chat_at = now();
+      return { id: m.id, at: m.at, name: p.name, player_id: p.id, text: t };
+    },
+    vibe_run({ p_token, p_slogan }) {
+      const p = auth(p_token); tick();
+      if (p.shifts < 5) err('NOT_ELIGIBLE', 'Candidates need 5 completed shifts.');
+      if (db.candidates.some(c => c.player_id === p.id)) err('ALREADY', 'You are already on the ballot.');
+      const s = clean(p_slogan, 60); if (s.length < 5) err('BAD_SLOGAN', 'Write a slogan of at least 5 characters.');
+      move('p:' + p.id, 'treasury', 50000, 'election fee', 'Mayoral candidacy');
+      db.candidates.push({ player_id: p.id, slogan: s, votes: 0, joined_at: now() }); news('city', null, p.name + ' is running for mayor: "' + s + '"'); return state(p);
+    },
+    vibe_vote({ p_token, p_candidate }) {
+      const p = auth(p_token); tick();
+      if (p.shifts < 3) err('NOT_ELIGIBLE', 'Voters need 3 completed shifts.');
+      const c = db.candidates.find(x => x.player_id === p_candidate); if (!c) err('NO_CANDIDATE', 'That person is not on the ballot.');
+      if (db.votes.some(v => v.voter_id === p.id)) err('ALREADY', 'You already voted in this election.');
+      db.votes.push({ voter_id: p.id, candidate_id: p_candidate }); c.votes++; return state(p);
+    },
+    vibe_set_policy({ p_token, p_income_tax, p_sales_tax, p_starter_grant }) {
+      const p = auth(p_token); if (db.city.mayor_id !== p.id) err('NOT_MAYOR', 'Only the mayor can change city policy.');
+      if (!(p_income_tax >= 0 && p_income_tax <= .25 && p_sales_tax >= 0 && p_sales_tax <= .15 && p_starter_grant >= 0 && p_starter_grant <= 100000)) err('BAD_POLICY', 'Income tax 0–25%, sales tax 0–15%, starter grant ₣0–₣100,000.');
+      Object.assign(db.city, { income_tax: Math.round(p_income_tax * 100) / 100, sales_tax: Math.round(p_sales_tax * 100) / 100, starter_grant: Math.round(p_starter_grant) });
+      news('city', null, 'Mayor ' + p.name + ' sets income tax at ' + Math.round(p_income_tax * 100) + '%, sales tax at ' + Math.round(p_sales_tax * 100) + '% and the starter grant at ' + fmt(p_starter_grant) + '.'); return state(p);
+    }
+  };
+  return {
+    init() { load(); },
+    async call(fn, args) {
+      if (!api[fn]) throw new GameError('BAD_CALL', 'Unknown action.');
+      const snapshot = JSON.stringify(db);
+      try { const r = api[fn](JSON.parse(JSON.stringify(args || {}))); save(); return JSON.parse(JSON.stringify(r)); }
+      catch (e) { db = JSON.parse(snapshot); if (e instanceof GameError) throw e; console.error(e); throw new GameError('BUG', 'Something went wrong. Try again.'); }
+    }
+  };
+})();
+
+/* ═══════════════════════════ API (online or offline) ═══════════════════════════ */
+const Api = {
+  mode: 'offline', sb: null,
+  async init() {
+    try {
+      if (!window.supabase || !window.supabase.createClient) throw new Error('no client');
+      this.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+      const r = await withTimeout(this.sb.rpc('vibe_feed', { p_after_news: 0, p_after_chat: 0 }), 7000);
+      if (r.error) throw r.error;
+      this.mode = 'online';
+    } catch (e) {
+      this.mode = 'offline'; this.sb = null; Offline.init();
+    }
+    return this.mode;
+  },
+  async call(fn, args) {
+    if (this.mode === 'offline') return Offline.call(fn, args);
+    let r;
+    try { r = await withTimeout(this.sb.rpc(fn, args || {}), 15000); }
+    catch (e) { throw new GameError('NETWORK', 'Could not reach Veyra. Check your connection and try again.'); }
+    if (r.error) throw parseErr(r.error.message);
+    return r.data;
+  }
+};
+const tokenKey = () => Api.mode === 'online' ? 'vibe-token' : 'vibe-offline-token';
+
+/* ═══════════════════════════ UI HELPERS ═══════════════════════════ */
+function toast(msg, kind = '') {
+  const el = document.createElement('div'); el.className = 'toast ' + kind; el.textContent = msg;
+  $('#toasts').appendChild(el);
+  setTimeout(() => el.remove(), kind === 'err' ? 4200 : 3200);
+  while ($('#toasts').children.length > 3) $('#toasts').firstChild.remove();
+}
+function showErr(e) { toast(e && e.message ? e.message : 'Something went wrong.', 'err'); if (e && e.code === 'AUTH') signOut(true); }
+const Sheet = {
+  open(html, onMount) {
+    const s = $('#sheet'); s.innerHTML = html; $('#sheetWrap').hidden = false; Input.block = true;
+    s.querySelectorAll('[data-close]').forEach(b => b.onclick = () => this.close());
+    if (onMount) onMount(s);
+    const f = s.querySelector('[autofocus]') || s.querySelector('button.btn, input'); if (f && !matchMedia('(pointer:coarse)').matches) f.focus();
+  },
+  close() { $('#sheetWrap').hidden = true; $('#sheet').innerHTML = ''; Input.block = !$('#phone').hidden || !$('#onboard').hidden; this.onClose && this.onClose(); this.onClose = null; },
+  get isOpen() { return !$('#sheetWrap').hidden; }
+};
+$('#sheetWrap').addEventListener('pointerdown', e => { if (e.target.id === 'sheetWrap' && !Sheet.locked) Sheet.close(); });
+const head = (kicker, title, sub) => `<div class="sheet-head"><div><div class="kicker">${esc(kicker)}</div><h2>${esc(title)}</h2>${sub ? `<p>${esc(sub)}</p>` : ''}</div><button class="x" data-close aria-label="Close">×</button></div>`;
+async function busy(btn, fn) {
+  if (btn) { if (btn.disabled) return; btn.disabled = true; }
+  try { return await fn(); } catch (e) { showErr(e); } finally { if (btn) btn.disabled = false; }
+}
+// Two-tap confirmation for anything that spends money.
+function confirmTap(btn, label, fn) {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.armed) { delete btn.dataset.armed; btn.textContent = btn.dataset.label; busy(btn, fn); return; }
+    btn.dataset.label = btn.textContent; btn.dataset.armed = '1'; btn.textContent = label;
+    setTimeout(() => { if (btn.dataset.armed) { delete btn.dataset.armed; btn.textContent = btn.dataset.label; if (Phone.stale && !$('#phone').hidden) Phone.refresh(); } }, 3500);
+  });
+}
+
+/* ═══════════════════════════ 3D ENGINE ═══════════════════════════ */
+const canvas = $('#scene');
+const lowEnd = (navigator.hardwareConcurrency || 4) <= 4 || matchMedia('(pointer:coarse)').matches;
+const Quality = { high: store.get('vibe-quality') ? store.get('vibe-quality') === 'high' : !lowEnd };
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: Quality.high, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, Quality.high ? 1.75 : 1.25));
+renderer.shadowMap.enabled = Quality.high;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+const scene = new THREE.Scene();
+const SKY_DAY = new THREE.Color('#8fd3e8'), SKY_DUSK = new THREE.Color('#f29a6b'), SKY_NIGHT = new THREE.Color('#0d1626');
+scene.background = SKY_DAY.clone();
+scene.fog = new THREE.Fog(SKY_DAY.clone(), 160, 520);
+const camera = new THREE.PerspectiveCamera(58, 1, 0.5, 1000);
+const hemi = new THREE.HemisphereLight('#dff4ff', '#7a6a4a', 0.75); scene.add(hemi);
+const sun = new THREE.DirectionalLight('#fff3d6', 0.9);
+sun.castShadow = Quality.high; sun.shadow.mapSize.set(1024, 1024);
+Object.assign(sun.shadow.camera, { left: -70, right: 70, top: 70, bottom: -70, near: 1, far: 260 });
+sun.shadow.bias = -0.0008;
+scene.add(sun, sun.target);
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize); resize();
+
+// geometry helpers: vertex-coloured parts merged into one mesh per object
+const vcMat = new THREE.MeshLambertMaterial({ vertexColors: true });
+function paint(geo, color) {
+  const c = new THREE.Color(color), n = geo.attributes.position.count, a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) { a[i * 3] = c.r; a[i * 3 + 1] = c.g; a[i * 3 + 2] = c.b; }
+  geo.setAttribute('color', new THREE.BufferAttribute(a, 3)); return geo;
+}
+function box(w, h, d, color, x = 0, y = 0, z = 0, ry = 0) { const g = new THREE.BoxGeometry(w, h, d); if (ry) g.rotateY(ry); g.translate(x, y, z); return paint(g, color); }
+function cyl(rt, rb, h, color, x = 0, y = 0, z = 0, seg = 10, rx = 0, rz = 0) { const g = new THREE.CylinderGeometry(rt, rb, h, seg); if (rx) g.rotateX(rx); if (rz) g.rotateZ(rz); g.translate(x, y, z); return paint(g, color); }
+function cone(r, h, color, x = 0, y = 0, z = 0, seg = 4, ry = Math.PI / 4) { const g = new THREE.ConeGeometry(r, h, seg); g.rotateY(ry); g.translate(x, y, z); return paint(g, color); }
+function sphere(r, color, x = 0, y = 0, z = 0, sy = 1) { const g = new THREE.SphereGeometry(r, 10, 8); g.scale(1, sy, 1); g.translate(x, y, z); return paint(g, color); }
+function merge(parts) { const g = THREE.BufferGeometryUtils.mergeBufferGeometries(parts.map(p => p.index ? p : p)); parts.forEach(p => p.dispose()); return g; }
+function meshOf(parts, shadow = true) { const m = new THREE.Mesh(merge(parts), vcMat); m.castShadow = shadow && Quality.high; m.receiveShadow = Quality.high; return m; }
+
+// text sprites for signs and name tags
+function textSprite(text, { size = 48, color = '#1a1400', bg = '#f5c518', pad = 18, scale = 0.026, weight = '400', font = "'Bowlby One SC', 'Arial Black', sans-serif" } = {}) {
+  const c = document.createElement('canvas'), x = c.getContext('2d');
+  const f = `${weight} ${size}px ${font}`;
+  x.font = f; const w = Math.ceil(x.measureText(text).width) + pad * 2, h = size + pad * 1.4;
+  c.width = w; c.height = h; x.font = f;
+  if (bg) { x.fillStyle = bg; const r = 14; x.beginPath(); x.moveTo(r, 0); x.arcTo(w, 0, w, h, r); x.arcTo(w, h, 0, h, r); x.arcTo(0, h, 0, 0, r); x.arcTo(0, 0, w, 0, r); x.fill(); }
+  x.fillStyle = color; x.textBaseline = 'middle'; x.fillText(text, pad, h / 2 + 2);
+  const t = new THREE.CanvasTexture(c); t.minFilter = THREE.LinearFilter;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthWrite: false, fog: false })); s.scale.set(w * scale, h * scale, 1); s.renderOrder = 5; return s;
+}
+
+/* ═══════════════════════════ PORT VEYRA ═══════════════════════════ */
+const ROADS = [-240, -160, -80, 0, 80, 160, 240];
+const BLOCKS = [-200, -120, -40, 40, 120, 200];
+const colliders = []; // {x0,x1,z0,z1}
+const addCol = (cx, cz, w, d, pad = 0.4) => colliders.push({ x0: cx - w / 2 - pad, x1: cx + w / 2 + pad, z0: cz - d / 2 - pad, z1: cz + d / 2 + pad });
+const World = { night: 0, windowMats: [], lampMat: null, beacons: [], markers: [], water: null, beamMat: null };
+const rng = mulberry32(20261007);
+
+function windowTextures() {
+  const mk = lit => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); x.fillStyle = lit ? '#000' : '#fff'; x.fillRect(0, 0, 64, 64); x.fillStyle = lit ? '#ffd27a' : '#5b6670'; x.fillRect(16, 14, 32, 34); if (!lit) { x.fillStyle = '#e8e2d6'; x.fillRect(16, 46, 32, 4); } const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 2; return t; };
+  return { day: mk(false), lit: mk(true) };
+}
+function buildCity() {
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1400, 1400), new THREE.MeshLambertMaterial({ color: '#b7a77f' }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = Quality.high; scene.add(ground);
+
+  // blocks, roads, sidewalks, lane markings — one merged mesh
+  const flat = [];
+  const plane = (w, d, color, x, y, z) => { const g = new THREE.PlaneGeometry(w, d); g.rotateX(-Math.PI / 2); g.translate(x, y, z); return paint(g, color); };
+  BLOCKS.forEach(bx => BLOCKS.forEach(bz => flat.push(plane(66, 66, '#c9c1b0', bx, 0.05, bz))));
+  ROADS.forEach(r => {
+    flat.push(plane(520, 14, '#3a3e45', 0, 0.1, r), plane(14, 520, '#3a3e45', r, 0.11, 0));
+    for (let t = -250; t < 250; t += 12) { flat.push(plane(5, 0.35, '#f5c518', t + 6, 0.16, r), plane(0.35, 5, '#f5c518', r, 0.16, t + 6)); }
+    [-1, 1].forEach(s => { flat.push(plane(520, 2.6, '#9c968a', 0, 0.2, r + s * 8.3), plane(2.6, 520, '#9c968a', r + s * 8.3, 0.21, 0)); });
+  });
+  // beach and sea
+  flat.push(plane(560, 70, '#ead7a4', 0, 0.03, 282));
+  const roadMesh = meshOf(flat, false); roadMesh.receiveShadow = Quality.high; scene.add(roadMesh);
+  const sea = new THREE.Mesh(new THREE.PlaneGeometry(1400, 600), new THREE.MeshLambertMaterial({ color: '#2a8fb5', emissive: '#0b3a4d', emissiveIntensity: 0.3 }));
+  sea.rotation.x = -Math.PI / 2; sea.position.set(0, 0.02, 612); scene.add(sea); World.water = sea;
+  colliders.push({ x0: -700, x1: 700, z0: 312, z1: 900 });
+
+  // generic buildings, merged per facade colour
+  const tex = windowTextures();
+  const FACADES = ['#efe6d2', '#e7b9a0', '#a9d1d8', '#cfe3c1', '#e9cf8f', '#f2f0ea', '#d7c2e0', '#c8d0d8'];
+  const facadeGeos = FACADES.map(() => []); const props = [];
+  const reserved = new Set(['40,40', '-120,40', '120,40', '40,-120', '200,-120', '-120,-120', '-200,-200', '-120,-200', '200,120', '-200,200', '-40,120']);
+  BLOCKS.forEach(bx => BLOCKS.forEach(bz => {
+    if (reserved.has(bx + ',' + bz)) return;
+    const central = Math.abs(bx) < 130 && Math.abs(bz) < 130;
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([qx, qz]) => {
+      if (rng() < 0.12) return;
+      const w = 15 + rng() * 9, d = 15 + rng() * 9, h = central ? 10 + rng() * rng() * 50 : 6 + rng() * rng() * 22;
+      const cx = bx + qx * 15, cz = bz + qz * 15;
+      const g = new THREE.BoxGeometry(w, h, d);
+      const uv = g.attributes.uv;
+      for (let f = 0; f < 6; f++) for (let k = 0; k < 4; k++) {
+        const i = f * 4 + k;
+        if (f === 2 || f === 3) { uv.setXY(i, 0.04, 0.04); continue; }
+        const fw = f < 2 ? d : w; uv.setXY(i, uv.getX(i) * Math.max(1, Math.round(fw / 5)), uv.getY(i) * Math.max(1, Math.round(h / 4)));
+      }
+      g.translate(cx, h / 2, cz); facadeGeos[Math.floor(rng() * FACADES.length)].push(g);
+      addCol(cx, cz, w, d);
+      // Lagos rooftop details: plastic water tanks and a parapet
+      props.push(box(w + 0.4, 0.8, d + 0.4, '#d8d2c4', cx, h + 0.4, cz));
+      if (rng() < 0.75) props.push(cyl(1.1, 1.1, 2, rng() < 0.5 ? '#1d1f24' : '#2f6fdb', cx + (rng() - .5) * w * .5, h + 1.8, cz + (rng() - .5) * d * .5, 10));
+      if (rng() < 0.3) props.push(box(1.2, 1.4, 0.8, '#9aa1a8', cx - w / 2 + 2, h / 2, cz + d / 2 + 0.4)); // AC unit
+    });
+  }));
+  facadeGeos.forEach((gs, i) => {
+    if (!gs.length) return;
+    const mat = new THREE.MeshLambertMaterial({ color: FACADES[i], map: tex.day, emissive: '#ffcf70', emissiveMap: tex.lit, emissiveIntensity: 0 });
+    World.windowMats.push(mat);
+    const m = new THREE.Mesh(THREE.BufferGeometryUtils.mergeBufferGeometries(gs), mat); m.castShadow = m.receiveShadow = Quality.high; scene.add(m);
+  });
+  scene.add(meshOf(props));
+
+  buildLandmarks();
+  buildStreetFurniture();
+  buildMarkers();
+}
+
+function buildLandmarks() {
+  const P = [];
+  const sign = (text, x, y, z, opt) => { const s = textSprite(text, opt); s.position.set(x, y, z); scene.add(s); };
+  const danfo = (x, z, ry) => { P.push(...danfoParts(x, z, ry)); addCol(x, z, ry ? 5.4 : 2.4, ry ? 2.4 : 5.4); };
+
+  // Central Bus Park
+  P.push(box(60, 0.12, 60, '#8f8a80', 40, 0.12, 40));
+  for (let i = 0; i < 3; i++) { const x = 18 + i * 22; P.push(box(18, 0.5, 7, '#2f6fdb', x, 5, 18), cyl(.2, .2, 5, '#555', x - 8, 2.5, 15.5), cyl(.2, .2, 5, '#555', x + 8, 2.5, 15.5), cyl(.2, .2, 5, '#555', x - 8, 2.5, 20.5), cyl(.2, .2, 5, '#555', x + 8, 2.5, 20.5)); }
+  for (let i = 0; i < 9; i++) P.push(box(.3, .04, 8, '#f3efe4', 13 + i * 6.8, .2, 24), box(.3, .04, 8, '#f3efe4', 13 + i * 6.8, .2, 58));
+  [[18, 24], [28, 24], [52, 24], [62, 24]].forEach(([x, z]) => danfo(x, z, 0));
+  [[18, 58, 0], [62, 58, 0]].forEach(([x, z]) => danfo(x, z, 0));
+  P.push(box(4, 2.2, 2.4, '#f5c518', 66, 1.1, 46), box(4.2, 0.3, 2.6, '#1d1f24', 66, 2.35, 46)); addCol(66, 46, 4, 2.4);
+  sign('CENTRAL BUS PARK', 40, 11, 22);
+
+  // Oja Market
+  P.push(box(60, 0.12, 60, '#a49a86', -120, 0.12, 40));
+  const awn = ['#ff6b4a', '#22a06b', '#f5c518', '#2f6fdb', '#c2185b', '#ff9f1c'];
+  let k = 0;
+  for (let ix = -2; ix <= 2; ix++) for (let iz = -2; iz <= 2; iz++) {
+    if (Math.abs(ix) <= 1 && Math.abs(iz) <= 1) continue;
+    const x = -120 + ix * 11, z = 40 + iz * 10, col = awn[k++ % awn.length];
+    P.push(box(7, 0.25, 5.5, col, x, 3.2, z, 0), box(6, 1, 3, '#7a5230', x, 0.6, z),
+      box(1.2, .5, 1, ['#e53935', '#ffb300', '#7cb342', '#8d6e63'][k % 4], x - 1.5, 1.35, z), box(1.2, .5, 1, ['#ffb300', '#7cb342', '#e53935', '#fff3e0'][k % 4], x + 1.2, 1.35, z),
+      cyl(.12, .12, 3.2, '#444', x - 3.2, 1.6, z - 2.5), cyl(.12, .12, 3.2, '#444', x + 3.2, 1.6, z - 2.5), cyl(.12, .12, 3.2, '#444', x - 3.2, 1.6, z + 2.5), cyl(.12, .12, 3.2, '#444', x + 3.2, 1.6, z + 2.5));
+    addCol(x, z, 6, 3.4);
+  }
+  // Mama Put's big pots at the centre
+  P.push(cyl(1.2, 1, 1.2, '#2b2b2b', -125, 0.7, 34), cyl(1, .9, 1, '#2b2b2b', -122, 0.6, 34), box(5, 0.25, 4, '#ff6b4a', -123.5, 3, 34));
+  sign('OJA MARKET', -120, 10, 40);
+
+  // Veyra Bank tower
+  const glass = new THREE.MeshLambertMaterial({ color: '#7fb5c9', map: windowTextures().day, emissive: '#ffcf70', emissiveMap: windowTextures().lit, emissiveIntensity: 0 });
+  World.windowMats.push(glass);
+  const tg = new THREE.BoxGeometry(34, 64, 30); const tuv = tg.attributes.uv; for (let i = 0; i < tuv.count; i++) tuv.setXY(i, tuv.getX(i) * 7, tuv.getY(i) * 16);
+  const tower = new THREE.Mesh(tg, glass); tower.position.set(120, 32, 30); tower.castShadow = tower.receiveShadow = Quality.high; scene.add(tower); addCol(120, 30, 34, 30);
+  P.push(box(44, 6, 12, '#22a06b', 120, 3, 50), box(46, 0.8, 14, '#f3efe4', 120, 6.4, 50)); addCol(120, 50, 44, 12);
+  P.push(box(1.6, 2.4, 1, '#1d1f24', 106, 1.2, 57), box(1.2, .6, .1, '#5cc8e0', 106, 1.7, 57.55));
+  sign('VEYRA BANK', 120, 10, 57);
+
+  // City Hall
+  P.push(box(54, 16, 26, '#f4f1ea', 40, 8, -124), box(56, 1.2, 28, '#d9d2c3', 40, 16.6, -124), box(40, 1.2, 8, '#e8e2d4', 40, 0.6, -106), box(44, 0.8, 4, '#e8e2d4', 40, 0.4, -101));
+  for (let i = 0; i < 7; i++) P.push(cyl(.8, .9, 13, '#ffffff', 22 + i * 6, 7.5, -109));
+  P.push(box(44, 1.4, 4, '#f4f1ea', 40, 14.6, -109));
+  P.push(sphere(8, '#22a06b', 40, 17, -124, 0.75), cyl(.2, .2, 14, '#ddd', 62, 7, -100));
+  P.push(box(5, 1, .1, '#22a06b', 64.6, 13.2, -100), box(5, 1, .1, '#f5c518', 64.6, 12.2, -100), box(5, 1, .1, '#22a06b', 64.6, 11.2, -100));
+  addCol(40, -124, 54, 26); addCol(40, -109, 44, 2);
+  sign('CITY HALL', 40, 23, -104);
+
+  // VPD Station
+  P.push(box(36, 14, 24, '#e9eef5', 200, 7, -122), box(36.4, 2, 24.4, '#1f4fa8', 200, 12, -122), box(10, 4, 1, '#1f4fa8', 200, 6, -109.6));
+  P.push(...carParts('#f3efe4', 186, -102, 0, true), ...carParts('#f3efe4', 214, -102, 0, true)); addCol(186, -102, 2.2, 4.6); addCol(214, -102, 2.2, 4.6);
+  addCol(200, -122, 36, 24);
+  sign('VPD', 200, 18, -109, { bg: '#1f4fa8', color: '#fff' });
+
+  // Veyra Daily
+  P.push(box(32, 20, 24, '#a94438', -120, 10, -122), box(32.4, 1, 24.4, '#7a2f27', -120, 20.4, -122), cyl(2.4, 2.4, .3, '#ddd', -112, 22, -126, 16, Math.PI / 3));
+  addCol(-120, -122, 32, 24);
+  sign('VEYRA DAILY', -120, 15, -109, { bg: '#fff', color: '#a94438' });
+
+  // Palm Estate: bungalows with hip roofs
+  [[-214, -214], [-186, -214], [-214, -190], [-186, -190], [-134, -214], [-106, -214], [-134, -188], [-106, -188]].forEach(([x, z], i) => {
+    const wall = ['#f3e9d2', '#e7b9a0', '#cfe3c1', '#a9d1d8'][i % 4];
+    P.push(box(14, 6, 11, wall, x, 3, z), cone(10.6, 5, '#8a3b2a', x, 8.5, z), box(2, 3.6, .2, '#5d4037', x, 1.8, z + 5.6), box(16, 1.2, .3, '#ddd', x, .6, z + 7.4));
+    addCol(x, z, 14, 11);
+  });
+  sign('PALM ESTATE', -200, 9, -168);
+
+  // Motor Mart
+  P.push(box(34, 9, 22, '#dfe7ec', 200, 4.5, 132), box(34.4, 1.6, 22.4, '#ff6b4a', 200, 9.6, 132), box(60, .12, 30, '#8f8a80', 200, .1, 104));
+  [['#c2185b', 184], ['#2f6fdb', 196], ['#1d1f24', 208], ['#22a06b', 220]].forEach(([c, x]) => { P.push(...carParts(c, x, 106, 0)); addCol(x, 106, 2.2, 4.6); });
+  addCol(200, 132, 34, 22);
+  sign('MOTOR MART', 200, 15, 120, { bg: '#ff6b4a', color: '#1d0a04' });
+
+  // Unity Stadium
+  const ring = new THREE.CylinderGeometry(28, 28, 12, 28, 1, true); ring.translate(-200, 6, 202);
+  P.push(paint(ring, '#e9eef5'));
+  const pitch = new THREE.CircleGeometry(25, 28); pitch.rotateX(-Math.PI / 2); pitch.translate(-200, .12, 202); P.push(paint(pitch, '#3f9a4a'));
+  [[-222, 180], [-178, 180], [-222, 224], [-178, 224]].forEach(([x, z]) => P.push(cyl(.4, .5, 24, '#888', x, 12, z), box(4, 2, 1, '#f3efe4', x, 24, z)));
+  addCol(-200, 177, 34, 2); addCol(-200, 228, 56, 2); addCol(-227, 202, 2, 52); addCol(-173, 202, 2, 52);
+  sign('UNITY STADIUM', -200, 20, 172);
+
+  // Freedom Park (green block)
+  P.push(box(60, .15, 60, '#5f9e4f', -40, .1, 120), box(4, 4, 4, '#cfc6b2', -40, 2, 120), sphere(2, '#f5c518', -40, 5.5, 120)); addCol(-40, 120, 4, 4);
+
+  // Lighthouse Beach
+  P.push(cyl(2.2, 3, 22, '#f3efe4', 120, 11, 292), cyl(2.25, 3.05, 3, '#ff6b4a', 120, 6, 292), cyl(2.25, 3.05, 3, '#ff6b4a', 120, 14, 292), cyl(2.6, 2.6, 3, '#1d1f24', 120, 23.5, 292));
+  addCol(120, 292, 6, 6);
+  [[0, 276], [20, 284], [-24, 280], [60, 278], [-60, 286]].forEach(([x, z], i) => P.push(cyl(.08, .08, 3, '#ddd', x, 1.5, z), cone(2.4, 1, ['#ff6b4a', '#22a06b', '#f5c518', '#2f6fdb', '#c2185b'][i], x, 3.2, z, 8, 0), box(1.6, .2, 3, '#f3efe4', x + 1.8, .4, z)));
+  const beam = new THREE.Mesh(new THREE.ConeGeometry(6, 60, 16, 1, true), new THREE.MeshBasicMaterial({ color: '#fff3c4', transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide }));
+  beam.geometry.translate(0, -30, 0); beam.geometry.rotateZ(Math.PI / 2); beam.position.set(120, 23.5, 292); scene.add(beam); World.beam = beam;
+  sign('LIGHTHOUSE BEACH', 40, 9, 258);
+
+  scene.add(meshOf(P));
+}
+
+function buildStreetFurniture() {
+  // palms and street lamps as instanced meshes: two draw calls each
+  const palms = [], lamps = [];
+  ROADS.forEach(r => {
+    for (let t = -236; t <= 236; t += 22) {
+      const near = ROADS.some(q => Math.abs(q - t) < 10);
+      if (near) continue;
+      if (rng() < 0.45) palms.push([t, r + (rng() < .5 ? -11 : 11)]); else if (rng() < 0.5) palms.push([r + (rng() < .5 ? -11 : 11), t]);
+      if ((t + 236) % 44 === 0) { lamps.push([t, r + 9.8]); lamps.push([r - 9.8, t]); }
+    }
+  });
+  const okSpot = ([x, z]) => !colliders.some(c => x > c.x0 - 1 && x < c.x1 + 1 && z > c.z0 - 1 && z < c.z1 + 1);
+  const pts = palms.filter(okSpot), lps = lamps.filter(okSpot);
+  const trunkG = merge([cyl(.35, .55, 9, '#8a6a43', 0, 4.5, 0, 6)]);
+  const leafG = merge([0, 1, 2, 3, 4, 5].map(i => { const g = new THREE.BoxGeometry(5, .2, 1.3); g.translate(2.4, 0, 0); g.rotateZ(-0.35); g.rotateY(i * Math.PI / 3); g.translate(0, 9.2, 0); return paint(g, '#2f8f4e'); }));
+  const trunks = new THREE.InstancedMesh(trunkG, vcMat, pts.length), leaves = new THREE.InstancedMesh(leafG, vcMat, pts.length);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(1, 1, 1), p = new THREE.Vector3();
+  pts.forEach(([x, z], i) => { q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rng() * 6); const k = .8 + rng() * .5; s.set(k, k, k); p.set(x, 0, z); m4.compose(p, q, s); trunks.setMatrixAt(i, m4); leaves.setMatrixAt(i, m4); });
+  trunks.castShadow = leaves.castShadow = Quality.high; scene.add(trunks, leaves);
+  const poleG = merge([cyl(.14, .18, 7, '#5b6168', 0, 3.5, 0, 6), box(1.6, .15, .3, '#5b6168', .7, 7, 0)]);
+  World.lampMat = new THREE.MeshBasicMaterial({ color: '#555b61' });
+  const bulbG = new THREE.BoxGeometry(.8, .3, .5); bulbG.translate(1.3, 6.85, 0);
+  const poles = new THREE.InstancedMesh(poleG, vcMat, lps.length), bulbs = new THREE.InstancedMesh(bulbG, World.lampMat, lps.length);
+  lps.forEach(([x, z], i) => { m4.makeTranslation(x, 0, z); poles.setMatrixAt(i, m4); bulbs.setMatrixAt(i, m4); });
+  scene.add(poles, bulbs);
+}
+
+function buildMarkers() {
+  const ringG = new THREE.RingGeometry(2.6, 3.4, 32); ringG.rotateX(-Math.PI / 2);
+  PLACES.forEach(pl => {
+    const m = new THREE.Mesh(ringG, new THREE.MeshBasicMaterial({ color: '#f5c518', transparent: true, opacity: .85, depthWrite: false }));
+    m.position.set(pl.x, 0.3, pl.z); scene.add(m); World.markers.push(m);
+  });
+}
+
+// ── vehicles ──
+function wheelParts(xs, zs, r = .45) { const out = []; xs.forEach(x => zs.forEach(z => out.push(cyl(r, r, .35, '#151515', x, r, z, 10, 0, Math.PI / 2)))); return out; }
+function danfoParts(x = 0, z = 0, ry = 0) {
+  const parts = [box(2.3, 1.9, 5.2, '#f5c518', 0, 1.45, 0), box(2.32, .22, 5.22, '#1d1f24', 0, 1.0, 0), box(2.32, .22, 5.22, '#1d1f24', 0, 1.25, 0), box(2.34, .62, 3.9, '#2a3440', 0, 1.98, -.3), box(2.1, .6, .1, '#2a3440', 0, 1.9, 2.62), box(2.4, .3, .3, '#999', 0, .55, 2.6), ...wheelParts([-1.1, 1.1], [-1.7, 1.7])];
+  return parts.map(g => { if (ry) g.rotateY(ry); g.translate(x, 0, z); return g; });
+}
+function carParts(color, x = 0, z = 0, ry = 0, police = false) {
+  const parts = [box(2.0, .8, 4.4, color, 0, .8, 0), box(1.8, .75, 2.4, police ? '#1f4fa8' : '#2a3440', 0, 1.55, -.2), box(1.8, .1, 2.42, color, 0, 1.95, -.2), ...wheelParts([-.95, .95], [-1.35, 1.35], .4)];
+  if (police) parts.push(box(.6, .25, .4, '#e53935', -.35, 2.1, -.2), box(.6, .25, .4, '#2f6fdb', .35, 2.1, -.2), box(2.02, .25, 4.42, '#1f4fa8', 0, .9, 0));
+  return parts.map(g => { if (ry) g.rotateY(ry); g.translate(x, 0, z); return g; });
+}
+function kekeParts(color) { return [box(1.5, 1.1, 2.6, color, 0, 1.1, 0), box(1.6, .12, 2.8, '#1d1f24', 0, 2.25, 0), cyl(.06, .06, .9, '#333', -.7, 1.8, 1.2), cyl(.06, .06, .9, '#333', .7, 1.8, 1.2), cyl(.06, .06, .9, '#333', -.7, 1.8, -1.2), cyl(.06, .06, .9, '#333', .7, 1.8, -1.2), ...wheelParts([-.7, .7], [-.9], .35), ...wheelParts([0], [1.2], .35)]; }
+function bikeParts(motor) {
+  const p = [cyl(motor ? .42 : .45, motor ? .42 : .45, .12, '#151515', 0, motor ? .42 : .45, .85, 14, 0, Math.PI / 2), cyl(motor ? .42 : .45, motor ? .42 : .45, .12, '#151515', 0, motor ? .42 : .45, -.85, 14, 0, Math.PI / 2), box(.12, .12, 1.6, motor ? '#c2185b' : '#2f6fdb', 0, .85, 0), box(.5, .12, .7, '#1d1f24', 0, motor ? 1.0 : 1.05, -.2), box(.8, .08, .08, '#333', 0, 1.3, .7)];
+  if (motor) p.push(box(.5, .5, .8, '#c2185b', 0, .75, .15), box(.3, .3, .3, '#888', 0, .45, -.3));
+  return p;
+}
+const RideMeshes = {};
+function rideMesh(kind, color) {
+  let parts;
+  if (kind === 'danfo') parts = danfoParts(); else if (kind === 'patrol') parts = carParts('#f3efe4', 0, 0, 0, true); else if (kind === 'car') parts = carParts(color || '#c2185b');
+  else if (kind === 'okada') parts = bikeParts(true); else if (kind === 'bicycle') parts = bikeParts(false); else if (kind === 'keke') parts = kekeParts(color || '#22a06b'); else return null;
+  return meshOf(parts);
+}
+
+/* ═══════════════════════════ REALISTIC CHARACTERS ═══════════════════════════
+   Rigged glTF bodies, shared Mixamo animations retargeted
+   at load, skin and outfit recolouring, procedural hairstyles on the head bone.
+   Depends on THREE, THREE.GLTFLoader, THREE.SkeletonUtils, and LOOK palette. */
+const Chars = (() => {
+  const comp = (a, i, k) => { const v = k === 0 ? a.getX(i) : k === 1 ? a.getY(i) : k === 2 ? a.getZ(i) : a.getW(i); return a.normalized ? v / (a.array instanceof Uint8Array ? 255 : a.array instanceof Uint16Array ? 65535 : 1) : v; };
+  const strip = n => n.replace(/^mixamorig[:_]?/i, '');
+  const V3 = () => new THREE.Vector3(), Q = () => new THREE.Quaternion();
+  const BODIES = [
+    { id: 'man', label: 'Man', url: 'models/man.glb', paint: 'rpm', styles: ['Low cut', 'Afro', 'High top', 'Bald', 'Locs', 'Cap', 'Fedora'] },
+    { id: 'woman', label: 'Woman', url: 'models/woman.glb', paint: 'atlas', styles: ['Afro puffs', 'Gele', 'Head wrap'] }
+  ];
+  const state = { ready: false, bodies: [], error: null };
+
+  function bonesOf(root) { const out = {}; root.traverse(o => { if (o.isBone || /^mixamorig/i.test(o.name)) out[strip(o.name)] = o; }); return out; }
+  function aim(root, bone, child, dir) {
+    root.updateMatrixWorld(true);
+    const a = bone.getWorldPosition(V3()), cur = child.getWorldPosition(V3()).sub(a).normalize();
+    const want = dir.clone().normalize().applyQuaternion(root.getWorldQuaternion(Q()));
+    const world = bone.getWorldQuaternion(Q()).premultiply(Q().setFromUnitVectors(cur, want));
+    bone.quaternion.copy(bone.parent.getWorldQuaternion(Q()).invert().multiply(world));
+    bone.updateMatrixWorld(true);
+  }
+  function tpose(root, bones) {
+    root.updateMatrixWorld(true);
+    const inv = root.getWorldQuaternion(Q()).invert();
+    ['Left', 'Right'].forEach(s => {
+      const c = [bones[s + 'Arm'], bones[s + 'ForeArm'], bones[s + 'Hand']]; if (!c.every(Boolean)) return;
+      const side = c[2].getWorldPosition(V3()).sub(c[0].getWorldPosition(V3())).applyQuaternion(inv).x;
+      const out = new THREE.Vector3(Math.sign(side) || 1, 0, 0); aim(root, c[0], c[1], out); aim(root, c[1], c[2], out);
+    });
+  }
+  // Turn a model so it faces +Z: its left hip must sit on +X.
+  function faceForward(root) {
+    const b = bonesOf(root); if (!b.LeftUpLeg || !b.RightUpLeg) return;
+    root.updateMatrixWorld(true);
+    const left = b.LeftUpLeg.getWorldPosition(V3()).sub(b.RightUpLeg.getWorldPosition(V3()));
+    root.rotation.y = Math.atan2(-left.z, left.x); root.updateMatrixWorld(true);
+  }
+  function reference(root, refClip) {
+    const bones = bonesOf(root);
+    if (refClip) { const m = new THREE.AnimationMixer(root); m.clipAction(refClip).play(); m.setTime(0); m.stopAllAction(); m.uncacheRoot(root); }
+    tpose(root, bones); root.updateMatrixWorld(true);
+    const snap = {}; for (const k in bones) snap[k] = { q: bones[k].getWorldQuaternion(Q()), p: bones[k].getWorldPosition(V3()) };
+    return { root, bones, snap };
+  }
+  function retarget(src, tgt, clip, fps = 30) {
+    const mixer = new THREE.AnimationMixer(src.root); mixer.clipAction(clip).play();
+    const frames = Math.max(2, Math.round(clip.duration * fps) + 1);
+    const order = []; tgt.root.traverse(o => { if (o.isBone && src.bones[strip(o.name)]) order.push(strip(o.name)); });
+    const parentOf = n => { const p = tgt.bones[n].parent; return p && p.isBone && src.bones[strip(p.name)] ? strip(p.name) : null; };
+    const fixedParentQ = {}; order.forEach(n => { if (!parentOf(n)) fixedParentQ[n] = tgt.bones[n].parent.getWorldQuaternion(Q()); });
+    const times = new Float32Array(frames), qv = {}, pv = new Float32Array(frames * 3), world = {};
+    order.forEach(n => qv[n] = new Float32Array(frames * 4));
+    const scale = tgt.snap.Hips.p.y / src.snap.Hips.p.y, inv = Q(), tq = Q();
+    const hipParent = tgt.bones.Hips.parent; hipParent.updateMatrixWorld(true);
+    const hipParentInv = new THREE.Matrix4().copy(hipParent.matrixWorld).invert();
+    for (let f = 0; f < frames; f++) {
+      const t = Math.min(clip.duration, f / fps); times[f] = t; mixer.setTime(t); src.root.updateMatrixWorld(true);
+      for (const n of order) {
+        src.bones[n].getWorldQuaternion(tq);
+        const w = tq.clone().multiply(inv.copy(src.snap[n].q).invert()).multiply(tgt.snap[n].q); world[n] = w;
+        const pn = parentOf(n), pq = pn ? world[pn] : fixedParentQ[n];
+        pq.clone().invert().multiply(w).toArray(qv[n], f * 4);
+      }
+      const p = src.bones.Hips.getWorldPosition(V3()).sub(src.snap.Hips.p).multiplyScalar(scale);
+      p.x = 0; p.z = 0;                                  // keep the character in place
+      p.add(tgt.snap.Hips.p).applyMatrix4(hipParentInv).toArray(pv, f * 3);
+    }
+    mixer.stopAllAction(); mixer.uncacheRoot(src.root);
+    const tracks = order.map(n => new THREE.QuaternionKeyframeTrack(tgt.bones[n].name + '.quaternion', times, qv[n]));
+    tracks.push(new THREE.VectorKeyframeTrack(tgt.bones.Hips.name + '.position', times, pv));
+    return new THREE.AnimationClip(clip.name, clip.duration, tracks);
+  }
+
+  // ── recolouring ──
+  function hsv(r, g, b) { const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0; if (d) { if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h *= 60; if (h < 0) h += 360; } return [h, mx ? d / mx : 0, mx / 255]; }
+  const pixelCache = new Map();
+  function pixels(tex) {
+    if (pixelCache.has(tex)) return pixelCache.get(tex);
+    const img = tex.image, w = img.width, h = img.height, c = document.createElement('canvas'); c.width = w; c.height = h;
+    const x = c.getContext('2d'); x.drawImage(img, 0, 0); const d = x.getImageData(0, 0, w, h);
+    const out = { w, h, data: d.data }; pixelCache.set(tex, out); return out;
+  }
+  // rules: [{ test(h,s,v) -> bool, color: '#hex' }]; each matching pixel keeps its shading but takes the colour
+  function recolor(tex, rules) {
+    const src = pixels(tex), n = src.w * src.h, out = new Uint8ClampedArray(src.data), sums = rules.map(() => [0, 0]), tag = new Int8Array(n).fill(-1);
+    for (let i = 0; i < n; i++) {
+      const r = src.data[i * 4], g = src.data[i * 4 + 1], b = src.data[i * 4 + 2], [h, s, v] = hsv(r, g, b);
+      for (let k = 0; k < rules.length; k++) if (rules[k].test(h, s, v)) { tag[i] = k; sums[k][0] += 0.299 * r + 0.587 * g + 0.114 * b; sums[k][1]++; break; }
+    }
+    const targets = rules.map(r => new THREE.Color(r.color)), refs = sums.map(([L, c]) => c ? L / c : 1);
+    for (let i = 0; i < n; i++) {
+      const k = tag[i]; if (k < 0) continue;
+      const L = 0.299 * src.data[i * 4] + 0.587 * src.data[i * 4 + 1] + 0.114 * src.data[i * 4 + 2], f = Math.pow(L / refs[k], 0.85) * 255, T = targets[k];
+      out[i * 4] = T.r * f; out[i * 4 + 1] = T.g * f; out[i * 4 + 2] = T.b * f;
+    }
+    const c = document.createElement('canvas'); c.width = src.w; c.height = src.h; c.getContext('2d').putImageData(new ImageData(out, src.w, src.h), 0, 0);
+    const t = tex.clone(); t.image = c; t.needsUpdate = true; return t;
+  }
+  const ALL = () => true;
+  const matCache = new Map();
+  function paintedMaterials(body, look) {
+    const C = k => LOOK[k][Math.min(7, Math.max(0, look[k] | 0))];
+    const out = {};
+    body.materials.forEach(m => {
+      const n = m.name; let rules = null;
+      if (body.paint === 'rpm') {
+        if (n === 'Wolf3D_Skin' || n === 'Wolf3D_Body') rules = [{ test: ALL, color: C('skin') }];
+        if (n === 'Wolf3D_Outfit_Top') rules = [{ test: (h, s, v) => (h < 32 || h > 345) && s > 0.18 && s < 0.78 && v > 0.22, color: C('top') }];
+        if (n === 'Wolf3D_Outfit_Bottom') rules = [{ test: (h, s, v) => v > 0.12, color: C('bottom') }];
+      } else if (body.paint === 'atlas') {
+        rules = [{ test: (h, s, v) => h >= 40 && h <= 68 && s > 0.45 && v > 0.3, color: C('bottom') },
+                 { test: (h, s, v) => h > 8 && h < 38 && s > 0.3 && s < 0.85 && v > 0.1 && v < 0.62, color: C('skin') }];
+      }
+      if (!rules || !m.map) { out[n] = m; return; }
+      // cache per material and colours, so people who share a shirt colour share the texture
+      const key = body.id + '|' + n + '|' + rules.map(r => r.color).join(',');
+      if (!matCache.has(key)) { const nm = m.clone(); nm.map = recolor(m.map, rules); matCache.set(key, nm); }
+      out[n] = matCache.get(key);
+    });
+    return out;
+  }
+
+  // ── hair ──
+  function headFrame(body) {
+    // skull centre and radii in the character frame, from the Head and HeadTop_End bones
+    const root = body.template, b = bonesOf(root); root.updateMatrixWorld(true);
+    const inv = new THREE.Matrix4().copy(root.matrixWorld).invert();
+    const H = b.Head.getWorldPosition(V3()).applyMatrix4(inv);
+    const T = (b.HeadTop_End ? b.HeadTop_End.getWorldPosition(V3()) : b.Head.getWorldPosition(V3()).add(new THREE.Vector3(0, 0.22, 0))).applyMatrix4(inv);
+    const h = Math.max(0.15, T.y - H.y);
+    return { head: b.Head, centre: new THREE.Vector3(0, H.y + h * 0.56, (H.z + T.z) / 2 + h * 0.06), rx: h * 0.4, ry: h * 0.5, rz: h * 0.47 };
+  }
+  // A relaxed standing idle built from the T-pose: arms down, slight breathing.
+  function makeIdle(tgt) {
+    const root = tgt.root, b = tgt.bones, names = Object.keys(b).filter(n => b[n].isBone);
+    const saved = names.map(n => b[n].quaternion.clone());
+    [['Left', 1], ['Right', -1]].forEach(([s, x]) => {
+      if (b[s + 'Arm'] && b[s + 'ForeArm'] && b[s + 'Hand']) { aim(root, b[s + 'Arm'], b[s + 'ForeArm'], new THREE.Vector3(x * 0.13, -1, -0.02)); aim(root, b[s + 'ForeArm'], b[s + 'Hand'], new THREE.Vector3(x * 0.06, -1, 0.12)); }
+    });
+    const times = new Float32Array([0, 1.6, 3.2]), tracks = [];
+    names.forEach(n => { const q = b[n].quaternion, v = new Float32Array(12); for (let i = 0; i < 3; i++) q.toArray(v, i * 4); tracks.push(new THREE.QuaternionKeyframeTrack(b[n].name + '.quaternion', times, v)); });
+    const hp = b.Hips.position, bob = (tgt.snap.Hips.p.y || 1) * 0.004 / Math.max(1e-6, b.Hips.getWorldScale(V3()).y);
+    tracks.push(new THREE.VectorKeyframeTrack(b.Hips.name + '.position', times, new Float32Array([hp.x, hp.y, hp.z, hp.x, hp.y - bob, hp.z, hp.x, hp.y, hp.z])));
+    names.forEach((n, i) => b[n].quaternion.copy(saved[i])); root.updateMatrixWorld(true);
+    return new THREE.AnimationClip('Idle', 3.2, tracks);
+  }
+  const hairMats = new Map();
+  const hairMat = c => { if (!hairMats.has(c)) hairMats.set(c, new THREE.MeshStandardMaterial({ color: c, roughness: 0.95, metalness: 0 })); return hairMats.get(c); };
+  const clothMat = c => { const k = 'cloth' + c; if (!hairMats.has(k)) hairMats.set(k, new THREE.MeshStandardMaterial({ color: c, roughness: 0.75 })); return hairMats.get(k); };
+  function bumpy(geo, amt, seed) {
+    const p = geo.attributes.position, v = V3(); let s = seed;
+    const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+    for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const k = 1 + (rnd() - .5) * amt; p.setXYZ(i, v.x * k, v.y * k, v.z * k); }
+    geo.computeVertexNormals(); return geo;
+  }
+  function shell(f, cover = 0.47, grow = 1.06) {
+    const g = new THREE.SphereGeometry(1, 28, 18, 0, Math.PI * 2, 0, Math.PI * cover); g.rotateX(-0.28);
+    g.scale(f.rx * grow, f.ry * grow, f.rz * grow); return g;
+  }
+  function hairPieces(body, style, f, hairC, topC) {
+    const H = hairMat(hairC), parts = [];
+    const add = (g, m) => parts.push(new THREE.Mesh(g, m));
+    const name = body.styles[style] || body.styles[0];
+    if (name === 'Low cut') add(shell(f, 0.46, 1.045), H);
+    if (name === 'Afro') { const g = bumpy(new THREE.SphereGeometry(1, 24, 18), 0.07, 7); g.scale(f.rx * 1.5, f.ry * 1.22, f.rz * 1.4); g.translate(0, f.ry * 0.74, -f.rz * 0.22); add(g, H); add(shell(f, 0.47, 1.05), H); }
+    if (name === 'High top') { add(shell(f, 0.46, 1.045), H); const g = new THREE.CylinderGeometry(f.rx * 0.95, f.rx * 1.02, f.ry * 0.95, 22); g.scale(1, 1, f.rz / f.rx); g.translate(0, f.ry * 0.82, -f.rz * 0.06); add(g, H); }
+    if (name === 'Locs' || name === 'Braids') {
+      add(shell(f, 0.5, 1.05), H);
+      const n = name === 'Locs' ? 16 : 22, len = name === 'Locs' ? f.ry * 2.3 : f.ry * 3.2, r = name === 'Locs' ? f.rx * 0.075 : f.rx * 0.045;
+      for (let i = 0; i < n; i++) {
+        const a = Math.PI * (0.18 + 0.64 * i / (n - 1)) + Math.PI / 2;   // back half of the head
+        const g = new THREE.CylinderGeometry(r, r * 0.8, len, 6); g.translate(0, -len / 2, 0); g.rotateX(0.12);
+        g.translate(Math.cos(a) * f.rx * 0.95, f.ry * 0.35, Math.sin(a) * f.rz * 0.95); add(g, H);
+      }
+    }
+    if (name === 'Cap') {
+      const dome = new THREE.SphereGeometry(1, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.5); dome.scale(f.rx * 1.1, f.ry * 0.95, f.rz * 1.1); dome.translate(0, f.ry * 0.12, 0); add(dome, clothMat(topC));
+      const brim = new THREE.CylinderGeometry(f.rx * 1.0, f.rx * 1.0, f.ry * 0.05, 20, 1, false, -Math.PI / 2, Math.PI); brim.scale(1, 1, 1.25); brim.translate(0, f.ry * 0.15, f.rz * 0.55); add(brim, clothMat(topC));
+    }
+    if (name === 'Gele' || name === 'Head wrap') {
+      const M = clothMat(topC), big = name === 'Gele' ? 1 : 0.8;
+      // a wrap wide enough to cover built-in hair, a band at the hairline, then the gele's stiff pleats
+      const dome = new THREE.SphereGeometry(1, 26, 18, 0, Math.PI * 2, 0, Math.PI * 0.6); dome.rotateX(-0.32);
+      dome.scale(f.rx * 1.9 * big + f.rx * 0.2, f.ry * 1.35, f.rz * 1.45); dome.translate(0, f.ry * 0.12, -f.rz * 0.18); add(dome, M);
+      const band = new THREE.TorusGeometry(1, 0.16, 8, 30); band.rotateX(Math.PI / 2 - 0.35); band.scale(f.rx * 1.75 * big + f.rx * 0.25, f.ry, f.rz * 1.4); band.translate(0, f.ry * 0.2, -f.rz * 0.1); add(band, M);
+      if (name === 'Gele') {
+        [[-0.9, 0.95, -0.35], [0, 1.25, -0.5], [0.9, 0.95, -0.35], [-0.45, 1.15, -0.65], [0.45, 1.15, -0.65]].forEach(([x, y, z], i) => {
+          const p = new THREE.SphereGeometry(1, 14, 10); p.scale(f.rx * 0.95, f.ry * 0.75, f.rz * 0.16);
+          p.rotateX(-0.75); p.rotateY(x * 0.55); p.rotateZ(-x * 0.4); p.translate(f.rx * x, f.ry * y, f.rz * z); add(p, M);
+        });
+      } else { const knot = new THREE.SphereGeometry(f.rx * 0.5, 14, 10); knot.translate(0, f.ry * 1.25, f.rz * 0.35); add(knot, M); }
+    }
+    if (name === 'Bun') { add(shell(f, 0.5, 1.05), H); const g = bumpy(new THREE.SphereGeometry(f.rx * 0.55, 16, 12), 0.08, 3); g.translate(0, f.ry * 0.95, -f.rz * 0.55); add(g, H); }
+    return parts;
+  }
+  function trimHair(body, f) {
+    // For the woman's built-in afro puffs: an index buffer without triangles far outside the skull
+    body.trimmed = new Map();
+    body.template.traverse(o => {
+      if (!o.isSkinnedMesh) return; const hi = o.skeleton.bones.indexOf(f.head); if (hi < 0) return;
+      const pos = o.geometry.attributes.position, si = o.geometry.attributes.skinIndex, sw = o.geometry.attributes.skinWeight, idx = o.geometry.index;
+      const rootInv = new THREE.Matrix4().copy(body.template.matrixWorld).invert(), v = V3(), far = new Uint8Array(pos.count);
+      for (let i = 0; i < pos.count; i++) {
+        let w = 0; for (let k = 0; k < 4; k++) if (comp(si, i, k) === hi) w += comp(sw, i, k);
+        if (w < 0.5) continue; v.fromBufferAttribute(pos, i); o.boneTransform(i, v); v.applyMatrix4(o.matrixWorld).applyMatrix4(rootInv).sub(f.centre);
+        const d = Math.hypot(v.x / f.rx, v.y / f.ry, v.z / f.rz); if (d > 1.32 || (v.y > f.ry * 0.55 && d > 1.12)) far[i] = 1;
+      }
+      const keep = []; for (let t = 0; t < idx.count; t += 3) { const a = idx.getX(t), b = idx.getX(t + 1), c = idx.getX(t + 2); if (!(far[a] && far[b] && far[c])) keep.push(a, b, c); }
+      const g = o.geometry.clone(); g.setIndex(keep); body.trimmed.set(o.name, g);
+    });
+  }
+
+  async function load(base = '') {
+    if (!THREE.GLTFLoader || !THREE.SkeletonUtils) throw new Error('character loader missing');
+    const L = new THREE.GLTFLoader(); const get1 = u => new Promise((a, b) => L.load(base + u, a, null, b));
+    // .glb first; hosts that won't serve .glb (such as claude.ai previews) get the same model as self-contained glTF JSON
+    const get = u => get1(u).catch(() => get1(u.replace(/\.glb$/, '.gltf.json')));
+    const files = await Promise.all([get('models/anims.glb'), ...BODIES.map(b => get(b.url))]);
+    const anim = files[0]; faceForward(anim.scene);
+    const src = reference(anim.scene, anim.animations.find(a => a.name === 'TPose'));
+    BODIES.forEach((b, i) => {
+      const g = files[i + 1], root = g.scene; faceForward(root);
+      const tgt = reference(root, g.animations.find(a => a.name === 'TPose'));
+      const body = Object.assign({}, b, { template: root, clips: {}, materials: [] });
+      ['Walk', 'Run'].forEach(n => body.clips[n] = retarget(src, tgt, anim.animations.find(a => a.name === n)));
+      body.clips.Idle = makeIdle(tgt);
+      const seen = new Set(); root.traverse(o => {
+        if (!o.isMesh) return; o.frustumCulled = false;
+        if (!seen.has(o.material)) {
+          seen.add(o.material); body.materials.push(o.material);
+          // the city is drawn without colour management, so read textures as-is; no metal on people
+          ['map', 'emissiveMap'].forEach(k => { if (o.material[k]) { o.material[k].encoding = THREE.LinearEncoding; o.material[k].needsUpdate = true; } });
+          if ('metalness' in o.material) { o.material.metalness = 0; o.material.roughness = Math.max(0.55, o.material.roughness); o.material.needsUpdate = true; }
+        }
+      });
+      body.frame = headFrame(body);
+      state.bodies.push(body);
+    });
+    state.ready = true; return state;
+  }
+
+  // One character instance: { group, animate(speed, dt), seat(kind) }
+  function create(look = {}) {
+    const body = state.bodies[Math.min(state.bodies.length - 1, look.body | 0)] || state.bodies[0];
+    const C = k => LOOK[k][Math.min(7, Math.max(0, look[k] | 0))];
+    const root = THREE.SkeletonUtils.clone(body.template), mats = paintedMaterials(body, look), style = Math.min(body.styles.length - 1, look.style | 0), styleName = body.styles[style];
+    root.traverse(o => {
+      if (!o.isMesh) return; o.frustumCulled = false; o.castShadow = Quality.high;
+      if (mats[o.material.name]) o.material = mats[o.material.name];
+      if (o.name === 'Wolf3D_Headwear') o.visible = styleName === 'Fedora';
+      
+    });
+    const bones = bonesOf(root), f = body.frame;
+    // hair rides on the head bone; build it in the character frame then re-parent
+    const hair = new THREE.Group(); hairPieces(body, style, f, C('hair'), C('top')).forEach(m => { m.castShadow = Quality.high; hair.add(m); });
+    if (hair.children.length) {
+      root.updateMatrixWorld(true);
+      const want = new THREE.Matrix4().compose(f.centre.clone().applyMatrix4(root.matrixWorld), root.getWorldQuaternion(Q()), new THREE.Vector3(1, 1, 1).multiply(root.getWorldScale(V3())));
+      const head = bones.Head; head.updateMatrixWorld(true);
+      // pose the head bone at its reference first so the offset is measured in the T-pose it was built for
+      const local = new THREE.Matrix4().copy(head.matrixWorld).invert().multiply(want);
+      local.decompose(hair.position, hair.quaternion, hair.scale); head.add(hair);
+    }
+    const group = new THREE.Group(); group.add(root);
+    const mixer = new THREE.AnimationMixer(root), act = {};
+    ['Idle', 'Walk', 'Run'].forEach(n => { act[n] = mixer.clipAction(body.clips[n]); act[n].play(); act[n].setEffectiveWeight(n === 'Idle' ? 1 : 0); });
+    let cur = 'Idle', seated = null, phase = Math.random() * 10; mixer.setTime(phase);
+    return {
+      group, root, bones, mixer, realistic: true, height: 1.8,
+      animate(speed, dt) {
+        const want = seated ? 'Idle' : speed < 0.25 ? 'Idle' : speed < 3.2 ? 'Walk' : 'Run';
+        if (want !== cur) { act[want].reset().setEffectiveWeight(1).play(); act[want].crossFadeFrom(act[cur], 0.25, false); cur = want; }
+        act.Walk.timeScale = Math.min(1.6, Math.max(0.6, speed / 1.45)); act.Run.timeScale = Math.min(1.5, Math.max(0.75, speed / 5.2));
+        mixer.update(dt);
+        if (seated) this.sitPose();
+      },
+      seat(kind) {
+        const onBike = kind === 'okada' || kind === 'bicycle';
+        seated = onBike ? kind : null; group.visible = kind === 'foot' || onBike;
+        group.position.set(0, onBike ? (kind === 'okada' ? 0.1 : 0.12) : 0, onBike ? -0.25 : 0);
+        if (onBike) { mixer.update(0); this.sitPose(); }
+      },
+      sitPose() {
+        const b = bones;
+        [['Left', 1], ['Right', -1]].forEach(([s, x]) => {
+          if (b[s + 'UpLeg'] && b[s + 'Leg'] && b[s + 'Foot']) { aim(root, b[s + 'UpLeg'], b[s + 'Leg'], new THREE.Vector3(x * 0.16, -0.12, 1)); aim(root, b[s + 'Leg'], b[s + 'Foot'], new THREE.Vector3(0, -1, 0.18)); }
+          if (b[s + 'Arm'] && b[s + 'ForeArm'] && b[s + 'Hand']) { aim(root, b[s + 'Arm'], b[s + 'ForeArm'], new THREE.Vector3(x * 0.3, -0.55, 0.78)); aim(root, b[s + 'ForeArm'], b[s + 'Hand'], new THREE.Vector3(x * 0.12, -0.15, 1)); }
+        });
+      }
+    };
+  }
+  return { load, create, state, BODIES };
+})();
+
+// ── people ──
+function avatar(look = {}) {
+  if (Chars.state.ready) { try { return Chars.create(look); } catch (e) { console.warn('character fallback', e); } }
+  const L = k => LOOK[k][clamp(look[k] | 0, 0, 7)];
+  const skin = L('skin'), hair = L('hair'), top = L('top'), bot = L('bottom'), st = clamp(look.style | 0, 0, 7);
+  const body = [box(.92, 1.0, .5, top, 0, 1.47, 0), box(.86, .3, .48, bot, 0, .98, 0), box(.32, .22, .3, skin, 0, 2.05, 0), box(.62, .64, .58, skin, 0, 2.47, 0), box(.1, .1, .02, '#141010', -.14, 2.52, .3), box(.1, .1, .02, '#141010', .14, 2.52, .3)];
+  const H = (g) => body.push(g);
+  if (st === 0) H(box(.64, .12, .6, hair, 0, 2.81, 0));
+  if (st === 1) H(sphere(.5, hair, 0, 2.86, -.05, .85));
+  if (st === 2) { H(box(.64, .14, .6, hair, 0, 2.82, 0)); for (let i = -2; i <= 2; i++) H(box(.09, .7, .09, hair, i * .13, 2.45, -.31)); }
+  if (st === 4) { H(box(.66, .22, .62, top, 0, 2.86, 0)); H(box(.6, .06, .36, top, 0, 2.76, .44)); }
+  if (st === 5) { H(cyl(.42, .36, .42, top, 0, 2.95, -.04, 10)); H(box(.9, .18, .7, top, 0, 3.12, -.04, .3)); }
+  if (st === 6) { H(box(.66, .16, .62, hair, 0, 2.83, 0)); [[-.33, 0], [.33, 0], [0, -.31], [-.22, -.28], [.22, -.28]].forEach(([x, z]) => H(box(.1, .8, .1, hair, x, 2.42, z))); }
+  if (st === 7) H(box(.6, .5, .56, hair, 0, 3.02, 0));
+  const g = new THREE.Group();
+  const bm = meshOf(body); g.add(bm);
+  const limb = (parts, x, y) => { const piv = new THREE.Group(); piv.position.set(x, y, 0); const m = meshOf(parts); piv.add(m); g.add(piv); return piv; };
+  const legs = [limb([box(.34, .78, .38, bot, 0, -.39, 0), box(.36, .16, .5, '#1d1f24', 0, -.82, .05)], -.22, .9), limb([box(.34, .78, .38, bot, 0, -.39, 0), box(.36, .16, .5, '#1d1f24', 0, -.82, .05)], .22, .9)];
+  const arms = [limb([box(.24, .7, .28, top, 0, -.35, 0), box(.2, .22, .22, skin, 0, -.8, 0)], -.6, 1.92), limb([box(.24, .7, .28, top, 0, -.35, 0), box(.2, .22, .22, skin, 0, -.8, 0)], .6, 1.92)];
+  return { group: g, legs, arms, phase: Math.random() * 6, height: 3.1 };
+}
+function animateAvatar(a, speed, dt) {
+  if (a.animate) { a.animate(speed, dt); return; }
+  if (a.seated) return;
+  a.phase += dt * (speed > 0.2 ? 2 + speed * 1.2 : 0);
+  const s = speed > 0.2 ? Math.sin(a.phase) * Math.min(.8, .25 + speed * .08) : 0;
+  a.legs[0].rotation.x = lerp(a.legs[0].rotation.x, s, .3); a.legs[1].rotation.x = lerp(a.legs[1].rotation.x, -s, .3);
+  a.arms[0].rotation.x = lerp(a.arms[0].rotation.x, -s * .8, .3); a.arms[1].rotation.x = lerp(a.arms[1].rotation.x, s * .8, .3);
+}
+function seatAvatar(a, kind) {
+  if (a.seat) { a.seat(kind); return; }
+  const sit = kind === 'okada' || kind === 'bicycle'; a.seated = sit;
+  a.legs.forEach(l => l.rotation.x = sit ? -1.2 : 0); a.arms.forEach(l => l.rotation.x = sit ? -1.0 : 0);
+  a.group.visible = kind === 'foot' || sit;
+  a.group.position.y = sit ? .55 : 0; a.group.position.z = sit ? -.25 : 0;
+}
+
+/* ═══════════════════════════ ACTORS ═══════════════════════════ */
+class Actor {
+  constructor(look, name, isMe) {
+    this.root = new THREE.Group(); this.look = look; this.av = avatar(look); this.root.add(this.av.group);
+    this.ride = 'foot'; this.rideMesh = null; this.x = 0; this.z = 0; this.yaw = 0; this.speed = 0;
+    this.tag = name ? textSprite(name, { size: 34, bg: isMe ? '#f5c518' : 'rgba(15,18,24,.78)', color: isMe ? '#1a1400' : '#f3efe4', weight: '700', font: "'Atkinson Hyperlegible', sans-serif", pad: 12, scale: this.av.height < 2 ? .0105 : .022 }) : null;
+    if (this.tag) { this.tag.position.y = this.av.height + 0.45; this.root.add(this.tag); }
+    scene.add(this.root);
+  }
+  setLook(look) { this.root.remove(this.av.group); this.look = look; this.av = avatar(look); this.root.add(this.av.group); this.setRide(this.ride, true); }
+  setRide(kind, force) {
+    if (kind === this.ride && !force) return;
+    this.ride = kind;
+    if (this.rideMesh) { this.root.remove(this.rideMesh); this.rideMesh = null; }
+    const m = rideMesh(kind); if (m) { this.rideMesh = m; this.root.add(m); }
+    seatAvatar(this.av, kind);
+    if (this.tag) this.tag.position.y = kind === 'danfo' ? 4.4 : ['car', 'patrol'].includes(kind) ? 3 : this.av.height + (kind === 'foot' ? 0.45 : 0.8);
+  }
+  bubble(text) {
+    if (this.bub) this.root.remove(this.bub);
+    this.bub = textSprite(text.length > 42 ? text.slice(0, 40) + '…' : text, { size: 30, bg: '#ffffff', color: '#1d1f24', weight: '700', font: "'Atkinson Hyperlegible', sans-serif", pad: 14, scale: this.av.height < 2 ? .0115 : .022 });
+    this.bub.position.y = (this.tag ? this.tag.position.y : this.av.height + 0.45) + 0.7; this.root.add(this.bub); clearTimeout(this.bt); this.bt = setTimeout(() => { this.root.remove(this.bub); this.bub = null; }, 6000);
+  }
+  place() { this.root.position.set(this.x, 0, this.z); this.root.rotation.y = this.yaw; }
+  dispose() { scene.remove(this.root); }
+}
+
+// NPC traffic on the road grid and pedestrians on the pavements
+const Traffic = {
+  cars: [], peds: [],
+  init() {
+    const n = Quality.high ? 18 : 10, colors = ['#f5c518', '#22a06b', '#2f6fdb', '#c2185b', '#f3efe4', '#1d1f24'];
+    for (let i = 0; i < n; i++) {
+      const kind = i % 3 === 0 ? 'danfo' : i % 3 === 1 ? 'keke' : 'car';
+      const mesh = kind === 'danfo' ? meshOf(danfoParts()) : kind === 'keke' ? meshOf(kekeParts(i % 2 ? '#22a06b' : '#f5c518')) : meshOf(carParts(colors[i % colors.length]));
+      scene.add(mesh);
+      const a = [Math.floor(rng() * 7), Math.floor(rng() * 7)];
+      this.cars.push({ mesh, from: a, to: this.next(a, null), t: rng(), speed: kind === 'keke' ? 8 : 11 + rng() * 4 });
+    }
+    const pn = Quality.high ? 16 : 8;
+    for (let i = 0; i < pn; i++) {
+      const a = new Actor({ body: rng() < 0.55 ? 0 : 1, skin: Math.floor(rng() * 5), hair: Math.floor(rng() * 3), top: Math.floor(rng() * 8), bottom: Math.floor(rng() * 8), style: Math.floor(rng() * 7) });
+      const horiz = rng() < .5, line = ROADS[Math.floor(rng() * 7)] + (rng() < .5 ? -8.3 : 8.3);
+      this.peds.push({ a, horiz, line, pos: -230 + rng() * 460, dir: rng() < .5 ? 1 : -1, speed: 1.4 + rng() * .8 });
+    }
+  },
+  next(node, prev) {
+    const opts = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dz]) => [node[0] + dx, node[1] + dz]).filter(([a, b]) => a >= 0 && a < 7 && b >= 0 && b < 7 && !(prev && a === prev[0] && b === prev[1]));
+    return opts[Math.floor(Math.random() * opts.length)];
+  },
+  update(dt) {
+    this.cars.forEach(c => {
+      const fx = ROADS[c.from[0]], fz = ROADS[c.from[1]], tx = ROADS[c.to[0]], tz = ROADS[c.to[1]];
+      c.t += dt * c.speed / 80;
+      if (c.t >= 1) { const prev = c.from; c.from = c.to; c.to = this.next(c.to, prev); c.t -= 1; return; }
+      const dx = Math.sign(tx - fx), dz = Math.sign(tz - fz);
+      const x = lerp(fx, tx, c.t) + dz * 3.4, z = lerp(fz, tz, c.t) - dx * 3.4;
+      c.mesh.position.set(x, 0, z);
+      const target = Math.atan2(dx, dz); let d = target - c.mesh.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d)); c.mesh.rotation.y += d * Math.min(1, dt * 8);
+    });
+    this.peds.forEach(p => {
+      p.pos += p.dir * p.speed * dt; if (Math.abs(p.pos) > 236) { p.dir *= -1; p.pos = clamp(p.pos, -236, 236); }
+      p.a.x = p.horiz ? p.pos : p.line; p.a.z = p.horiz ? p.line : p.pos; p.a.yaw = p.horiz ? (p.dir > 0 ? Math.PI / 2 : -Math.PI / 2) : (p.dir > 0 ? 0 : Math.PI);
+      p.a.place();
+      const near = !Game.me || Math.hypot(p.a.x - camera.position.x, p.a.z - camera.position.z) < 150;
+      p.a.root.visible = near; if (near) animateAvatar(p.a.av, p.speed, dt);
+    });
+  }
+};
+
+/* ═══════════════════════════ INPUT ═══════════════════════════ */
+const Input = {
+  keys: new Set(), joy: { x: 0, y: 0 }, block: false, camYaw: Math.PI, camPitch: 0.5, zoom: 1, lastDrag: 0,
+  init() {
+    addEventListener('keydown', e => {
+      if (e.target.closest && e.target.closest('input,textarea,select')) { if (e.key === 'Enter' && e.target.id === 'chatInput') sendChat(); return; }
+      const k = e.key.toLowerCase(); this.keys.add(k);
+      if (Game.photo) { Game.setPhoto(false); return; }
+      if (k === 'escape') { if (Sheet.isOpen && !Sheet.locked) Sheet.close(); else if (!$('#phone').hidden) Phone.close(); }
+      if (this.block) return;
+      if (k === 'e' || k === 'enter') $('#actBtn').hidden || $('#actBtn').click();
+      if (k === 'p') Phone.open(); if (k === 'm') Phone.open('map'); if (k === 'r') Game.cycleRide(); if (k === 't') Phone.open('chat');
+    });
+    addEventListener('keyup', e => this.keys.delete(e.key.toLowerCase()));
+    addEventListener('blur', () => this.keys.clear());
+    // camera drag and pinch on the canvas
+    const pts = new Map(); let pinch = 0;
+    canvas.addEventListener('pointerdown', e => { if (Game.photo) { Game.setPhoto(false); return; } pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); try { canvas.setPointerCapture(e.pointerId); } catch (err) { } });
+    canvas.addEventListener('pointermove', e => {
+      const p = pts.get(e.pointerId); if (!p) return;
+      if (pts.size === 2) { const [a, b] = [...pts.values()]; const d0 = Math.hypot(a.x - b.x, a.y - b.y); p.x = e.clientX; p.y = e.clientY; const [c, d] = [...pts.values()]; const d1 = Math.hypot(c.x - d.x, c.y - d.y); if (pinch) this.zoom = clamp(this.zoom * d0 / d1, .55, 2.2); pinch = 1; return; }
+      this.camYaw -= (e.clientX - p.x) * 0.006; this.camPitch = clamp(this.camPitch + (e.clientY - p.y) * 0.004, 0.12, 1.2);
+      p.x = e.clientX; p.y = e.clientY; this.lastDrag = performance.now();
+    });
+    const up = e => { pts.delete(e.pointerId); if (pts.size < 2) pinch = 0; };
+    canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
+    canvas.addEventListener('wheel', e => { this.zoom = clamp(this.zoom * (e.deltaY > 0 ? 1.1 : .9), .55, 2.2); e.preventDefault(); }, { passive: false });
+    // joystick
+    const joy = $('#joy'), knob = $('#joyKnob'); let jid = null, cx = 0, cy = 0;
+    if (matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window) joy.hidden = false;
+    joy.addEventListener('pointerdown', e => { jid = e.pointerId; const r = joy.getBoundingClientRect(); cx = r.left + r.width / 2; cy = r.top + r.height / 2; try { joy.setPointerCapture(jid); } catch (err) { } move(e); });
+    const move = e => { if (e.pointerId !== jid) return; let dx = e.clientX - cx, dy = e.clientY - cy; const d = Math.hypot(dx, dy), m = 46; if (d > m) { dx *= m / d; dy *= m / d; } knob.style.transform = `translate(${dx}px,${dy}px)`; this.joy.x = dx / m; this.joy.y = dy / m; };
+    joy.addEventListener('pointermove', move);
+    const end = e => { if (e.pointerId !== jid) return; jid = null; this.joy.x = this.joy.y = 0; knob.style.transform = ''; };
+    joy.addEventListener('pointerup', end); joy.addEventListener('pointercancel', end);
+  },
+  axis() {
+    if (this.block || Game.photo) return { x: 0, y: 0 };
+    const k = this.keys; let x = this.joy.x, y = this.joy.y;
+    if (k.has('w') || k.has('arrowup')) y -= 1; if (k.has('s') || k.has('arrowdown')) y += 1;
+    if (k.has('a') || k.has('arrowleft')) x -= 1; if (k.has('d') || k.has('arrowright')) x += 1;
+    const m = Math.hypot(x, y); if (m > 1) { x /= m; y /= m; } return { x, y };
+  }
+};
+
+/* ═══════════════════════════ GAME STATE ═══════════════════════════ */
+const Game = {
+  state: null, token: null, me: null, fetchedAt: 0, serverOffset: 0, ride: 'foot', target: null, nearPlace: null, photo: false,
+  feed: { news: [], chat: [], lastNews: 0, lastChat: 0 }, cpBusy: false, finishing: false,
+  serverNow() { return Date.now() + this.serverOffset; },
+  apply(s) {
+    if (!s) return;
+    const prevShift = this.state && this.state.shift;
+    this.state = s; this.fetchedAt = Date.now();
+    if (s.server_time) this.serverOffset = Date.parse(s.server_time) - Date.now();
+    if (this.me && s.me && JSON.stringify(this.me.look) !== JSON.stringify(s.me.look)) { this.me.setLook(s.me.look); Net.track(); }
+    // job vehicles
+    const sh = s.shift;
+    if (sh && (sh.job === 'driver' || sh.job === 'police')) this.setRide(sh.job === 'driver' ? 'danfo' : 'patrol', true);
+    else if (['danfo', 'patrol'].includes(this.ride)) this.setRide('foot', true);
+    if (prevShift && !sh) this.target = null;
+    HUD.render();
+    if (!$('#phone').hidden) Phone.refresh();
+  },
+  async act(fn, args) { const r = await Api.call(fn, Object.assign({ p_token: this.token }, args || {})); if (r && r.me) this.apply(r); else if (r && r.state) this.apply(r.state); return r; },
+  hunger() { const s = this.state; if (!s) return 0; return clamp(s.me.hunger - (Date.now() - this.fetchedAt) / 36e5 * 12, 0, 100); },
+  rides() { const v = (this.state && this.state.me.vehicles) || []; return ['foot', ...['bicycle', 'okada', 'car'].filter(k => v.includes(k))]; },
+  setRide(kind, force) {
+    if (!force && this.state && this.state.shift && ['driver', 'police'].includes(this.state.shift.job)) { toast('You are on shift. Finish or quit it first.'); return; }
+    this.ride = kind; if (this.me) this.me.setRide(kind); $('#rideLabel').textContent = RIDES[kind].label; Net.track();
+  },
+  cycleRide() { const r = this.rides(); if (r.length < 2) { toast('Buy a bicycle, okada or car at Motor Mart.'); return; } this.setRide(r[(r.indexOf(this.ride) + 1) % r.length]); },
+  setPhoto(on) { this.photo = on; $('#hud').hidden = on; let h = $('#photoHint'); if (on) { if (!h) { h = document.createElement('div'); h.id = 'photoHint'; h.className = 'photo-hint'; h.textContent = 'Photo mode: drag to frame your shot, tap to exit'; document.body.appendChild(h); } } else if (h) h.remove(); }
+};
+
+/* ═══════════════════════════ PLAYER CONTROL ═══════════════════════════ */
+const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
+function collide(x, z, r) {
+  for (const c of colliders) {
+    if (x + r < c.x0 || x - r > c.x1 || z + r < c.z0 || z - r > c.z1) continue;
+    const nx = clamp(x, c.x0, c.x1), nz = clamp(z, c.z0, c.z1); let dx = x - nx, dz = z - nz; const d = Math.hypot(dx, dz);
+    if (d > 0.0001) { if (d < r) { x = nx + dx / d * r; z = nz + dz / d * r; } }
+    else { const l = x - c.x0, rr = c.x1 - x, t = z - c.z0, b = c.z1 - z, m = Math.min(l, rr, t, b); if (m === l) x = c.x0 - r; else if (m === rr) x = c.x1 + r; else if (m === t) z = c.z0 - r; else z = c.z1 + r; }
+  }
+  return [clamp(x, -258, 258), clamp(z, -258, 308)];
+}
+function updatePlayer(dt) {
+  const me = Game.me; if (!me) return;
+  const ax = Input.axis(), mag = Math.hypot(ax.x, ax.y);
+  const sp = RIDES[Game.ride].speed * (Game.hunger() < 10 && Game.ride === 'foot' ? 0.7 : 1);
+  if (mag > 0.05) {
+    const ang = Math.atan2(-ax.x, -ax.y) + Input.camYaw + Math.PI;
+    const vx = Math.sin(ang) * sp * mag, vz = Math.cos(ang) * sp * mag;
+    const r = ['foot', 'bicycle', 'okada'].includes(Game.ride) ? .6 : 1.6;
+    [me.x, me.z] = collide(me.x + vx * dt, me.z + vz * dt, r);
+    let d = ang - me.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); me.yaw += d * Math.min(1, dt * (Game.ride === 'foot' ? 12 : 6));
+    me.speed = sp * mag;
+    if (performance.now() - Input.lastDrag > 1600 && Game.ride !== 'foot') { let c = me.yaw + Math.PI - Input.camYaw; c = Math.atan2(Math.sin(c), Math.cos(c)); Input.camYaw += c * Math.min(1, dt * 1.2); }
+  } else me.speed = 0;
+  me.place(); animateAvatar(me.av, Game.ride === 'foot' ? me.speed : 0, dt);
+  // camera
+  const ah = me.av.height || 3.1, dist = (Game.ride === 'foot' ? (ah < 2 ? 5.6 : 13) : Game.ride === 'danfo' ? 19 : ['okada', 'bicycle'].includes(Game.ride) && ah < 2 ? 8 : 16) * Input.zoom;
+  const cy = Math.sin(Input.camPitch) * dist, ch = Math.cos(Input.camPitch) * dist;
+  camPos.set(me.x + Math.sin(Input.camYaw) * ch, 1.6 + cy, me.z + Math.cos(Input.camYaw) * ch);
+  camera.position.lerp(camPos, Math.min(1, dt * 10));
+  camLook.set(me.x, Game.ride === 'foot' ? ah * 0.8 : ah < 2 && ['okada', 'bicycle'].includes(Game.ride) ? 1.5 : 2.2, me.z); camera.lookAt(camLook);
+  sun.position.set(me.x + 60, 110, me.z + 40); sun.target.position.set(me.x, 0, me.z);
+  Net.sendPos();
+}
+
+/* ═══════════════════════════ WAYPOINT & PLACES ═══════════════════════════ */
+const Guide = {
+  beacon: null, arrow: null,
+  init() {
+    this.beacon = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.2, 70, 18, 1, true), new THREE.MeshBasicMaterial({ color: '#f5c518', transparent: true, opacity: .28, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+    this.beacon.geometry.translate(0, 35, 0); this.beacon.visible = false; scene.add(this.beacon);
+    const ag = new THREE.ConeGeometry(.6, 1.6, 4); ag.rotateX(Math.PI / 2);
+    this.arrow = new THREE.Mesh(ag, new THREE.MeshBasicMaterial({ color: '#f5c518' })); this.arrow.visible = false; scene.add(this.arrow);
+  },
+  update(t) {
+    const tg = Game.target, me = Game.me;
+    this.beacon.visible = this.arrow.visible = !!(tg && me);
+    if (!tg || !me) return;
+    this.beacon.position.set(tg.x, 0, tg.z); this.beacon.material.opacity = .22 + Math.sin(t * 3) * .08;
+    this.arrow.position.set(me.x, me.ride === 'danfo' ? 5.6 : me.ride === 'foot' ? me.av.height + 1.1 : 4.4, me.z); this.arrow.scale.setScalar(me.ride === 'foot' && me.av.height < 2 ? 0.6 : 1); this.arrow.rotation.y = Math.atan2(tg.x - me.x, tg.z - me.z);
+  }
+};
+function nearestPlace() {
+  const me = Game.me; if (!me) return null;
+  const r = Game.ride === 'foot' ? 7 : 12;
+  let best = null, bd = r;
+  PLACES.forEach(p => { const d = Math.hypot(p.x - me.x, p.z - me.z); if (d < bd) { bd = d; best = p; } });
+  return best;
+}
+function shiftTarget() {
+  const sh = Game.state && Game.state.shift;
+  if (!sh || !(sh.job === 'driver' || sh.job === 'police')) return null;
+  return sh.route[sh.progress] || null;
+}
+
+/* ═══════════════════════════ HUD ═══════════════════════════ */
+const HUD = {
+  render() {
+    const s = Game.state; if (!s) return;
+    $('#hudMoney').textContent = fmt(s.me.balance);
+    this.tick();
+  },
+  tick() {
+    const s = Game.state; if (!s) return;
+    const h = Game.hunger(); const bar = $('#hungerBar'); bar.firstElementChild.style.width = h + '%'; bar.classList.toggle('low', h < 25);
+    // Veyra clock: one real minute is one hour in the city, the same for everyone
+    const hr = (Date.now() / 60000) % 24; const hh = Math.floor(hr), mm = Math.floor((hr - hh) * 60);
+    $('#hudClock').textContent = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+    // shift tracker
+    const sh = s.shift, tr = $('#tracker');
+    tr.hidden = !sh;
+    if (sh) {
+      const left = Math.max(0, Date.parse(sh.expires_at) - Game.serverNow()); const m = Math.floor(left / 60000), sec = Math.floor(left / 1000) % 60;
+      $('#tTime').textContent = m + ':' + String(sec).padStart(2, '0');
+      $('#tJob').textContent = JOBS[sh.job].title + ' shift';
+      if (sh.job === 'driver' || sh.job === 'police') {
+        const t = shiftTarget(); const me = Game.me;
+        if (t) { $('#tGoal').textContent = (sh.job === 'driver' ? 'Stop ' : 'Call ') + (sh.progress + 1) + ' of ' + sh.route.length + ': ' + t.name; $('#tMeta').textContent = me ? Math.round(Math.hypot(t.x - me.x, t.z - me.z)) + ' m away' : ''; }
+        else { $('#tGoal').textContent = 'All stops done'; $('#tMeta').textContent = 'Collecting your pay…'; }
+      } else { $('#tGoal').textContent = 'At ' + placeById[JOBS[sh.job].place].name; $('#tMeta').textContent = 'Go inside to work'; }
+    }
+    const np = nearestPlace(); Game.nearPlace = np;
+    const act = $('#actBtn');
+    if (np && !Input.block) { act.hidden = false; act.textContent = np.id === 'beach' || np.id === 'stadium' ? 'Visit ' + np.name : 'Enter ' + np.name; }
+    else act.hidden = true;
+  }
+};
+
+/* ═══════════════════════════ PLACES: what you can do there ═══════════════════════════ */
+const Places = {
+  open(p) {
+    const fn = this[p.id]; if (fn) fn.call(this, p);
+  },
+  jobBlock(job) {
+    const j = JOBS[job], s = Game.state, sh = s.shift, lv = level((s.me.xp || {})[job]);
+    const active = sh && sh.job === job, other = sh && sh.job !== job;
+    return `<div class="card"><div><h3>${esc(j.title)} <span class="pill">Level ${lv}</span></h3><p>${esc(j.blurb)}</p></div><div class="price">${fmt(j.pay)}</div></div>
+      <button class="btn wide" id="jobBtn" ${other ? 'disabled' : ''}>${active ? 'Continue shift' : other ? 'Finish your other shift first' : 'Start shift'}</button>
+      <p class="note">Pay is before ${Math.round(s.city.income_tax * 100)}% income tax. Hungry workers earn 40% less; having a home adds 10%; each level adds 5%.</p>`;
+  },
+  bindJob(job) { const b = $('#jobBtn'); if (b) b.onclick = () => busy(b, () => Shifts.start(job)); },
+  park(p) { Sheet.open(head('Bus Park', p.name, 'Danfos leave for every corner of Port Veyra.') + `<div class="stack">${this.jobBlock('driver')}</div>`, () => this.bindJob('driver')); },
+  police(p) { Sheet.open(head('Veyra Police Department', p.name, 'Patrol officers answer calls across the city.') + `<div class="stack">${this.jobBlock('police')}</div>`, () => this.bindJob('police')); },
+  newsroom(p) {
+    const s = Game.state, ready = s.me.story_ready_at && Date.parse(s.me.story_ready_at) > Game.serverNow();
+    Sheet.open(head('Newsroom', p.name, 'Every story you file runs on the city feed with your name on it.') + `<div class="stack">${this.jobBlock('journalist')}${ready ? `<p class="note">The editor takes one story every 10 minutes.</p>` : ''}</div>`, () => this.bindJob('journalist'));
+  },
+  cityhall(p) {
+    const c = Game.state.city;
+    Sheet.open(head('Port Veyra', p.name, c.mayor ? 'Mayor ' + c.mayor.name : 'The mayor\'s office is empty until the next election.') +
+      `<div class="stack">${this.jobBlock('clerk')}<button class="btn ghost wide" id="toGov">Elections and city budget</button></div>`, () => { this.bindJob('clerk'); $('#toGov').onclick = () => { Sheet.close(); Phone.open('city'); }; });
+  },
+  bank(p) {
+    const s = Game.state;
+    Sheet.open(head('Veyra Bank', 'Your account', '₣V is game money. It has no real-world value and can never be cashed out.') +
+      `<div class="wallet"><small>Current account</small><b>${fmt(s.me.balance)}</b><span>${esc(s.me.name)}</span></div>
+       <div class="stack"><button class="btn wide" id="bkSend">Send money</button><button class="btn ghost wide" id="bkHist">Transactions</button></div>`,
+      () => { $('#bkSend').onclick = () => { Sheet.close(); Phone.open('bank'); }; $('#bkHist').onclick = () => { Sheet.close(); Phone.open('bank'); }; });
+  },
+  async market(p) {
+    let m; try { m = await Api.call('vibe_market'); } catch (e) { return showErr(e); }
+    const s = Game.state, b = s.business, meId = s.me.id;
+    const rows = [{ id: '', name: m.npc.name, owner: 'Market stall', price: m.npc.price }, ...m.bukas.filter(x => x.owner_id !== meId)].map(x =>
+      `<div class="card"><div><h3>${esc(x.name)}</h3><p>${esc(x.owner)} · jollof, beans and plantain</p></div><div class="price">${fmt(x.price)}</div><button class="btn green" data-buy="${esc(x.id)}" data-price="${x.price}">Eat</button></div>`).join('');
+    Sheet.open(head('Food', p.name, 'A plate fills your food bar by 45. Sales tax goes to the city.') +
+      `<div class="stack">${rows}</div><div class="section-title">Your buka</div>${b ? `<div class="card"><div><h3>${esc(b.name)}</h3><p>${b.plates_sold.toLocaleString('en-US')} plates sold · ${fmt(b.price)} a plate</p></div><button class="btn" id="mkMine">Manage</button></div>` :
+        `<div class="card"><div><h3>Open a buka</h3><p>Sell plates to customers all day, even while you are offline. Licence fee goes to the city.</p></div><div class="price">${fmt(250000)}</div></div><button class="btn ghost wide" id="mkOpen">Open my buka</button>`}`,
+      el => {
+        el.querySelectorAll('[data-buy]').forEach(btn => btn.onclick = () => busy(btn, async () => { await Game.act('vibe_buy', { p_item: 'plate', p_business: btn.dataset.buy || null }); toast('You ate. Food bar refilled.', 'ok'); }));
+        const mo = $('#mkOpen'); if (mo) mo.onclick = () => this.openBuka();
+        const mm = $('#mkMine'); if (mm) mm.onclick = () => { Sheet.close(); Phone.open('market'); };
+      });
+  },
+  openBuka() {
+    Sheet.open(head('Oja Market', 'Open your buka', 'Licence fee ₣250,000. Cheaper plates sell more; demand pauses after 12 hours until you collect.') +
+      `<div class="stack"><div class="field"><label for="bkName">Buka name</label><input id="bkName" maxlength="24" placeholder="e.g. Mama Ngozi's Pot" autofocus></div>
+       <div class="field"><label for="bkPrice">Price per plate (₣1,000 to ₣20,000)</label><input id="bkPrice" type="number" inputmode="numeric" min="1000" max="20000" step="500" value="3500"></div>
+       <button class="btn wide" id="bkGo">Pay ₣250,000 and open</button></div>`, () => {
+      confirmTap($('#bkGo'), 'Tap again to pay ₣250,000', async () => { await Game.act('vibe_open_buka', { p_name: $('#bkName').value, p_price: Math.round(+$('#bkPrice').value) }); Sheet.close(); toast('Your buka is open at Oja Market.', 'ok'); });
+    });
+  },
+  estate(p) {
+    const s = Game.state, home = s.me.home;
+    const row = (k, h) => `<div class="card"><div><h3>${esc(h.label)} ${home === k ? '<span class="pill good">Yours</span>' : ''}</h3><p>${esc(h.blurb)}${h.rent ? ' Rent is charged daily from your account.' : ''}</p></div><div class="price">${h.rent ? fmt(h.rent) + '/day' : fmt(h.price)}</div></div>
+      ${home === k ? '' : `<button class="btn ${h.price ? '' : 'ghost'} wide" data-home="${k}">${h.price ? 'Buy for ' + fmt(h.price) : 'Rent for ' + fmt(h.rent) + ' a day'}</button>`}`;
+    const paid = home && home !== 'duplex' && s.me.rent_paid_until ? `<p class="note">Rent paid until ${new Date(s.me.rent_paid_until).toLocaleString()}. Fall more than 3 days behind and you are evicted.</p>` : '';
+    Sheet.open(head('Housing', p.name, home ? 'A home adds 10% to every shift you work.' : 'You are sleeping at the bus park. A home adds 10% to every shift.') +
+      `<div class="stack">${['room', 'flat', 'duplex'].map(k => row(k, HOMES[k])).join('')}${paid}</div>`, el => {
+      el.querySelectorAll('[data-home]').forEach(b => confirmTap(b, 'Tap again to confirm', async () => { await Game.act('vibe_buy', { p_item: 'home_' + b.dataset.home }); Sheet.close(); toast('Welcome home.', 'ok'); }));
+    });
+  },
+  dealer(p) {
+    const owned = Game.state.me.vehicles || [];
+    const row = k => { const r = RIDES[k]; const have = owned.includes(k); return `<div class="card"><div><h3>${r.label} ${have ? '<span class="pill good">Owned</span>' : ''}</h3><p>Top speed ${Math.round(r.speed * 3.6)} km/h, on foot is ${Math.round(RIDES.foot.speed * 3.6)}</p></div><div class="price">${fmt(r.price)}</div>${have ? '' : `<button class="btn" data-ride="${k}">Buy</button>`}</div>`; };
+    Sheet.open(head('Vehicles', p.name, 'Switch rides any time with the ride button or the R key.') + `<div class="stack">${['bicycle', 'okada', 'car'].map(row).join('')}</div>`, el => {
+      el.querySelectorAll('[data-ride]').forEach(b => confirmTap(b, 'Confirm', async () => { await Game.act('vibe_buy', { p_item: b.dataset.ride }); Sheet.close(); Game.setRide(b.dataset.ride); toast('Enjoy your new ' + RIDES[b.dataset.ride].label.toLowerCase() + '.', 'ok'); }));
+    });
+  },
+  stadium(p) { this.spot(p, 'Home of Port Veyra United. Match days are loud.'); },
+  beach(p) { this.spot(p, 'Sand, suya and the lighthouse at sunset.'); },
+  spot(p, line) {
+    Sheet.open(head('Photo spot', p.name, line) + `<button class="btn wide" id="photoGo">Take a photo</button><p class="note">Photo mode hides the screen so you can frame a shot to share.</p>`, () => { $('#photoGo').onclick = () => { Sheet.close(); Game.setPhoto(true); }; });
+  }
+};
+
+/* ═══════════════════════════ SHIFTS ═══════════════════════════ */
+const Shifts = {
+  async start(job) {
+    const s = await Game.act('vibe_start_shift', { p_job: job });
+    Sheet.close();
+    const sh = s.shift;
+    if (job === 'driver' || job === 'police') { toast(job === 'driver' ? 'Your danfo is ready. Follow the yellow beacon.' : 'Patrol car ready. First call is on the beacon.', 'ok'); }
+    else if (job === 'clerk') this.clerk(sh);
+    else this.journalist(sh);
+  },
+  // called every frame from the loop: arrival at a driver/police stop
+  async check() {
+    const sh = Game.state && Game.state.shift; const me = Game.me;
+    if (!sh || !(sh.job === 'driver' || sh.job === 'police') || Game.cpBusy || Game.finishing || Date.now() < (Game.backoff || 0)) return;
+    const t = shiftTarget();
+    if (!t) { Game.finishing = true; const pre = Game.state.me; try { const r = await Game.act('vibe_finish_shift', { p_shift: sh.id, p_answers: [] }); this.payslip(sh.job, r, pre); } catch (e) { showErr(e); Game.backoff = Date.now() + 5000; } finally { Game.finishing = false; } return; }
+    Game.target = { x: t.x, z: t.z, name: t.name };
+    if (Math.hypot(t.x - me.x, t.z - me.z) > 10) return;
+    Game.cpBusy = true;
+    try {
+      await Game.act('vibe_checkpoint', { p_shift: sh.id, p_index: sh.progress });
+      toast(sh.job === 'driver' ? 'Passengers off at ' + t.name + '.' : 'Call at ' + t.name + ' handled.', 'ok');
+    } catch (e) { if (e.code !== 'TOO_FAST') showErr(e); Game.backoff = Date.now() + (e.code === 'TOO_FAST' ? 1500 : 5000); }
+    finally { Game.cpBusy = false; }
+  },
+  payslip(job, r, pre) {
+    const s = Game.state, notes = [], was = pre || s.me;
+    if (was.hunger < 25) notes.push('You worked hungry: 40% less pay.'); if (was.home) notes.push('Home bonus: +10%.');
+    const lv = level((was.xp || {})[job]); if (lv) notes.push('Level ' + lv + ': +' + lv * 5 + '%.');
+    if (level((s.me.xp || {})[job]) > lv) notes.push('Promoted to level ' + level((s.me.xp || {})[job]) + '.');
+    Sheet.open(head('Payslip', JOBS[job].title + ' shift', r.correct || r.wrong ? `${r.correct} right, ${r.wrong} wrong.` : 'Shift complete.') +
+      `<dl class="kv"><dt>Gross pay</dt><dd>${fmt(r.gross)}</dd><dt>Income tax (${Math.round(s.city.income_tax * 100)}%)</dt><dd>−${fmt(r.tax)}</dd><dt class="total">Paid to Veyra Bank</dt><dd class="total">${fmt(r.net)}</dd></dl>
+       ${notes.length ? `<p class="note" style="margin-top:10px">${esc(notes.join(' '))}</p>` : ''}<div class="stack" style="margin-top:14px"><button class="btn wide" data-close>Done</button></div>`);
+    toast('+' + fmt(r.net) + ' paid', 'money');
+  },
+  waitFor(sh, sec, el, label) {
+    return new Promise(res => {
+      const t = () => { const left = sec - (Game.serverNow() - Date.parse(sh.started_at)) / 1000; if (left <= 0) return res(); if (el) el.textContent = label + ' ' + Math.ceil(left) + ' s'; setTimeout(t, 250); };
+      t();
+    });
+  },
+  clerk(sh) {
+    const ans = []; let i = 0;
+    const draw = () => {
+      if (i >= sh.cards.length) return this.clerkSubmit(sh, ans);
+      const c = sh.cards[i];
+      Sheet.locked = true;
+      Sheet.open(head('Permit desk · ' + (i + 1) + ' of ' + sh.cards.length, 'Approve or reject?') +
+        `<div class="rules"><b>Approve only if</b> the fee is paid, tax is cleared, and the business is allowed in that zone. Salons: Residential or Market. Nightclubs: Market or Industrial. Workshops: Industrial only. Bukas and pharmacies: any zone.</div>
+         <div class="permit" style="margin-top:12px"><div class="ph"><span>Port Veyra permit application</span><span>No. ${String(1000 + i * 37).padStart(5, '0')}</span></div><h3>${esc(c.business)}</h3>
+         <dl><dt>Applicant</dt><dd>${esc(c.applicant)}</dd><dt>Zone</dt><dd>${esc(c.zone)}</dd><dt>Licence fee</dt><dd>${c.fee_paid ? 'Paid' : 'Not paid'}</dd><dt>Tax clearance</dt><dd>${c.tax_cleared ? 'Cleared' : 'Missing'}</dd></dl></div>
+         <div class="row-btns" style="margin-top:14px"><button class="btn red wide" id="pRej">Reject</button><button class="btn green wide" id="pApp">Approve</button></div>`,
+        () => { $('#pApp').onclick = () => { ans.push(true); i++; draw(); }; $('#pRej').onclick = () => { ans.push(false); i++; draw(); }; $('#sheet .x').onclick = () => { Sheet.locked = false; Sheet.close(); toast('Shift paused. Come back to City Hall to continue.'); }; });
+    };
+    draw();
+  },
+  async clerkSubmit(sh, ans) {
+    Sheet.open(head('Permit desk', 'Stamping your decisions') + `<p id="stampMsg">Stamping…</p>`);
+    await this.waitFor(sh, 13, $('#stampMsg'), 'The supervisor checks your stamps:');
+    Sheet.locked = false;
+    const pre = Game.state.me;
+    try { const r = await Game.act('vibe_finish_shift', { p_shift: sh.id, p_answers: ans }); this.payslip('clerk', r, pre); } catch (e) { Sheet.close(); showErr(e); }
+  },
+  journalist(sh) {
+    const angles = h => [h, 'Port Veyra reacts: ' + h.replace(/\.$/, ''), 'Why everyone is talking about this: ' + h.replace(/\.$/, '')].map(x => x.slice(0, 90));
+    let pick = 0;
+    const draw = () => {
+      Sheet.open(head('Veyra Daily', 'File a story', 'Pick what you are covering, then write the headline readers will see.') +
+        `<div class="stack">${sh.events.map((e, k) => `<button class="card" style="text-align:left;border-color:${k === pick ? 'var(--danfo)' : 'var(--line)'}" data-ev="${k}"><div><h3>${esc(e.headline)}</h3></div></button>`).join('')}
+        <div class="field"><label for="hl">Your headline (10 to 90 characters)</label><textarea id="hl" maxlength="90">${esc(angles(sh.events[pick].headline)[1])}</textarea></div>
+        <p class="note">Publish only what you would stand behind. Stories carry your name.</p>
+        <button class="btn wide" id="hlGo">File story</button><p class="note" id="hlMsg"></p></div>`, el => {
+        el.querySelectorAll('[data-ev]').forEach(b => b.onclick = () => { pick = +b.dataset.ev; draw(); });
+        $('#hlGo').onclick = () => busy($('#hlGo'), async () => {
+          const text = $('#hl').value.trim(); if (text.length < 10) { toast('Headlines need at least 10 characters.', 'err'); return; }
+          await this.waitFor(sh, 16, $('#hlMsg'), 'The editor is reading it:');
+          const pre = Game.state.me;
+          const r = await Game.act('vibe_finish_shift', { p_shift: sh.id, p_answers: { event: pick, headline: text } });
+          this.payslip('journalist', r, pre); Feed.poll(); Net.announce();
+        });
+      });
+    };
+    draw();
+  },
+  async quit() { try { await Game.act('vibe_quit_shift'); Game.target = null; toast('Shift ended. No pay for unfinished work.'); } catch (e) { showErr(e); } }
+};
+
+/* ═══════════════════════════ PHONE ═══════════════════════════ */
+const ICON = {
+  bank: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/></svg>',
+  jobs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>',
+  news: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  city: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>',
+  map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z M9 4v14M15 6v14"/></svg>',
+  market: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9l2-5h12l2 5M4 9h16v11H4zM9 20v-6h6v6"/></svg>',
+  me: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'
+};
+const APPS = [['bank', 'Bank', '#f5c518', '#1a1400'], ['jobs', 'Jobs', '#22a06b', '#04140c'], ['news', 'News', '#ff6b4a', '#1d0a04'], ['chat', 'Chat', '#5cc8e0', '#04161b'], ['city', 'City Hall', '#f3efe4', '#1d1f24'], ['map', 'Map', '#7e57c2', '#fff'], ['market', 'My buka', '#c2185b', '#fff'], ['me', 'Profile', '#2f6fdb', '#fff']];
+const Phone = {
+  view: 'home',
+  open(view = 'home') { $('#phone').hidden = false; Input.block = true; this.go(view); },
+  close() { $('#phone').hidden = true; $('#chatBar').hidden = true; Input.block = Sheet.isOpen || !$('#onboard').hidden; },
+  go(view) { this.view = view; $('#phBack').hidden = view === 'home'; $('#chatBar').hidden = view !== 'chat'; this.refresh(true); if (view === 'bank') this.loadHistory(); if (view === 'chat') { const b = $('#phBody'); b.scrollTop = b.scrollHeight; } },
+  refresh(force) {
+    const s = Game.state; if (!s) return;
+    const v = this.view, b = $('#phBody');
+    const title = { home: 'Veyra phone', bank: 'Veyra Bank', jobs: 'Jobs', news: 'Veyra Daily', chat: 'City chat', city: 'City Hall', map: 'Map', market: 'My buka', me: 'Profile' }[v];
+    $('#phTitle').textContent = title;
+    if (v === 'map') { if (!b.querySelector('#mapCv')) { b.innerHTML = '<div class="mapwrap"><canvas id="mapCv" width="640" height="640" aria-label="Map of Port Veyra"></canvas></div><p class="note">Tap a place to set a waypoint. Yellow is you, blue dots are other players.</p><div class="list" id="mapList"></div>'; this.bindMap(); } this.drawMap(); return; }
+    if (v === 'chat') { this.renderChat(); return; }
+    // never redraw under the player's fingers: a half-confirmed button or a field being typed in
+    if (!force && (b.querySelector('[data-armed]') || (b.contains(document.activeElement) && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)))) { this.stale = true; return; }
+    this.stale = false;
+    const keepScroll = b.scrollTop;
+    b.innerHTML = this['v_' + v](s);
+    b.scrollTop = keepScroll;
+    this['b_' + v] && this['b_' + v](s);
+  },
+  v_home(s) {
+    return `<div class="wallet"><small>Balance</small><b>${fmt(s.me.balance)}</b><span>${esc(s.me.name)} · ${s.me.shifts} shift${s.me.shifts === 1 ? '' : 's'} worked</span></div>
+      <div class="apps">${APPS.map(([k, n, bg, fg]) => `<button class="app" data-app="${k}"><i style="background:${bg};color:${fg}">${ICON[k]}</i>${n}</button>`).join('')}</div>
+      <p class="note" style="margin-top:22px">${Api.mode === 'online' ? 'Connected to the Port Veyra server.' : 'Offline preview. Progress stays on this device.'} ₣V is game money with no real-world value.</p>`;
+  },
+  b_home() { $('#phBody').querySelectorAll('[data-app]').forEach(b => b.onclick = () => this.go(b.dataset.app)); },
+  v_bank(s) {
+    const lock = !s.me.can_transfer;
+    return `<div class="wallet"><small>Current account</small><b>${fmt(s.me.balance)}</b><span>₣V has no cash value and can't be withdrawn.</span></div>
+      <div class="section-title">Send money</div>
+      ${lock ? `<p class="note">Transfers unlock after 3 completed shifts and your first hour in Veyra. You have ${s.me.shifts} of 3.</p>` : ''}
+      <div class="stack"><div class="field"><label for="tfTo">Citizen name</label><input id="tfTo" maxlength="16" ${lock ? 'disabled' : ''}></div>
+      <div class="field"><label for="tfAmt">Amount (₣100 to ₣500,000, up to ₣500,000 a day)</label><input id="tfAmt" type="number" inputmode="numeric" min="100" max="500000" ${lock ? 'disabled' : ''}></div>
+      <div class="field"><label for="tfMemo">Note (optional)</label><input id="tfMemo" maxlength="60" ${lock ? 'disabled' : ''}></div>
+      <button class="btn wide" id="tfGo" ${lock ? 'disabled' : ''}>Send</button></div>
+      <div class="section-title">Transactions</div><div class="list" id="hist"><p class="note">Loading…</p></div>`;
+  },
+  b_bank() {
+    const go = $('#tfGo'); if (!go || go.disabled) return;
+    confirmTap(go, 'Tap again to send', async () => {
+      const to = $('#tfTo').value.trim(), amt = Math.round(+$('#tfAmt').value);
+      await Game.act('vibe_transfer', { p_to: to, p_amount: amt, p_memo: $('#tfMemo').value });
+      toast('Sent ' + fmt(amt) + ' to ' + to + '.', 'ok'); this.loadHistory();
+    });
+  },
+  async loadHistory() {
+    let h; try { h = await Api.call('vibe_history', { p_token: Game.token }); } catch (e) { return; }
+    const el = $('#hist'); if (!el) return;
+    el.innerHTML = h.length ? h.map(x => `<div class="li"><div class="a">${esc(x.memo || x.reason)}</div><div class="b">${esc(x.other || '')} · ${ago(x.at)}</div><div class="v ${x.amount > 0 ? 'in' : ''}">${x.amount > 0 ? '+' : '−'}${fmt(Math.abs(x.amount))}</div></div>`).join('') : '<p class="note">No transactions yet.</p>';
+  },
+  v_jobs(s) {
+    const sh = s.shift;
+    return `${sh ? `<div class="card"><div><h3>On shift: ${esc(JOBS[sh.job].title)}</h3><p>Ends ${new Date(sh.expires_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p></div><button class="btn red" id="jbQuit">Quit</button></div>` : ''}
+      <div class="stack" style="margin-top:${sh ? 12 : 0}px">${Object.entries(JOBS).map(([k, j]) => { const p = placeById[j.place]; const xp = (s.me.xp || {})[k] || 0; return `<div class="card"><div><h3>${esc(j.title)} <span class="pill">Lv ${level(xp)}</span></h3><p>${esc(j.blurb)} Start at ${esc(p.name)}.</p></div><div class="stack" style="gap:6px;align-items:flex-end"><span class="price">${fmt(j.pay)}</span><button class="btn ghost" data-way="${p.id}">Go</button></div></div>`; }).join('')}</div>
+      <p class="note" style="margin-top:12px">Every shift counts toward voting (3 shifts) and running for mayor (5 shifts).</p>`;
+  },
+  b_jobs() { $('#phBody').querySelectorAll('[data-way]').forEach(b => b.onclick = () => { setWaypoint(b.dataset.way); this.close(); }); const q = $('#jbQuit'); if (q) confirmTap(q, 'Sure?', () => Shifts.quit()); },
+  v_news() {
+    const items = [...Game.feed.news].reverse();
+    return items.length ? items.map(n => `<div class="news-item ${n.kind === 'story' ? 'story' : ''}"><div class="k">${n.kind === 'story' ? 'Story by ' + esc(n.author || 'a reporter') : 'City desk'} · ${ago(n.at)}</div><div class="h">${esc(n.headline)}</div></div>`).join('') : '<p class="note">No news yet. Be the first journalist in Port Veyra.</p>';
+  },
+  renderChat() {
+    const b = $('#phBody'); const atBottom = b.scrollHeight - b.scrollTop - b.clientHeight < 60;
+    const me = Game.state.me.id;
+    b.innerHTML = '<div class="chat-log">' + (Game.feed.chat.length ? Game.feed.chat.map(m => `<div class="msg ${m.player_id === me ? 'me' : ''}"><b>${esc(m.name)}</b>${esc(m.text)}</div>`).join('') : '<p class="note">Say hello to Port Veyra.</p>') + '</div><p class="note" style="margin-top:12px">Be decent. Messages are filtered and public.</p>';
+    if (atBottom) b.scrollTop = b.scrollHeight;
+  },
+  v_city(s) {
+    const c = s.city, e = c.election, total = e.candidates.reduce((a, x) => a + x.votes, 0) || 1, mine = c.mayor && c.mayor.id === s.me.id;
+    const closes = Math.max(0, Date.parse(e.closes_at) - Game.serverNow()), hrs = Math.floor(closes / 36e5), mins = Math.floor(closes / 6e4) % 60;
+    const onBallot = e.candidates.some(x => x.id === s.me.id);
+    return `<div class="card"><div><h3>${c.mayor ? 'Mayor ' + esc(c.mayor.name) : 'No mayor yet'}</h3><p>City treasury ${fmt(c.treasury)}</p></div></div>
+      <dl class="kv" style="margin-top:12px"><dt>Income tax</dt><dd>${Math.round(c.income_tax * 100)}%</dd><dt>Sales tax</dt><dd>${Math.round(c.sales_tax * 100)}%</dd><dt>Starter grant for newcomers</dt><dd>${fmt(c.starter_grant)}</dd></dl>
+      ${mine ? `<div class="section-title">Your policy, Mayor</div><div class="stack">
+        <div class="range-row"><label for="pIT">Income tax</label><b id="pITv">${Math.round(c.income_tax * 100)}%</b><input type="range" id="pIT" min="0" max="25" value="${Math.round(c.income_tax * 100)}"></div>
+        <div class="range-row"><label for="pST">Sales tax</label><b id="pSTv">${Math.round(c.sales_tax * 100)}%</b><input type="range" id="pST" min="0" max="15" value="${Math.round(c.sales_tax * 100)}"></div>
+        <div class="range-row"><label for="pSG">Starter grant</label><b id="pSGv">${fmt(c.starter_grant)}</b><input type="range" id="pSG" min="0" max="100000" step="5000" value="${c.starter_grant}"></div>
+        <button class="btn wide" id="pGo">Sign the new policy</button><p class="note">The grant is paid from the treasury, so a generous grant needs tax coming in.</p></div>` : ''}
+      <div class="section-title">Mayoral election · closes in ${hrs} h ${mins} min</div>
+      ${e.candidates.length ? e.candidates.map(x => `<div class="cand"><div><b>${esc(x.name)}</b></div><div class="votes">${x.votes}</div><div class="sl">“${esc(x.slogan)}”</div>
+        ${e.my_vote ? (e.my_vote === x.id ? '<span class="pill good">Your vote</span>' : '') : `<button class="btn ghost" data-vote="${esc(x.id)}" ${s.me.can_vote ? '' : 'disabled'}>Vote</button>`}
+        <div class="bar"><i style="width:${Math.round(x.votes / total * 100)}%"></i></div></div>`).join('') : '<p class="note">Nobody is on the ballot yet.</p>'}
+      ${!s.me.can_vote ? `<p class="note">Voting opens to citizens with 3 completed shifts. You have ${s.me.shifts}.</p>` : ''}
+      ${onBallot ? '' : `<div class="section-title">Run for mayor</div>${s.me.can_run ? `<div class="stack"><div class="field"><label for="slog">Your slogan</label><input id="slog" maxlength="60" placeholder="e.g. Streetlights on every road"></div><button class="btn wide" id="runGo">Join the ballot for ₣50,000</button></div>` : `<p class="note">Candidates need 5 completed shifts and a ₣50,000 filing fee. You have ${s.me.shifts} shifts.</p>`}`}`;
+  },
+  b_city() {
+    const body = $('#phBody');
+    body.querySelectorAll('[data-vote]').forEach(b => confirmTap(b, 'Confirm', async () => { await Game.act('vibe_vote', { p_candidate: b.dataset.vote }); toast('Vote cast. One citizen, one vote.', 'ok'); }));
+    const run = $('#runGo'); if (run) confirmTap(run, 'Tap again to pay ₣50,000', async () => { await Game.act('vibe_run', { p_slogan: $('#slog').value }); toast('You are on the ballot. Go campaign.', 'ok'); Feed.poll(); Net.announce(); });
+    const pg = $('#pGo');
+    if (pg) {
+      const sync = () => { $('#pITv').textContent = $('#pIT').value + '%'; $('#pSTv').textContent = $('#pST').value + '%'; $('#pSGv').textContent = fmt(+$('#pSG').value); };
+      ['#pIT', '#pST', '#pSG'].forEach(id => $(id).oninput = sync);
+      confirmTap(pg, 'Tap again to sign', async () => { await Game.act('vibe_set_policy', { p_income_tax: +$('#pIT').value / 100, p_sales_tax: +$('#pST').value / 100, p_starter_grant: +$('#pSG').value }); toast('Policy signed. The city has been told.', 'ok'); Feed.poll(); Net.announce(); });
+    }
+  },
+  v_market(s) {
+    const b = s.business;
+    if (!b) return `<p class="note">You don't run a buka yet. Go to Oja Market to open one for ₣250,000.</p><button class="btn wide" data-way="market">Set waypoint to Oja Market</button>`;
+    const hours = Math.min(12, (Game.serverNow() - Date.parse(b.last_collect)) / 36e5), est = Math.floor(hours * 8 * clamp(3500 / b.price, .25, 2));
+    return `<div class="wallet"><small>${esc(b.name)}</small><b>${fmt(est * b.price)}</b><span>About ${est} plates waiting · ${b.plates_sold.toLocaleString('en-US')} sold so far</span></div>
+      <div class="stack"><button class="btn wide" id="colGo" ${est ? '' : 'disabled'}>Collect takings</button>
+      <div class="field"><label for="prIn">Price per plate</label><input id="prIn" type="number" inputmode="numeric" min="1000" max="20000" step="500" value="${b.price}"></div>
+      <button class="btn ghost wide" id="prGo">Update price</button>
+      <p class="note">Customers buy about 8 plates an hour at ₣3,500. Cheaper plates sell faster, up to twice as many; pricier ones sell slower. Demand stops piling up after 12 hours, so check in. Sales tax is ${Math.round(s.city.sales_tax * 100)}%.</p></div>`;
+  },
+  b_market() {
+    const w = $('#phBody').querySelector('[data-way]'); if (w) w.onclick = () => { setWaypoint('market'); this.close(); };
+    const c = $('#colGo'); if (c) c.onclick = () => busy(c, async () => { const r = await Game.act('vibe_collect'); toast(r.plates ? r.plates + ' plates sold: +' + fmt(r.revenue - r.tax) : 'No new sales yet.', r.plates ? 'money' : ''); });
+    const p = $('#prGo'); if (p) p.onclick = () => busy(p, async () => { await Game.act('vibe_set_price', { p_price: Math.round(+$('#prIn').value) }); toast('Price updated.', 'ok'); });
+  },
+  v_me(s) {
+    const xp = s.me.xp || {};
+    return `<div class="card"><div><h3>${esc(s.me.name)}</h3><p>Citizen since ${new Date(s.me.created_at).toLocaleDateString()}</p></div><button class="btn ghost" id="lookGo">Change look</button></div>
+      <dl class="kv" style="margin-top:12px"><dt>Home</dt><dd>${s.me.home ? esc(HOMES[s.me.home].label) : 'None'}</dd><dt>Vehicles</dt><dd>${(s.me.vehicles || []).map(v => RIDES[v].label).join(', ') || 'None'}</dd><dt>Shifts worked</dt><dd>${s.me.shifts}</dd>
+      ${Object.keys(JOBS).map(k => `<dt>${JOBS[k].title}</dt><dd>Level ${level(xp[k])} · ${xp[k] || 0} XP</dd>`).join('')}</dl>
+      <div class="section-title">Recovery code</div><p class="note">This code is your account. Use it to play on another device. Anyone who has it can play as you, so keep it private.</p>
+      <div class="code" id="codeBox">${esc(Game.token)}</div><div class="row-btns" style="margin-top:8px"><button class="btn ghost" id="copyCode">Copy code</button></div>
+      <div class="section-title">Settings</div><div class="stack"><button class="btn ghost wide" id="qGo">Graphics: ${Quality.high ? 'High' : 'Low'} (tap to switch, reloads)</button>
+      <button class="btn ghost wide" id="outGo">Sign out on this device</button></div>
+      ${Api.mode === 'offline' ? `<p class="note" style="margin-top:12px">You are playing the offline preview. Play online with everyone at <a href="${PLAY_URL}" target="_blank" rel="noopener" style="color:var(--danfo)">${PLAY_URL}</a></p>` : ''}`;
+  },
+  b_me() {
+    $('#lookGo').onclick = () => { this.close(); Onboard.creator(true); };
+    $('#copyCode').onclick = async () => { try { await navigator.clipboard.writeText(Game.token); toast('Code copied.', 'ok'); } catch (e) { const r = document.createRange(); r.selectNodeContents($('#codeBox')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Code selected. Copy it now.'); } };
+    $('#qGo').onclick = () => { store.set('vibe-quality', Quality.high ? 'low' : 'high'); location.reload(); };
+    confirmTap($('#outGo'), 'Saved your code? Tap again', () => signOut(false));
+  },
+  bindMap() {
+    const cv = $('#mapCv');
+    cv.onclick = e => { const r = cv.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width * 600 - 300, z = (e.clientY - r.top) / r.height * 600 - 280; let best = null, bd = 30; PLACES.forEach(p => { const d = Math.hypot(p.x - x, p.z - z); if (d < bd) { bd = d; best = p; } }); if (best) { setWaypoint(best.id); this.close(); } };
+    $('#mapList').innerHTML = PLACES.map(p => `<button class="li" style="background:none;border:0;border-bottom:1px solid var(--line);text-align:left" data-way="${p.id}"><span class="a">${esc(p.name)}</span><span class="b">${esc(p.tag)}</span><span class="v">Go</span></button>`).join('');
+    $('#mapList').querySelectorAll('[data-way]').forEach(b => b.onclick = () => { setWaypoint(b.dataset.way); this.close(); });
+  },
+  drawMap() {
+    const cv = $('#mapCv'); if (!cv) return; const x = cv.getContext('2d'), S = 640 / 600, tx = v => (v + 300) * S, tz = v => (v + 280) * S;
+    x.fillStyle = '#cbbd96'; x.fillRect(0, 0, 640, 640);
+    x.fillStyle = '#2a8fb5'; x.fillRect(0, tz(312), 640, 640); x.fillStyle = '#ead7a4'; x.fillRect(0, tz(248), 640, tz(312) - tz(248));
+    BLOCKS.forEach(bx => BLOCKS.forEach(bz => { x.fillStyle = '#e6dfcf'; x.fillRect(tx(bx - 33), tz(bz - 33), 66 * S, 66 * S); }));
+    x.fillStyle = '#3a3e45'; ROADS.forEach(r => { x.fillRect(tx(-260), tz(r - 7), 520 * S, 14 * S); x.fillRect(tx(r - 7), tz(-260), 14 * S, 520 * S); });
+    x.font = "700 18px 'Atkinson Hyperlegible', sans-serif"; x.textAlign = 'center';
+    PLACES.forEach(p => { x.fillStyle = '#f5c518'; x.beginPath(); x.arc(tx(p.x), tz(p.z), 7, 0, 7); x.fill(); x.strokeStyle = '#1a1400'; x.lineWidth = 2; x.stroke(); x.fillStyle = '#11141a'; x.fillText(p.name, tx(p.x), tz(p.z) - 12); });
+    Net.peers.forEach(pe => { if (!pe.actor) return; x.fillStyle = '#2f6fdb'; x.beginPath(); x.arc(tx(pe.actor.x), tz(pe.actor.z), 5, 0, 7); x.fill(); });
+    if (Game.target) { x.strokeStyle = '#ff6b4a'; x.lineWidth = 4; x.beginPath(); x.arc(tx(Game.target.x), tz(Game.target.z), 13, 0, 7); x.stroke(); }
+    const me = Game.me; if (me) { x.save(); x.translate(tx(me.x), tz(me.z)); x.rotate(-me.yaw + Math.PI); x.fillStyle = '#f5c518'; x.strokeStyle = '#000'; x.lineWidth = 2; x.beginPath(); x.moveTo(0, -11); x.lineTo(8, 9); x.lineTo(-8, 9); x.closePath(); x.fill(); x.stroke(); x.restore(); }
+  }
+};
+$('#phClose').onclick = () => Phone.close();
+$('#phBack').onclick = () => Phone.go('home');
+$('#phoneBtn').onclick = () => Phone.open();
+$('#walletChip').onclick = () => Phone.open('bank');
+$('#walletChip').onkeydown = e => { if (e.key === 'Enter') Phone.open('bank'); };
+$('#rideBtn').onclick = () => Game.cycleRide();
+$('#actBtn').onclick = () => { if (Game.nearPlace) Places.open(Game.nearPlace); };
+$('#tQuit').onclick = () => { const b = $('#tQuit'); if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Quit shift'; Shifts.quit(); } else { b.dataset.armed = 1; b.textContent = 'Tap again to quit without pay'; setTimeout(() => { delete b.dataset.armed; b.textContent = 'Quit shift'; }, 3000); } };
+$('#chatSend').onclick = () => sendChat();
+function setWaypoint(id) { const p = placeById[id]; Game.target = { x: p.x, z: p.z, name: p.name }; toast('Waypoint set: ' + p.name + '. Follow the yellow beacon.'); }
+async function sendChat() {
+  const inp = $('#chatInput'); const t = inp.value.trim(); if (!t) return;
+  try { const m = await Api.call('vibe_chat', { p_token: Game.token, p_text: t }); inp.value = ''; Feed.addChat([m]); Net.chat(m); } catch (e) { showErr(e); }
+}
+
+/* ═══════════════════════════ FEED & MULTIPLAYER ═══════════════════════════ */
+const Feed = {
+  async poll() {
+    try {
+      const r = await Api.call('vibe_feed', { p_after_news: Game.feed.lastNews, p_after_chat: Game.feed.lastChat });
+      if (r.news.length) { Game.feed.news.push(...r.news); Game.feed.news = Game.feed.news.slice(-60); Game.feed.lastNews = r.news[r.news.length - 1].id; $('#tickerText').textContent = r.news[r.news.length - 1].headline; if (Phone.view === 'news' && !$('#phone').hidden) Phone.refresh(); }
+      this.addChat(r.chat);
+      $('#netDot').classList.remove('off');
+    } catch (e) { $('#netDot').classList.add('off'); }
+  },
+  addChat(list) {
+    const fresh = list.filter(m => !Game.feed.chat.some(c => c.id === m.id)); if (!fresh.length) return;
+    Game.feed.chat.push(...fresh); Game.feed.chat.sort((a, b) => a.id - b.id); Game.feed.chat = Game.feed.chat.slice(-80);
+    Game.feed.lastChat = Math.max(Game.feed.lastChat, ...fresh.map(m => m.id));
+    fresh.forEach(m => { const who = m.player_id === (Game.state && Game.state.me.id) ? Game.me : (Net.peers.get(m.player_id) || {}).actor; if (who && Date.now() - Date.parse(m.at) < 20000) who.bubble(m.text); });
+    if (Phone.view === 'chat' && !$('#phone').hidden) Phone.renderChat();
+  }
+};
+const Net = {
+  ch: null, peers: new Map(), last: 0, lastSent: '',
+  connect() {
+    if (Api.mode !== 'online' || !Game.state) return;
+    const me = Game.state.me;
+    this.ch = Api.sb.channel(CHANNEL, { config: { presence: { key: me.id }, broadcast: { self: false, ack: false } } });
+    this.ch
+      .on('broadcast', { event: 'pos' }, ({ payload }) => this.onPos(payload))
+      .on('broadcast', { event: 'chat' }, ({ payload }) => Feed.addChat([payload]))
+      .on('broadcast', { event: 'news' }, () => Feed.poll())
+      .on('presence', { event: 'sync' }, () => this.onSync())
+      .subscribe(st => { if (st === 'SUBSCRIBED') { this.track(); $('#netDot').classList.remove('off'); } else if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT') $('#netDot').classList.add('off'); });
+  },
+  track() { if (this.ch && Game.state) this.ch.track({ id: Game.state.me.id, name: Game.state.me.name, look: Game.state.me.look, ride: Game.ride }).catch(() => { }); },
+  onSync() {
+    const st = this.ch.presenceState(), seen = new Set(), myId = Game.state.me.id;
+    Object.values(st).forEach(arr => { const p = arr[0]; if (!p || !p.id || p.id === myId) return; seen.add(p.id);
+      const name = String(p.name || 'Citizen').slice(0, 16);
+      let pe = this.peers.get(p.id); if (!pe) { pe = { name, look: p.look || {}, actor: null, tx: null, tz: null, ty: 0, seen: Date.now() }; this.peers.set(p.id, pe); }
+      if (pe.name !== name || JSON.stringify(pe.look) !== JSON.stringify(p.look || {})) {
+        pe.name = name; pe.look = p.look || {};
+        if (pe.actor) { const o = pe.actor; pe.actor = new Actor(pe.look, pe.name, false); pe.actor.x = o.x; pe.actor.z = o.z; pe.actor.yaw = o.yaw; pe.actor.setRide(o.ride); o.dispose(); }
+      } });
+    this.peers.forEach((pe, id) => { if (!seen.has(id)) { if (pe.actor) pe.actor.dispose(); this.peers.delete(id); } });
+    $('#hudOnline').textContent = (this.peers.size + 1) + ' online';
+  },
+  onPos(d) {
+    if (!d || typeof d.id !== 'string' || !isFinite(d.x) || !isFinite(d.z)) return;
+    let pe = this.peers.get(d.id); if (!pe) { pe = { name: 'Citizen', look: {}, actor: null, seen: Date.now() }; this.peers.set(d.id, pe); }
+    if (!pe.actor) { pe.actor = new Actor(pe.look, pe.name, false); pe.actor.x = d.x; pe.actor.z = d.z; }
+    pe.tx = clamp(d.x, -300, 320); pe.tz = clamp(d.z, -300, 320); pe.ty = +d.r || 0; pe.sp = +d.s || 0; pe.seen = Date.now();
+    if (RIDES[d.v]) pe.actor.setRide(d.v);
+  },
+  sendPos() {
+    if (!this.ch || !Game.me) return; const t = performance.now(); if (t - this.last < 200) return;
+    const me = Game.me, p = { id: Game.state.me.id, x: Math.round(me.x * 10) / 10, z: Math.round(me.z * 10) / 10, r: Math.round(me.yaw * 100) / 100, s: Math.round(me.speed), v: Game.ride };
+    const key = p.x + ',' + p.z + ',' + p.r + ',' + p.v; if (key === this.lastSent && t - this.last < 2000) return;
+    this.last = t; this.lastSent = key; this.ch.send({ type: 'broadcast', event: 'pos', payload: p }).catch(() => { });
+  },
+  chat(m) { if (this.ch) this.ch.send({ type: 'broadcast', event: 'chat', payload: m }).catch(() => { }); },
+  announce() { if (this.ch) this.ch.send({ type: 'broadcast', event: 'news', payload: {} }).catch(() => { }); },
+  update(dt) {
+    this.peers.forEach((pe, id) => {
+      const a = pe.actor; if (!a || pe.tx === null) return;
+      if (Date.now() - pe.seen > 15000) { a.dispose(); pe.actor = null; return; }
+      a.x = lerp(a.x, pe.tx, Math.min(1, dt * 8)); a.z = lerp(a.z, pe.tz, Math.min(1, dt * 8));
+      let d = pe.ty - a.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); a.yaw += d * Math.min(1, dt * 8);
+      a.place(); animateAvatar(a.av, a.ride === 'foot' ? pe.sp : 0, dt);
+    });
+  }
+};
+
+/* ═══════════════════════════ ONBOARDING ═══════════════════════════ */
+const Onboard = {
+  look: { body: 0, skin: 2, hair: 0, top: 0, bottom: 0, style: 0 }, preview: null,
+  styles() { return Chars.state.ready ? (Chars.state.bodies[this.look.body | 0] || Chars.state.bodies[0]).styles : LOOK.style; },
+  show() { $('#onboard').hidden = false; Input.block = true; this.creator(false); },
+  creator(editing, rerender) {
+    if (editing && !rerender) { $('#onboard').hidden = false; Input.block = true; this.look = Object.assign({}, Game.state.me.look); }
+    if (!this.preview) { this.preview = new Actor(this.look); const at = editing && Game.me ? Game.me : { x: 22, z: 270 }; this.side = editing && Game.me ? 1 : -1; this.preview.x = at.x; this.preview.z = at.z; this.preview.yaw = this.side < 0 ? Math.PI : 0; this.preview.place(); if (editing && Game.me) Game.me.root.visible = false; }
+    const sw = (k) => `<div class="field"><label>${{ skin: 'Skin', hair: 'Hair colour', top: 'Top', bottom: 'Trousers' }[k]}</label><div class="swatches">${LOOK[k].map((c, i) => `<button class="sw" style="background:${c}" aria-label="${k} ${i + 1}" aria-pressed="${this.look[k] === i}" data-k="${k}" data-i="${i}"></button>`).join('')}</div></div>`;
+    $('#creator').innerHTML = `
+      ${Chars.state.ready ? `<div class="field"><label>Body</label><div class="styles">${Chars.state.bodies.map((b, i) => `<button aria-pressed="${(this.look.body | 0) === i}" data-k="body" data-i="${i}">${esc(b.label)}</button>`).join('')}</div></div>` : ''}
+      <div class="field"><label>Hairstyle</label><div class="styles">${this.styles().map((n, i) => `<button aria-pressed="${this.look.style === i}" data-k="style" data-i="${i}">${esc(n)}</button>`).join('')}</div></div>
+      <div class="c-grid">${sw('skin')}${sw('hair')}${sw('top')}${sw('bottom')}</div>
+      ${editing ? `<button class="btn wide" id="obSave">Save look</button><button class="link" id="obCancel">Cancel</button>` :
+        `<div class="field"><label for="obName">Your name in Veyra</label><input id="obName" maxlength="16" placeholder="3 to 16 letters or numbers" autocomplete="nickname"></div>
+         <div class="stack" style="margin-top:12px"><button class="btn wide" id="obGo">Arrive in Port Veyra</button>
+         <p class="note">You start with ${fmt(30000)} from the Republic. ₣V is game money only: it can't be bought, sold or cashed out.</p>
+         <button class="link" id="obCode">I have a recovery code</button></div>`}`;
+    $('#creator').querySelectorAll('[data-k]').forEach(b => b.onclick = () => { this.look[b.dataset.k] = +b.dataset.i; if (b.dataset.k === 'body') this.look.style = 0; this.preview.setLook(this.look); this.creator(editing, true); });
+    if (editing) {
+      $('#obSave').onclick = () => busy($('#obSave'), async () => { await Game.act('vibe_save_look', { p_look: this.look }); this.hide(); toast('Looking sharp.', 'ok'); });
+      $('#obCancel').onclick = () => this.hide();
+    } else {
+      $('#obGo').onclick = () => busy($('#obGo'), async () => {
+        const r = await Api.call('vibe_register', { p_name: $('#obName').value, p_look: this.look });
+        Game.token = r.token; store.set(tokenKey(), r.token); this.hide(); enterWorld(r.state, true);
+      });
+      $('#obCode').onclick = () => this.codeForm();
+    }
+  },
+  codeForm() {
+    $('#creator').innerHTML = `<div class="field"><label for="obTok">Recovery code</label><input id="obTok" maxlength="64" placeholder="64 characters from your Profile" autocomplete="off" spellcheck="false"></div>
+      <div class="stack" style="margin-top:12px"><button class="btn wide" id="obIn">Continue as that citizen</button><button class="link" id="obBack">Back to character creator</button></div>`;
+    $('#obIn').onclick = () => busy($('#obIn'), async () => { const t = $('#obTok').value.trim().toLowerCase(); const s = await Api.call('vibe_me', { p_token: t }); Game.token = t; store.set(tokenKey(), t); this.hide(); enterWorld(s, false); });
+    $('#obBack').onclick = () => this.creator(false);
+  },
+  hide() { $('#onboard').hidden = true; Input.block = Sheet.isOpen || !$('#phone').hidden; if (this.preview) { this.preview.dispose(); this.preview = null; } if (Game.me) Game.me.root.visible = true; }
+};
+function signOut(expired) {
+  store.del(tokenKey()); Game.token = null; Game.state = null; Game.target = null;
+  if (Game.me) { Game.me.dispose(); Game.me = null; }
+  if (Net.ch) { Api.sb.removeChannel(Net.ch); Net.ch = null; } Net.peers.forEach(p => p.actor && p.actor.dispose()); Net.peers.clear();
+  $('#hud').hidden = true; Phone.close(); if (Sheet.isOpen) Sheet.close();
+  if (expired) toast('Please sign in again.', 'err');
+  Onboard.show();
+}
+function enterWorld(state, isNew) {
+  Game.me = new Actor(state.me.look, state.me.name, true);
+  Game.me.x = 40 + (Math.random() - .5) * 10; Game.me.z = 46; Game.me.yaw = Math.PI; Game.me.place();
+  Input.camYaw = 0; camera.position.set(Game.me.x, 8, Game.me.z + 12);
+  Game.apply(state); Game.setRide('foot', true);
+  $('#hud').hidden = false; Input.block = false;
+  Feed.poll(); Net.connect();
+  if (isNew) setTimeout(() => {
+    Sheet.open(head('Welcome to Port Veyra', 'Hello, ' + state.me.name, 'You have ' + fmt(state.me.balance) + ' and no job yet.') +
+      `<div class="stack"><div class="card"><div><h3>1. Get a job</h3><p>You are at Central Bus Park. Walk onto the yellow ring and start a danfo driver shift.</p></div></div>
+       <div class="card"><div><h3>2. Eat and find a home</h3><p>Oja Market feeds you. Palm Estate rents rooms. A home adds 10% to your pay.</p></div></div>
+       <div class="card"><div><h3>3. Have a say</h3><p>After 3 shifts you can vote for mayor. After 5 you can run.</p></div></div>
+       <p class="note">${matchMedia('(pointer:coarse)').matches ? 'Move with the stick, drag the screen to look around.' : 'Move with WASD or the arrow keys, drag to look, E to enter, P for your phone, R to switch rides.'}</p>
+       <button class="btn wide" data-close>Let's go</button></div>`);
+  }, 600);
+}
+
+/* ═══════════════════════════ DAY & NIGHT ═══════════════════════════ */
+const tmpC = new THREE.Color();
+function updateSky(t) {
+  const hr = (Date.now() / 60000) % 24;
+  const day = clamp(Math.sin((hr - 6) / 12 * Math.PI) * 1.4, 0, 1);   // 0 at night, 1 at noon
+  const dusk = clamp(1 - Math.abs(hr - 18.5) / 1.6, 0, 1) + clamp(1 - Math.abs(hr - 6) / 1.4, 0, 1);
+  tmpC.copy(SKY_NIGHT).lerp(SKY_DAY, day).lerp(SKY_DUSK, clamp(dusk, 0, 1) * .6);
+  scene.background.copy(tmpC); scene.fog.color.copy(tmpC);
+  sun.intensity = .15 + day * .85; hemi.intensity = .35 + day * .45;
+  const night = 1 - day; World.night = night;
+  World.windowMats.forEach(m => m.emissiveIntensity = night > .45 ? .9 : 0);
+  if (World.lampMat) World.lampMat.color.set(night > .45 ? '#ffd27a' : '#555b61');
+  if (World.beam) { World.beam.material.opacity = night > .45 ? .22 : 0; World.beam.rotation.y = t * .6; }
+  World.markers.forEach((m, i) => { m.material.opacity = .55 + Math.sin(t * 3 + i) * .3; });
+  if (World.water) World.water.material.emissiveIntensity = .2 + Math.sin(t * .8) * .06;
+}
+
+/* ═══════════════════════════ BOOT & LOOP ═══════════════════════════ */
+const clock = new THREE.Clock(); let hudT = 0, feedT = 0, meT = 0, mapT = 0;
+function loop() {
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  updatePlayer(dt); Traffic.update(dt); Net.update(dt); Guide.update(t); updateSky(t);
+  if (Onboard.preview) {
+    const pv = Onboard.preview; pv.yaw += dt * .6; pv.place(); animateAvatar(pv.av, 0, dt);
+    // frame the character in the space the creator panel and title leave free
+    const W = innerWidth, H = innerHeight, cr = $('#creator').getBoundingClientRect(), br = $('.brand').getBoundingClientRect();
+    const side = cr.width < W * 0.7, top = br.bottom + 8, bottom = side ? H : cr.top, right = side ? cr.left : W;
+    const fh = Math.max(140, bottom - top), cx = right / 2, cyy = top + fh / 2;
+    const ph = pv.av.height || 3.1, d = (ph * 1.06 / 0.82) / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) * (H / fh);
+    camera.position.set(pv.x + 0.3, ph * 0.48, pv.z + d * Onboard.side); camera.lookAt(pv.x, ph * 0.48, pv.z);
+    camera.setViewOffset(W, H, W / 2 - cx, H / 2 - cyy, W, H);
+  } else if (camera.view && camera.view.enabled) camera.clearViewOffset();
+  else if (!Game.me) { const a = t * .05; camera.position.set(Math.sin(a) * 150, 70, Math.cos(a) * 150); camera.lookAt(0, 0, 0); }
+  if (Game.state) {
+    if ((hudT += dt) > .25) { hudT = 0; HUD.tick(); Shifts.check(); if (!Game.target || shiftTarget()) { const st = shiftTarget(); if (st) Game.target = { x: st.x, z: st.z, name: st.name }; } if (Game.target && !shiftTarget() && Game.me && Math.hypot(Game.target.x - Game.me.x, Game.target.z - Game.me.z) < 8) Game.target = null; }
+    if ((feedT += dt) > 8) { feedT = 0; Feed.poll(); }
+    if ((meT += dt) > 45) { meT = 0; Game.act('vibe_me').catch(e => { if (e.code === 'AUTH') showErr(e); }); }
+    if (Phone.view === 'map' && !$('#phone').hidden && (mapT += dt) > .3) { mapT = 0; Phone.drawMap(); }
+  }
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+async function boot() {
+  const bar = $('#loadBar'), msg = $('#loadMsg');
+  try {
+    if (!window.THREE || !THREE.BufferGeometryUtils) throw new Error('The 3D engine failed to load. Check your connection and reload.');
+    bar.style.width = '30%';
+    try { await withTimeout(Promise.all([document.fonts.load("400 48px 'Bowlby One SC'"), document.fonts.load("700 34px 'Atkinson Hyperlegible'")]), 2500); } catch (e) { }
+    buildCity(); bar.style.width = '50%'; await sleep(20);
+    msg.textContent = 'Loading the people of Port Veyra…';
+    try { await withTimeout(Chars.load(), 25000); } catch (e) { console.warn('Realistic characters unavailable, using simple ones:', e && e.message); }
+    bar.style.width = '65%';
+    Traffic.init(); Guide.init(); Input.init(); bar.style.width = '75%';
+    msg.textContent = 'Connecting to the Port Veyra server…';
+    const mode = await Api.init(); bar.style.width = '95%';
+    if (mode === 'offline') {
+      const band = document.createElement('div'); band.className = 'offline-band';
+      band.innerHTML = `Offline preview: progress stays on this device. <a href="${PLAY_URL}" target="_blank" rel="noopener">Play online with everyone</a>`;
+      document.body.appendChild(band); document.body.classList.add('is-offline'); $('#hudOnline').textContent = 'Offline'; $('#netDot').classList.add('off');
+    }
+    requestAnimationFrame(loop);
+    const tok = store.get(tokenKey());
+    if (tok) {
+      try { const s = await Api.call('vibe_me', { p_token: tok }); Game.token = tok; enterWorld(s, false); }
+      catch (e) { if (e.code === 'AUTH') store.del(tokenKey()); Onboard.show(); if (e.code !== 'AUTH') showErr(e); }
+    } else Onboard.show();
+    $('#loading').hidden = true;
+  } catch (e) {
+    console.error(e); msg.textContent = e.message || 'Port Veyra failed to load. Reload to try again.';
+  }
+}
+boot();
+</script>
