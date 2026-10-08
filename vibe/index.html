@@ -262,6 +262,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/SkeletonUtils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/meshopt_decoder.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <script>
 'use strict';
@@ -1168,7 +1169,8 @@ const Chars = (() => {
 
   async function load(base = '') {
     if (!THREE.GLTFLoader || !THREE.SkeletonUtils) throw new Error('character loader missing');
-    const L = new THREE.GLTFLoader(); const get1 = u => new Promise((a, b) => L.load(base + u, a, null, b));
+    const L = new THREE.GLTFLoader(); if (window.MeshoptDecoder) L.setMeshoptDecoder(MeshoptDecoder);
+    const get1 = u => new Promise((a, b) => L.load(base + u, a, null, b));
     // .glb first; hosts that won't serve .glb (such as claude.ai previews) get the same model as self-contained glTF JSON
     const get = u => get1(u).catch(() => get1(u.replace(/\.glb$/, '.gltf.json')));
     const files = await Promise.all([get('models/anims.glb'), ...BODIES.map(b => get(b.url))]);
@@ -1290,11 +1292,20 @@ class Actor {
   constructor(look, name, isMe) {
     this.root = new THREE.Group(); this.look = look; this.av = avatar(look); this.root.add(this.av.group);
     this.ride = 'foot'; this.rideMesh = null; this.x = 0; this.z = 0; this.yaw = 0; this.speed = 0;
-    this.tag = name ? textSprite(name, { size: 34, bg: isMe ? '#f5c518' : 'rgba(15,18,24,.78)', color: isMe ? '#1a1400' : '#f3efe4', weight: '700', font: "'Atkinson Hyperlegible', sans-serif", pad: 12, scale: this.av.height < 2 ? .0105 : .022 }) : null;
-    if (this.tag) { this.tag.position.y = this.av.height + 0.45; this.root.add(this.tag); }
-    scene.add(this.root);
+    this.name = name; this.isMe = isMe; this.makeTag();
+    scene.add(this.root); Actor.all.add(this);
   }
-  setLook(look) { this.root.remove(this.av.group); this.look = look; this.av = avatar(look); this.root.add(this.av.group); this.setRide(this.ride, true); }
+  makeTag() {
+    if (this.tag) { this.root.remove(this.tag); this.tag.material.map.dispose(); this.tag.material.dispose(); this.tag = null; }
+    if (!this.name) return;
+    this.tag = textSprite(this.name, { size: 34, bg: this.isMe ? '#f5c518' : 'rgba(15,18,24,.78)', color: this.isMe ? '#1a1400' : '#f3efe4', weight: '700', font: "'Atkinson Hyperlegible', sans-serif", pad: 12, scale: this.av.height < 2 ? .0105 : .022 });
+    this.tag.position.y = this.av.height + 0.45; this.root.add(this.tag);
+  }
+  setLook(look) {
+    const h = this.av.height; this.root.remove(this.av.group); this.look = look; this.av = avatar(look); this.root.add(this.av.group);
+    if (h !== this.av.height) this.makeTag();
+    this.setRide(this.ride, true);
+  }
   setRide(kind, force) {
     if (kind === this.ride && !force) return;
     this.ride = kind;
@@ -1309,7 +1320,14 @@ class Actor {
     this.bub.position.y = (this.tag ? this.tag.position.y : this.av.height + 0.45) + 0.7; this.root.add(this.bub); clearTimeout(this.bt); this.bt = setTimeout(() => { this.root.remove(this.bub); this.bub = null; }, 6000);
   }
   place() { this.root.position.set(this.x, 0, this.z); this.root.rotation.y = this.yaw; }
-  dispose() { scene.remove(this.root); }
+  dispose() { scene.remove(this.root); Actor.all.delete(this); }
+}
+Actor.all = new Set();
+// When the realistic models arrive, swap every simple person for a realistic one.
+function upgradePeople() {
+  Actor.all.forEach(a => a.setLook(a.look));
+  if (!$('#onboard').hidden && $('#creator').querySelector('[data-k]')) { const n = $('#obName') ? $('#obName').value : ''; Onboard.creator(!!Game.me, true); if ($('#obName')) $('#obName').value = n; }
+  if (Game.me) Game.setRide(Game.ride, true);
 }
 
 // NPC traffic on the road grid and pedestrians on the pavements
@@ -2048,8 +2066,8 @@ async function boot() {
     bar.style.width = '30%';
     try { await withTimeout(Promise.all([document.fonts.load("400 48px 'Bowlby One SC'"), document.fonts.load("700 34px 'Atkinson Hyperlegible'")]), 2500); } catch (e) { }
     buildCity(); bar.style.width = '50%'; await sleep(20);
-    msg.textContent = 'Loading the people of Port Veyra…';
-    try { await withTimeout(Chars.load(), 25000); } catch (e) { console.warn('Realistic characters unavailable, using simple ones:', e && e.message); }
+    // realistic people stream in the background; the city is playable with simple ones until they arrive
+    Chars.load().then(upgradePeople).catch(e => console.warn('Realistic characters unavailable, using simple ones:', e && e.message));
     bar.style.width = '65%';
     Traffic.init(); Guide.init(); Input.init(); bar.style.width = '75%';
     msg.textContent = 'Connecting to the Port Veyra server…';
